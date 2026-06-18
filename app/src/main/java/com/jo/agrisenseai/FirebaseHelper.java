@@ -25,6 +25,7 @@ public class FirebaseHelper {
     public static final String NODE_SENSOR_DATA = "sensorData";
     public static final String NODE_DASHBOARD = "dashboard";
     public static final String NODE_FARM = "farm";
+    public static final String NODE_WATER_LOSS = "waterLossDetection";
     public static final String PUMP_ON = "ON";
 
     private final DatabaseReference rootRef;
@@ -56,6 +57,11 @@ public class FirebaseHelper {
 
     public interface SensorListener {
         void onSensorUpdate(SensorData data);
+    }
+
+    /** Used by HomeFragment and InsightsFragment for water loss card. */
+    public interface WaterLossListener {
+        void onWaterLossUpdate(WaterLossData data);
     }
 
     // ---------------------------------------------------------
@@ -119,6 +125,25 @@ public class FirebaseHelper {
             }
         };
         rootRef.child(NODE_SENSOR_DATA).addValueEventListener(valueEventListener);
+        return valueEventListener;
+    }
+
+    /** Used by HomeFragment and InsightsFragment. */
+    public ValueEventListener listenWaterLoss(final WaterLossListener listener) {
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                WaterLossData data = snapshot.getValue(WaterLossData.class);
+                if (data != null) {
+                    listener.onWaterLossUpdate(data);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        };
+        rootRef.child(NODE_WATER_LOSS).addValueEventListener(valueEventListener);
         return valueEventListener;
     }
 

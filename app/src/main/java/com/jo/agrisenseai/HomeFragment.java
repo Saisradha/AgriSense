@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,8 +33,14 @@ public class HomeFragment extends Fragment {
     private TextView riskLevelBadge;
     private View notifUnreadDot;
 
+    // Water Loss views
+    private TextView wlStatusBadge;
+    private TextView wlBoundaryText;
+    private TextView wlEstimatedLossText;
+
     private ValueEventListener dashboardListener;
     private ValueEventListener unreadListener;
+    private ValueEventListener waterLossListener;
 
     @Nullable
     @Override
@@ -52,11 +59,28 @@ public class HomeFragment extends Fragment {
         riskLevelBadge = view.findViewById(R.id.riskLevelBadge);
         notifUnreadDot = view.findViewById(R.id.notifUnreadDot);
 
+        wlStatusBadge = view.findViewById(R.id.wlStatusBadge);
+        wlBoundaryText = view.findViewById(R.id.wlBoundaryText);
+        wlEstimatedLossText = view.findViewById(R.id.wlEstimatedLossText);
+
         // Bell icon → open Notification Center
         view.findViewById(R.id.notifBellContainer).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), NotificationActivity.class)));
 
+        // Simulator buttons
+        MaterialButton btnNormal = view.findViewById(R.id.btnSimNormal);
+        MaterialButton btnEast   = view.findViewById(R.id.btnSimEast);
+        MaterialButton btnWest   = view.findViewById(R.id.btnSimWest);
+
+        btnNormal.setOnClickListener(v ->
+                WaterLossEngine.analyze(1000, 68, 70, 67, 69));
+        btnEast.setOnClickListener(v ->
+                WaterLossEngine.analyze(1200, 65, 95, 63, 62));
+        btnWest.setOnClickListener(v ->
+                WaterLossEngine.analyze(1200, 64, 63, 62, 96));
+
         loadDashboardData();
+        loadWaterLossData();
         watchUnreadNotifications();
 
         return view;
@@ -83,18 +107,45 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    /**
-     * Updates the Risk Level badge text and colors based on the AI's
-     * riskLevel output ("Low", "Medium", "High").
-     */
-    private void applyRiskLevel(String riskLevel) {
-        if (riskLevel == null) {
-            riskLevel = AIEngine.RISK_LOW;
-        }
+    private void loadWaterLossData() {
+        waterLossListener = FirebaseHelper.getInstance().listenWaterLoss(data -> {
+            if (!isAdded()) return;
+            applyWaterLossCard(data);
+        });
+    }
+
+    private void applyWaterLossCard(WaterLossData data) {
+        String status = data.getStatus() != null ? data.getStatus() : WaterLossEngine.STATUS_NO_LEAKAGE;
+        wlStatusBadge.setText(status);
+        wlBoundaryText.setText(data.getSuspectedBoundary() != null ? data.getSuspectedBoundary() : "—");
+        wlEstimatedLossText.setText((int) data.getEstimatedLoss() + " L");
 
         int textColorRes;
         int bgColorRes;
+        switch (status) {
+            case WaterLossEngine.STATUS_DETECTED:
+                textColorRes = R.color.status_critical;
+                bgColorRes = R.color.icon_bg_red;
+                break;
+            case WaterLossEngine.STATUS_POSSIBLE:
+                textColorRes = R.color.status_medium;
+                bgColorRes = R.color.icon_bg_orange;
+                break;
+            default:
+                textColorRes = R.color.status_healthy;
+                bgColorRes = R.color.icon_bg_green;
+                break;
+        }
+        wlStatusBadge.setTextColor(ContextCompat.getColor(requireContext(), textColorRes));
+        wlStatusBadge.setBackgroundTintList(
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), bgColorRes)));
+    }
 
+    private void applyRiskLevel(String riskLevel) {
+        if (riskLevel == null) riskLevel = AIEngine.RISK_LOW;
+
+        int textColorRes;
+        int bgColorRes;
         switch (riskLevel) {
             case AIEngine.RISK_HIGH:
                 textColorRes = R.color.status_critical;
@@ -109,14 +160,12 @@ public class HomeFragment extends Fragment {
                 bgColorRes = R.color.icon_bg_green;
                 break;
         }
-
         riskLevelBadge.setText(riskLevel);
         riskLevelBadge.setTextColor(ContextCompat.getColor(requireContext(), textColorRes));
         riskLevelBadge.setBackgroundTintList(
                 ColorStateList.valueOf(ContextCompat.getColor(requireContext(), bgColorRes)));
     }
 
-    /** Shows a red dot on the bell when there are unread notifications. */
     private void watchUnreadNotifications() {
         unreadListener = new ValueEventListener() {
             @Override
@@ -125,10 +174,7 @@ public class HomeFragment extends Fragment {
                 boolean hasUnread = false;
                 for (DataSnapshot child : snapshot.getChildren()) {
                     Boolean read = child.child("read").getValue(Boolean.class);
-                    if (read == null || !read) {
-                        hasUnread = true;
-                        break;
-                    }
+                    if (read == null || !read) { hasUnread = true; break; }
                 }
                 notifUnreadDot.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
             }
@@ -145,6 +191,9 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
         if (dashboardListener != null) {
             FirebaseHelper.getInstance().removeListener(FirebaseHelper.NODE_DASHBOARD, dashboardListener);
+        }
+        if (waterLossListener != null) {
+            FirebaseHelper.getInstance().removeListener(FirebaseHelper.NODE_WATER_LOSS, waterLossListener);
         }
         if (unreadListener != null) {
             FirebaseDatabase.getInstance().getReference("notifications")
