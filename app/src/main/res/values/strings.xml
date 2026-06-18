@@ -1,0 +1,149 @@
+<resources>
+    <string name="app_name">AgriSense AI</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_farm">My Farm</string>
+    <string name="nav_assistant">AI Assistant</string>
+    <string name="nav_insights">Insights</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Home -->
+    <string name="home_greeting">Good Morning, Ramesh 👋</string>
+    <string name="home_subtitle">Here is your farm overview</string>
+    <string name="farm_health_label">FARM HEALTH</string>
+    <string name="farm_health_value">92%</string>
+    <string name="farm_health_status">Healthy</string>
+    <string name="ai_recommendation_label">AI Recommendation</string>
+    <string name="ai_recommendation_text">No irrigation needed for the next 18 hours</string>
+    <string name="stat_water_saved">Water Saved</string>
+    <string name="stat_energy_saved">Energy Saved</string>
+    <string name="stat_money_saved">Money Saved</string>
+    <string name="updated_recently">Updated 5 minutes ago</string>
+    <string name="pump_title">Pump Status</string>
+    <string name="pump_subtitle">Currently inactive</string>
+    <string name="pump_off">OFF</string>
+    <string name="water_now">Water Now</string>
+
+    <!-- My Farm -->
+    <string name="my_farm_title">My Farm</string>
+    <string name="my_farm_subtitle">Manage your fields</string>
+    <string name="farm_overview_subtitle">3 Fields • 12 Acres</string>
+    <string name="field_name_placeholder">Field Alpha</string>
+    <string name="field_alpha_location">North Block, Plot 4</string>
+    <string name="field_status_healthy">Healthy</string>
+    <string name="field_moisture_label">Moisture Good</string>
+    <string name="field_watering_label">Next Watering: Tomorrow, 6:00 AM</string>
+    <string name="other_fields_title">Other Fields</string>
+    <string name="field_beta_name">Field Beta</string>
+    <string name="field_beta_status">Medium</string>
+    <string name="field_beta_subtitle">Water after 8 hours</string>
+    <string name="field_gamma_name">Field Gamma</string>
+    <string name="field_gamma_status">Critical</string>
+    <string name="field_gamma_subtitle">High water stress</string>
+    <string name="add_new_farm">+ Add New Farm</string>
+    <string name="add_farm_title">Add New Farm</string>
+    <string name="add_farm_subtitle">Create a new field profile</string>
+
+    <!-- AI Assistant -->
+    <string name="assistant_title">AI Farm Assistant</string>
+    <string name="assistant_status_text">Your crop is healthy</string>
+    <string name="assistant_status_subtext">AI has analyzed the current conditions</string>
+    <string name="assistant_tap_to_speak">Tap to speak</string>
+    <string name="ai_status_title">Why this recommendation?</string>
+    <string name="ai_status_item_1">Soil moisture is optimal</string>
+    <string name="ai_status_item_2">Weather is favourable</string>
+    <string name="ai_status_item_3">No rainfall expected in 18 hrs</string>
+    <string name="quick_actions_title">Quick Actions</string>
+    <string name="action_ask">Ask AI</string>
+    <string name="action_history">History</string>
+    <string name="action_irrigation">Irrigation</string>
+
+    <!-- Insights -->
+    <string name="insights_title">Insights</string>
+    <string name="insights_subtitle">This Month</string>
+    <string name="insight_water_saved">Water Saved</string>
+    <string name="insight_energy_saved">Energy Saved</string>
+    <string name="insight_yield_prediction">Yield Prediction</string>
+    <string name="insight_crop_health">Crop Health</string>
+    <string name="insight_crop_health_value">91%</string>
+    <string name="insight_water_value">78%</string>
+    <string name="insight_energy_value">1.8 kWh</string>
+    <string name="insight_yield_value">+8%</string>
+    <string name="insight_ai_accuracy">AI Accuracy</string>
+    <string name="insight_ai_accuracy_value">94%</string>
+    <string name="analytics_title">Monthly Overview</string>
+    <string name="analytics_row1">Water usage reduced by 22% compared to last month</string>
+    <string name="analytics_row2">Crop health improved by 4 points since last check</string>
+
+    <!-- AI Engine -->
+    <string name="risk_level_title">Risk Level</string>
+    <string name="risk_low">Low</string>
+    <string name="risk_medium">Medium</string>
+    <string name="risk_high">High</string>
+
+    <!-- Profile -->
+    <string name="profile_name">Ramesh</string>
+    <string name="profile_email">ramesh@example.com</string>
+    <string name="profile_language">Language</string>
+    <string name="profile_language_value">English</string>
+    <string name="language_subtitle">App display language</string>
+    <string name="profile_dark_mode">Dark Mode</string>
+    <string name="dark_mode_subtitle">Easier on the eyes at night</string>
+    <string name="profile_voice_assistant">Voice Assistant</string>
+    <string name="voice_subtitle">Get spoken recommendations</string>
+    <string name="profile_settings">Settings</string>
+    <string name="settings_subtitle">App preferences &amp; data</string>
+
+    <!-- Language Selection Dialog (Phase 6) -->
+    <string name="dialog_select_language">Select Language</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="lang_english">English</string>
+    <string name="lang_telugu">తెలుగు</string>
+    <string name="lang_hindi">हिन्दी</string>
+    <string name="lang_tamil">தமிழ்</string>
+    <string name="lang_kannada">ಕನ್ನಡ</string>
+    <string name="lang_malayalam">മലയാളം</string>
+    <string name="lang_marathi">मराठी</string>
+    <string name="lang_bengali">বাংলা</string>
+
+    <!-- Voice Assistant (Phase 7) -->
+    <string name="voice_status_idle">Tap the microphone to ask a question</string>
+    <string name="voice_status_listening">Listening…</string>
+    <string name="voice_status_thinking">AI is thinking…</string>
+    <string name="voice_status_speaking">Speaking…</string>
+    <string name="voice_status_error">Could not hear you. Please try again.</string>
+    <string name="voice_status_mic_denied">Microphone permission is required.</string>
+    <string name="voice_response_label">AI Response</string>
+    <string name="voice_question_label">Your Question</string>
+    <string name="voice_ask_again">Ask Again</string>
+    <string name="voice_stop">Stop</string>
+    <string name="voice_auto_speak">Auto Speak Responses</string>
+    <string name="voice_auto_speak_subtitle">AI reads answers aloud automatically</string>
+    <string name="voice_greeting">Hello! Ask me anything about your farm.</string>
+    <string name="voice_unsupported_lang">Voice not fully supported for this language. Using English.</string>
+    <string name="voice_mic_rationale">Microphone access is needed to hear your questions.</string>
+
+    <!-- Notifications (Phase 8) -->
+    <string name="notif_channel_name">AgriSense Alerts</string>
+    <string name="notif_channel_desc">Smart irrigation and farm health alerts</string>
+    <string name="notif_center_title">Notifications</string>
+    <string name="notif_empty">No notifications yet</string>
+    <string name="notif_mark_all_read">Mark all as read</string>
+    <string name="notif_type_water">Water Required</string>
+    <string name="notif_type_pump">Pump Activated</string>
+    <string name="notif_type_healthy">Farm Healthy</string>
+    <string name="notif_type_risk">High Risk</string>
+    <string name="notif_type_system">System Alert</string>
+    <string name="notif_msg_water">AI detected low soil moisture. Start irrigation soon.</string>
+    <string name="notif_msg_pump">Irrigation system started successfully.</string>
+    <string name="notif_msg_healthy">No irrigation required. Farm health stable.</string>
+    <string name="notif_msg_risk">Crop stress detected. Immediate action recommended.</string>
+    <string name="notif_msg_system">Check device connectivity.</string>
+    <string name="notif_enabled">Notifications</string>
+    <string name="notif_enabled_subtitle">Receive farm alerts and reminders</string>
+    <string name="notif_sound">Notification Sound</string>
+    <string name="notif_sound_subtitle">Play sound for critical alerts</string>
+    <string name="notif_just_now">Just now</string>
+    <string name="notif_unread_badge">New</string>
+</resources>

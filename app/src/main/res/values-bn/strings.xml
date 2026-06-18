@@ -1,0 +1,149 @@
+<resources>
+    <string name="app_name">AgriSense AI</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">হোম</string>
+    <string name="nav_farm">আমার খামার</string>
+    <string name="nav_assistant">AI সহকারী</string>
+    <string name="nav_insights">অন্তর্দৃষ্টি</string>
+    <string name="nav_profile">প্রোফাইল</string>
+
+    <!-- Home -->
+    <string name="home_greeting">সুপ্রভাত, রমেশ 👋</string>
+    <string name="home_subtitle">এখানে আপনার খামারের সারসংক্ষেপ</string>
+    <string name="farm_health_label">খামারের স্বাস্থ্য</string>
+    <string name="farm_health_value">92%</string>
+    <string name="farm_health_status">সুস্থ</string>
+    <string name="ai_recommendation_label">AI সুপারিশ</string>
+    <string name="ai_recommendation_text">পরবর্তী 18 ঘণ্টার জন্য সেচের প্রয়োজন নেই</string>
+    <string name="stat_water_saved">জল সাশ্রয়</string>
+    <string name="stat_energy_saved">শক্তি সাশ্রয়</string>
+    <string name="stat_money_saved">অর্থ সাশ্রয়</string>
+    <string name="updated_recently">5 মিনিট আগে আপডেট হয়েছে</string>
+    <string name="pump_title">পাম্পের অবস্থা</string>
+    <string name="pump_subtitle">বর্তমানে নিষ্ক্রিয়</string>
+    <string name="pump_off">বন্ধ</string>
+    <string name="water_now">এখন জল দিন</string>
+
+    <!-- My Farm -->
+    <string name="my_farm_title">আমার খামার</string>
+    <string name="my_farm_subtitle">আপনার জমি পরিচালনা করুন</string>
+    <string name="farm_overview_subtitle">3টি জমি • 12 একর</string>
+    <string name="field_name_placeholder">জমি আলফা</string>
+    <string name="field_alpha_location">উত্তর ব্লক, প্লট 4</string>
+    <string name="field_status_healthy">সুস্থ</string>
+    <string name="field_moisture_label">আর্দ্রতা ভালো</string>
+    <string name="field_watering_label">পরবর্তী সেচ: আগামীকাল, 6:00 AM</string>
+    <string name="other_fields_title">অন্যান্য জমি</string>
+    <string name="field_beta_name">জমি বিটা</string>
+    <string name="field_beta_status">মধ্যম</string>
+    <string name="field_beta_subtitle">8 ঘণ্টা পরে জল দিন</string>
+    <string name="field_gamma_name">জমি গামা</string>
+    <string name="field_gamma_status">গুরুতর</string>
+    <string name="field_gamma_subtitle">অতিরিক্ত জলের চাপ</string>
+    <string name="add_new_farm">+ নতুন খামার যোগ করুন</string>
+    <string name="add_farm_title">নতুন খামার যোগ করুন</string>
+    <string name="add_farm_subtitle">নতুন ফিল্ড প্রোফাইল তৈরি করুন</string>
+
+    <!-- AI Assistant -->
+    <string name="assistant_title">AI কৃষি সহকারী</string>
+    <string name="assistant_status_text">আপনার ফসল সুস্থ</string>
+    <string name="assistant_status_subtext">AI বর্তমান পরিস্থিতি বিশ্লেষণ করেছে</string>
+    <string name="assistant_tap_to_speak">কথা বলতে ট্যাপ করুন</string>
+    <string name="ai_status_title">এই সুপারিশ কেন?</string>
+    <string name="ai_status_item_1">মাটির আর্দ্রতা সঠিক</string>
+    <string name="ai_status_item_2">আবহাওয়া অনুকূল</string>
+    <string name="ai_status_item_3">18 ঘণ্টায় বৃষ্টির সম্ভাবনা নেই</string>
+    <string name="quick_actions_title">দ্রুত কার্যক্রম</string>
+    <string name="action_ask">AI কে জিজ্ঞেস করুন</string>
+    <string name="action_history">ইতিহাস</string>
+    <string name="action_irrigation">সেচ</string>
+
+    <!-- Insights -->
+    <string name="insights_title">অন্তর্দৃষ্টি</string>
+    <string name="insights_subtitle">এই মাসে</string>
+    <string name="insight_water_saved">জল সাশ্রয়</string>
+    <string name="insight_energy_saved">শক্তি সাশ্রয়</string>
+    <string name="insight_yield_prediction">ফলন পূর্বাভাস</string>
+    <string name="insight_crop_health">ফসলের স্বাস্থ্য</string>
+    <string name="insight_crop_health_value">91%</string>
+    <string name="insight_water_value">78%</string>
+    <string name="insight_energy_value">1.8 kWh</string>
+    <string name="insight_yield_value">+8%</string>
+    <string name="insight_ai_accuracy">AI নির্ভুলতা</string>
+    <string name="insight_ai_accuracy_value">94%</string>
+    <string name="analytics_title">মাসিক সারসংক্ষেপ</string>
+    <string name="analytics_row1">গত মাসের তুলনায় জলের ব্যবহার 22% কমেছে</string>
+    <string name="analytics_row2">শেষ পরীক্ষার পর থেকে ফসলের স্বাস্থ্য 4 পয়েন্ট উন্নত হয়েছে</string>
+
+    <!-- AI Engine -->
+    <string name="risk_level_title">ঝুঁকির স্তর</string>
+    <string name="risk_low">কম</string>
+    <string name="risk_medium">মাঝারি</string>
+    <string name="risk_high">বেশি</string>
+
+    <!-- Profile -->
+    <string name="profile_name">রমেশ</string>
+    <string name="profile_email">ramesh@example.com</string>
+    <string name="profile_language">ভাষা</string>
+    <string name="profile_language_value">বাংলা</string>
+    <string name="language_subtitle">অ্যাপ প্রদর্শন ভাষা</string>
+    <string name="profile_dark_mode">ডার্ক মোড</string>
+    <string name="dark_mode_subtitle">রাতে চোখের জন্য সহজ</string>
+    <string name="profile_voice_assistant">ভয়েস অ্যাসিস্ট্যান্ট</string>
+    <string name="voice_subtitle">কথ্য সুপারিশ পান</string>
+    <string name="profile_settings">সেটিংস</string>
+    <string name="settings_subtitle">অ্যাপ পছন্দ &amp; ডেটা</string>
+
+    <!-- Language Dialog -->
+    <string name="dialog_select_language">ভাষা নির্বাচন করুন</string>
+    <string name="dialog_cancel">বাতিল করুন</string>
+    <string name="lang_english">English</string>
+    <string name="lang_telugu">తెలుగు</string>
+    <string name="lang_hindi">हिन्दी</string>
+    <string name="lang_tamil">தமிழ்</string>
+    <string name="lang_kannada">ಕನ್ನಡ</string>
+    <string name="lang_malayalam">മലയാളം</string>
+    <string name="lang_marathi">मराठी</string>
+    <string name="lang_bengali">বাংলা</string>
+
+    <!-- Voice Assistant (Phase 7) -->
+    <string name="voice_status_idle">প্রশ্ন জিজ্ঞেস করতে মাইক্রোফোন চাপুন</string>
+    <string name="voice_status_listening">শুনছি…</string>
+    <string name="voice_status_thinking">AI ভাবছে…</string>
+    <string name="voice_status_speaking">বলছে…</string>
+    <string name="voice_status_error">শুনতে পাইনি। আবার চেষ্টা করুন।</string>
+    <string name="voice_status_mic_denied">মাইক্রোফোন অনুমতি প্রয়োজন।</string>
+    <string name="voice_response_label">AI উত্তর</string>
+    <string name="voice_question_label">আপনার প্রশ্ন</string>
+    <string name="voice_ask_again">আবার জিজ্ঞেস করুন</string>
+    <string name="voice_stop">থামুন</string>
+    <string name="voice_auto_speak">স্বয়ংক্রিয় উত্তর</string>
+    <string name="voice_auto_speak_subtitle">AI উত্তর স্বয়ংক্রিয়ভাবে পড়ে</string>
+    <string name="voice_greeting">নমস্কার! আপনার খামার সম্পর্কে যেকোনো প্রশ্ন করুন।</string>
+    <string name="voice_unsupported_lang">এই ভাষায় ভয়েস সম্পূর্ণ সমর্থিত নয়। ইংরেজি ব্যবহার হচ্ছে।</string>
+    <string name="voice_mic_rationale">আপনার প্রশ্ন শুনতে মাইক্রোফোন প্রয়োজন।</string>
+
+    <!-- Notifications (Phase 8) -->
+    <string name="notif_channel_name">AgriSense সতর্কতা</string>
+    <string name="notif_channel_desc">স্মার্ট সেচ ও খামার স্বাস্থ্য সতর্কতা</string>
+    <string name="notif_center_title">বিজ্ঞপ্তি</string>
+    <string name="notif_empty">এখনো কোনো বিজ্ঞপ্তি নেই</string>
+    <string name="notif_mark_all_read">সব পঠিত হিসেবে চিহ্নিত করুন</string>
+    <string name="notif_type_water">জল প্রয়োজন</string>
+    <string name="notif_type_pump">পাম্প চালু হয়েছে</string>
+    <string name="notif_type_healthy">খামার সুস্থ</string>
+    <string name="notif_type_risk">উচ্চ ঝুঁকি</string>
+    <string name="notif_type_system">সিস্টেম সতর্কতা</string>
+    <string name="notif_msg_water">AI কম মাটির আর্দ্রতা শনাক্ত করেছে। শীঘ্রই সেচ শুরু করুন।</string>
+    <string name="notif_msg_pump">সেচ ব্যবস্থা সফলভাবে শুরু হয়েছে।</string>
+    <string name="notif_msg_healthy">সেচ প্রয়োজন নেই। খামারের স্বাস্থ্য স্থিতিশীল।</string>
+    <string name="notif_msg_risk">ফসলের চাপ শনাক্ত হয়েছে। অবিলম্বে পদক্ষেপ নেওয়ার পরামর্শ।</string>
+    <string name="notif_msg_system">ডিভাইস সংযোগ পরীক্ষা করুন।</string>
+    <string name="notif_enabled">বিজ্ঞপ্তি</string>
+    <string name="notif_enabled_subtitle">খামারের সতর্কতা ও অনুস্মারক পান</string>
+    <string name="notif_sound">বিজ্ঞপ্তি শব্দ</string>
+    <string name="notif_sound_subtitle">গুরুত্বপূর্ণ সতর্কতায় শব্দ বাজান</string>
+    <string name="notif_just_now">এইমাত্র</string>
+    <string name="notif_unread_badge">নতুন</string>
+</resources>

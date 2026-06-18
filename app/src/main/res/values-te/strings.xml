@@ -1,0 +1,149 @@
+<resources>
+    <string name="app_name">AgriSense AI</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">హోమ్</string>
+    <string name="nav_farm">నా పొలం</string>
+    <string name="nav_assistant">AI సహాయకుడు</string>
+    <string name="nav_insights">అంతర్దృష్టులు</string>
+    <string name="nav_profile">ప్రొఫైల్</string>
+
+    <!-- Home -->
+    <string name="home_greeting">శుభోదయం, రమేష్ 👋</string>
+    <string name="home_subtitle">మీ పొలం వివరాలు ఇక్కడ ఉన్నాయి</string>
+    <string name="farm_health_label">పొలం ఆరోగ్యం</string>
+    <string name="farm_health_value">92%</string>
+    <string name="farm_health_status">ఆరోగ్యంగా ఉంది</string>
+    <string name="ai_recommendation_label">AI సిఫారసు</string>
+    <string name="ai_recommendation_text">తదుపరి 18 గంటలకు నీరు అవసరం లేదు</string>
+    <string name="stat_water_saved">నీరు ఆదా</string>
+    <string name="stat_energy_saved">విద్యుత్ ఆదా</string>
+    <string name="stat_money_saved">డబ్బు ఆదా</string>
+    <string name="updated_recently">5 నిమిషాల క్రితం నవీకరించబడింది</string>
+    <string name="pump_title">పంప్ స్థితి</string>
+    <string name="pump_subtitle">ప్రస్తుతం నిష్క్రియంగా ఉంది</string>
+    <string name="pump_off">ఆఫ్</string>
+    <string name="water_now">ఇప్పుడు నీరు పెట్టండి</string>
+
+    <!-- My Farm -->
+    <string name="my_farm_title">నా పొలం</string>
+    <string name="my_farm_subtitle">మీ పొలాలను నిర్వహించండి</string>
+    <string name="farm_overview_subtitle">3 పొలాలు • 12 ఎకరాలు</string>
+    <string name="field_name_placeholder">పొలం అల్ఫా</string>
+    <string name="field_alpha_location">ఉత్తర బ్లాక్, ప్లాట్ 4</string>
+    <string name="field_status_healthy">ఆరోగ్యంగా ఉంది</string>
+    <string name="field_moisture_label">తేమ బాగుంది</string>
+    <string name="field_watering_label">తదుపరి నీరు: రేపు, 6:00 AM</string>
+    <string name="other_fields_title">ఇతర పొలాలు</string>
+    <string name="field_beta_name">పొలం బీటా</string>
+    <string name="field_beta_status">మధ్యస్థం</string>
+    <string name="field_beta_subtitle">8 గంటల తర్వాత నీరు పెట్టండి</string>
+    <string name="field_gamma_name">పొలం గామా</string>
+    <string name="field_gamma_status">విమర్శనాత్మక</string>
+    <string name="field_gamma_subtitle">అధిక నీటి ఒత్తిడి</string>
+    <string name="add_new_farm">+ కొత్త పొలం జోడించండి</string>
+    <string name="add_farm_title">కొత్త పొలం జోడించండి</string>
+    <string name="add_farm_subtitle">కొత్త పొలం ప్రొఫైల్ సృష్టించండి</string>
+
+    <!-- AI Assistant -->
+    <string name="assistant_title">AI వ్యవసాయ సహాయకుడు</string>
+    <string name="assistant_status_text">మీ పంట ఆరోగ్యంగా ఉంది</string>
+    <string name="assistant_status_subtext">AI ప్రస్తుత పరిస్థితులను విశ్లేషించింది</string>
+    <string name="assistant_tap_to_speak">మాట్లాడటానికి నొక్కండి</string>
+    <string name="ai_status_title">ఈ సిఫారసు ఎందుకు?</string>
+    <string name="ai_status_item_1">నేల తేమ సరైనది</string>
+    <string name="ai_status_item_2">వాతావరణం అనుకూలంగా ఉంది</string>
+    <string name="ai_status_item_3">18 గంటల్లో వర్షం అంచనా లేదు</string>
+    <string name="quick_actions_title">త్వరిత చర్యలు</string>
+    <string name="action_ask">AI అడగండి</string>
+    <string name="action_history">చరిత్ర</string>
+    <string name="action_irrigation">సేద్యం</string>
+
+    <!-- Insights -->
+    <string name="insights_title">అంతర్దృష్టులు</string>
+    <string name="insights_subtitle">ఈ నెల</string>
+    <string name="insight_water_saved">నీరు ఆదా</string>
+    <string name="insight_energy_saved">విద్యుత్ ఆదా</string>
+    <string name="insight_yield_prediction">దిగుబడి అంచనా</string>
+    <string name="insight_crop_health">పంట ఆరోగ్యం</string>
+    <string name="insight_crop_health_value">91%</string>
+    <string name="insight_water_value">78%</string>
+    <string name="insight_energy_value">1.8 kWh</string>
+    <string name="insight_yield_value">+8%</string>
+    <string name="insight_ai_accuracy">AI ఖచ్చితత్వం</string>
+    <string name="insight_ai_accuracy_value">94%</string>
+    <string name="analytics_title">నెలవారీ అవలోకనం</string>
+    <string name="analytics_row1">గత నెలతో పోలిస్తే నీటి వినియోగం 22% తగ్గింది</string>
+    <string name="analytics_row2">చివరి తనిఖీ నుండి పంట ఆరోగ్యం 4 పాయింట్లు మెరుగైంది</string>
+
+    <!-- AI Engine -->
+    <string name="risk_level_title">ప్రమాద స్థాయి</string>
+    <string name="risk_low">తక్కువ</string>
+    <string name="risk_medium">మధ్యస్థం</string>
+    <string name="risk_high">అధికం</string>
+
+    <!-- Profile -->
+    <string name="profile_name">రమేష్</string>
+    <string name="profile_email">ramesh@example.com</string>
+    <string name="profile_language">భాష</string>
+    <string name="profile_language_value">తెలుగు</string>
+    <string name="language_subtitle">యాప్ ప్రదర్శన భాష</string>
+    <string name="profile_dark_mode">డార్క్ మోడ్</string>
+    <string name="dark_mode_subtitle">రాత్రి కళ్ళకు సులభం</string>
+    <string name="profile_voice_assistant">వాయిస్ అసిస్టెంట్</string>
+    <string name="voice_subtitle">మాట్లాడే సిఫారసులు పొందండి</string>
+    <string name="profile_settings">సెట్టింగులు</string>
+    <string name="settings_subtitle">యాప్ ప్రాధాన్యతలు &amp; డేటా</string>
+
+    <!-- Language Dialog -->
+    <string name="dialog_select_language">భాషను ఎంచుకోండి</string>
+    <string name="dialog_cancel">రద్దు చేయి</string>
+    <string name="lang_english">English</string>
+    <string name="lang_telugu">తెలుగు</string>
+    <string name="lang_hindi">हिन्दी</string>
+    <string name="lang_tamil">தமிழ்</string>
+    <string name="lang_kannada">ಕನ್ನಡ</string>
+    <string name="lang_malayalam">മലയാളം</string>
+    <string name="lang_marathi">मराठी</string>
+    <string name="lang_bengali">বাংলা</string>
+
+    <!-- Voice Assistant (Phase 7) -->
+    <string name="voice_status_idle">ప్రశ్న అడగడానికి మైక్రోఫోన్ నొక్కండి</string>
+    <string name="voice_status_listening">వింటున్నాను…</string>
+    <string name="voice_status_thinking">AI ఆలోచిస్తోంది…</string>
+    <string name="voice_status_speaking">మాట్లాడుతోంది…</string>
+    <string name="voice_status_error">వినలేకపోయాను. మళ్ళీ ప్రయత్నించండి.</string>
+    <string name="voice_status_mic_denied">మైక్రోఫోన్ అనుమతి అవసరం.</string>
+    <string name="voice_response_label">AI సమాధానం</string>
+    <string name="voice_question_label">మీ ప్రశ్న</string>
+    <string name="voice_ask_again">మళ్ళీ అడగండి</string>
+    <string name="voice_stop">ఆపు</string>
+    <string name="voice_auto_speak">స్వయంచాలక సమాధానాలు</string>
+    <string name="voice_auto_speak_subtitle">AI సమాధానాలు స్వయంచాలకంగా చదువుతుంది</string>
+    <string name="voice_greeting">నమస్కారం! మీ పొలం గురించి ఏదైనా అడగండి.</string>
+    <string name="voice_unsupported_lang">ఈ భాషకు వాయిస్ పూర్తిగా మద్దతు లేదు. ఇంగ్లీష్ ఉపయోగిస్తున్నాం.</string>
+    <string name="voice_mic_rationale">మీ ప్రశ్నలు వినడానికి మైక్రోఫోన్ అవసరం.</string>
+
+    <!-- Notifications (Phase 8) -->
+    <string name="notif_channel_name">AgriSense హెచ్చరికలు</string>
+    <string name="notif_channel_desc">స్మార్ట్ సేద్యం మరియు పొలం ఆరోగ్య హెచ్చరికలు</string>
+    <string name="notif_center_title">నోటిఫికేషన్లు</string>
+    <string name="notif_empty">ఇంకా నోటిఫికేషన్లు లేవు</string>
+    <string name="notif_mark_all_read">అన్నింటినీ చదివినట్లు గుర్తించండి</string>
+    <string name="notif_type_water">నీరు అవసరం</string>
+    <string name="notif_type_pump">పంప్ ప్రారంభమైంది</string>
+    <string name="notif_type_healthy">పొలం ఆరోగ్యంగా ఉంది</string>
+    <string name="notif_type_risk">అధిక ప్రమాదం</string>
+    <string name="notif_type_system">సిస్టమ్ హెచ్చరిక</string>
+    <string name="notif_msg_water">AI నేల తేమ తక్కువగా ఉందని గుర్తించింది. త్వరలో సేద్యం ప్రారంభించండి.</string>
+    <string name="notif_msg_pump">సేద్యం వ్యవస్థ విజయవంతంగా ప్రారంభమైంది.</string>
+    <string name="notif_msg_healthy">సేద్యం అవసరం లేదు. పొలం ఆరోగ్యం స్థిరంగా ఉంది.</string>
+    <string name="notif_msg_risk">పంట ఒత్తిడి గుర్తించబడింది. తక్షణ చర్య సిఫారసు.</string>
+    <string name="notif_msg_system">పరికర కనెక్టివిటీ తనిఖీ చేయండి.</string>
+    <string name="notif_enabled">నోటిఫికేషన్లు</string>
+    <string name="notif_enabled_subtitle">పొలం హెచ్చరికలు మరియు రిమైండర్లు పొందండి</string>
+    <string name="notif_sound">నోటిఫికేషన్ శబ్దం</string>
+    <string name="notif_sound_subtitle">క్రిటికల్ హెచ్చరికలకు శబ్దం వినిపించు</string>
+    <string name="notif_just_now">ఇప్పుడే</string>
+    <string name="notif_unread_badge">కొత్తది</string>
+</resources>

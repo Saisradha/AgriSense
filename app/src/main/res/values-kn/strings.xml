@@ -1,0 +1,149 @@
+<resources>
+    <string name="app_name">AgriSense AI</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">ಮುಖಪುಟ</string>
+    <string name="nav_farm">ನನ್ನ ಹೊಲ</string>
+    <string name="nav_assistant">AI ಸಹಾಯಕ</string>
+    <string name="nav_insights">ಒಳನೋಟಗಳು</string>
+    <string name="nav_profile">ಪ್ರೊಫೈಲ್</string>
+
+    <!-- Home -->
+    <string name="home_greeting">ಶುಭೋದಯ, ರಮೇಶ್ 👋</string>
+    <string name="home_subtitle">ನಿಮ್ಮ ಹೊಲದ ಅವಲೋಕನ ಇಲ್ಲಿದೆ</string>
+    <string name="farm_health_label">ಹೊಲದ ಆರೋಗ್ಯ</string>
+    <string name="farm_health_value">92%</string>
+    <string name="farm_health_status">ಆರೋಗ್ಯಕರ</string>
+    <string name="ai_recommendation_label">AI ಶಿಫಾರಸು</string>
+    <string name="ai_recommendation_text">ಮುಂದಿನ 18 ಗಂಟೆಗಳಿಗೆ ನೀರಾವರಿ ಅಗತ್ಯವಿಲ್ಲ</string>
+    <string name="stat_water_saved">ನೀರು ಉಳಿತಾಯ</string>
+    <string name="stat_energy_saved">ಶಕ್ತಿ ಉಳಿತಾಯ</string>
+    <string name="stat_money_saved">ಹಣ ಉಳಿತಾಯ</string>
+    <string name="updated_recently">5 ನಿಮಿಷಗಳ ಹಿಂದೆ ನವೀಕರಿಸಲಾಗಿದೆ</string>
+    <string name="pump_title">ಪಂಪ್ ಸ್ಥಿತಿ</string>
+    <string name="pump_subtitle">ಪ್ರಸ್ತುತ ನಿಷ್ಕ್ರಿಯ</string>
+    <string name="pump_off">ಆಫ್</string>
+    <string name="water_now">ಈಗ ನೀರು ಹಾಕಿ</string>
+
+    <!-- My Farm -->
+    <string name="my_farm_title">ನನ್ನ ಹೊಲ</string>
+    <string name="my_farm_subtitle">ನಿಮ್ಮ ಹೊಲಗಳನ್ನು ನಿರ್ವಹಿಸಿ</string>
+    <string name="farm_overview_subtitle">3 ಹೊಲಗಳು • 12 ಎಕರೆ</string>
+    <string name="field_name_placeholder">ಹೊಲ ಆಲ್ಫಾ</string>
+    <string name="field_alpha_location">ಉತ್ತರ ಬ್ಲಾಕ್, ಪ್ಲಾಟ್ 4</string>
+    <string name="field_status_healthy">ಆರೋಗ್ಯಕರ</string>
+    <string name="field_moisture_label">ತೇವಾಂಶ ಉತ್ತಮ</string>
+    <string name="field_watering_label">ಮುಂದಿನ ನೀರಾವರಿ: ನಾಳೆ, 6:00 AM</string>
+    <string name="other_fields_title">ಇತರ ಹೊಲಗಳು</string>
+    <string name="field_beta_name">ಹೊಲ ಬೀಟಾ</string>
+    <string name="field_beta_status">ಮಧ್ಯಮ</string>
+    <string name="field_beta_subtitle">8 ಗಂಟೆಗಳ ನಂತರ ನೀರು ಹಾಕಿ</string>
+    <string name="field_gamma_name">ಹೊಲ ಗಾಮ</string>
+    <string name="field_gamma_status">ಗಂಭೀರ</string>
+    <string name="field_gamma_subtitle">ಅಧಿಕ ನೀರಿನ ಒತ್ತಡ</string>
+    <string name="add_new_farm">+ ಹೊಸ ಹೊಲ ಸೇರಿಸಿ</string>
+    <string name="add_farm_title">ಹೊಸ ಹೊಲ ಸೇರಿಸಿ</string>
+    <string name="add_farm_subtitle">ಹೊಸ ಹೊಲ ಪ್ರೊಫೈಲ್ ರಚಿಸಿ</string>
+
+    <!-- AI Assistant -->
+    <string name="assistant_title">AI ಕೃಷಿ ಸಹಾಯಕ</string>
+    <string name="assistant_status_text">ನಿಮ್ಮ ಬೆಳೆ ಆರೋಗ್ಯಕರ</string>
+    <string name="assistant_status_subtext">AI ಪ್ರಸ್ತುತ ಪರಿಸ್ಥಿತಿಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಿದೆ</string>
+    <string name="assistant_tap_to_speak">ಮಾತನಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ</string>
+    <string name="ai_status_title">ಈ ಶಿಫಾರಸು ಏಕೆ?</string>
+    <string name="ai_status_item_1">ಮಣ್ಣಿನ ತೇವಾಂಶ ಸೂಕ್ತ</string>
+    <string name="ai_status_item_2">ಹವಾಮಾನ ಅನುಕೂಲಕರ</string>
+    <string name="ai_status_item_3">18 ಗಂಟೆಗಳಲ್ಲಿ ಮಳೆ ನಿರೀಕ್ಷಿಲ್ಲ</string>
+    <string name="quick_actions_title">ತ್ವರಿತ ಕ್ರಿಯೆಗಳು</string>
+    <string name="action_ask">AI ಕೇಳಿ</string>
+    <string name="action_history">ಇತಿಹಾಸ</string>
+    <string name="action_irrigation">ನೀರಾವರಿ</string>
+
+    <!-- Insights -->
+    <string name="insights_title">ಒಳನೋಟಗಳು</string>
+    <string name="insights_subtitle">ಈ ತಿಂಗಳು</string>
+    <string name="insight_water_saved">ನೀರು ಉಳಿತಾಯ</string>
+    <string name="insight_energy_saved">ಶಕ್ತಿ ಉಳಿತಾಯ</string>
+    <string name="insight_yield_prediction">ಇಳುವರಿ ಮುನ್ಸೂಚನೆ</string>
+    <string name="insight_crop_health">ಬೆಳೆ ಆರೋಗ್ಯ</string>
+    <string name="insight_crop_health_value">91%</string>
+    <string name="insight_water_value">78%</string>
+    <string name="insight_energy_value">1.8 kWh</string>
+    <string name="insight_yield_value">+8%</string>
+    <string name="insight_ai_accuracy">AI ನಿಖರತೆ</string>
+    <string name="insight_ai_accuracy_value">94%</string>
+    <string name="analytics_title">ಮಾಸಿಕ ಅವಲೋಕನ</string>
+    <string name="analytics_row1">ಕಳೆದ ತಿಂಗಳಿಗಿಂತ ನೀರಿನ ಬಳಕೆ 22% ಕಡಿಮೆಯಾಗಿದೆ</string>
+    <string name="analytics_row2">ಕೊನೆಯ ತಪಾಸಣೆಯಿಂದ ಬೆಳೆ ಆರೋಗ್ಯ 4 ಅಂಕಗಳಷ್ಟು ಸುಧಾರಿಸಿದೆ</string>
+
+    <!-- AI Engine -->
+    <string name="risk_level_title">ಅಪಾಯ ಮಟ್ಟ</string>
+    <string name="risk_low">ಕಡಿಮೆ</string>
+    <string name="risk_medium">ಮಧ್ಯಮ</string>
+    <string name="risk_high">ಹೆಚ್ಚು</string>
+
+    <!-- Profile -->
+    <string name="profile_name">ರಮೇಶ್</string>
+    <string name="profile_email">ramesh@example.com</string>
+    <string name="profile_language">ಭಾಷೆ</string>
+    <string name="profile_language_value">ಕನ್ನಡ</string>
+    <string name="language_subtitle">ಅಪ್ಲಿಕೇಶನ್ ಪ್ರದರ್ಶನ ಭಾಷೆ</string>
+    <string name="profile_dark_mode">ಡಾರ್ಕ್ ಮೋಡ್</string>
+    <string name="dark_mode_subtitle">ರಾತ್ರಿ ಕಣ್ಣಿಗೆ ಸುಲಭ</string>
+    <string name="profile_voice_assistant">ಧ್ವನಿ ಸಹಾಯಕ</string>
+    <string name="voice_subtitle">ಮಾತನಾಡಿದ ಶಿಫಾರಸುಗಳನ್ನು ಪಡೆಯಿರಿ</string>
+    <string name="profile_settings">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="settings_subtitle">ಅಪ್ಲಿಕೇಶನ್ ಆದ್ಯತೆಗಳು &amp; ಡೇಟಾ</string>
+
+    <!-- Language Dialog -->
+    <string name="dialog_select_language">ಭಾಷೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ</string>
+    <string name="dialog_cancel">ರದ್ದು ಮಾಡಿ</string>
+    <string name="lang_english">English</string>
+    <string name="lang_telugu">తెలుగు</string>
+    <string name="lang_hindi">हिन्दी</string>
+    <string name="lang_tamil">தமிழ்</string>
+    <string name="lang_kannada">ಕನ್ನಡ</string>
+    <string name="lang_malayalam">മലയാളം</string>
+    <string name="lang_marathi">मराठी</string>
+    <string name="lang_bengali">বাংলা</string>
+
+    <!-- Voice Assistant (Phase 7) -->
+    <string name="voice_status_idle">ಪ್ರಶ್ನೆ ಕೇಳಲು ಮೈಕ್ರೋಫೋನ್ ಟ್ಯಾಪ್ ಮಾಡಿ</string>
+    <string name="voice_status_listening">ಕೇಳುತ್ತಿದ್ದೇನೆ…</string>
+    <string name="voice_status_thinking">AI ಯೋಚಿಸುತ್ತಿದೆ…</string>
+    <string name="voice_status_speaking">ಮಾತನಾಡುತ್ತಿದೆ…</string>
+    <string name="voice_status_error">ಕೇಳಿಸಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.</string>
+    <string name="voice_status_mic_denied">ಮೈಕ್ರೋಫೋನ್ ಅನುಮತಿ ಅಗತ್ಯ.</string>
+    <string name="voice_response_label">AI ಉತ್ತರ</string>
+    <string name="voice_question_label">ನಿಮ್ಮ ಪ್ರಶ್ನೆ</string>
+    <string name="voice_ask_again">ಮತ್ತೆ ಕೇಳಿ</string>
+    <string name="voice_stop">ನಿಲ್ಲಿಸಿ</string>
+    <string name="voice_auto_speak">ಸ್ವಯಂ ಉತ್ತರ</string>
+    <string name="voice_auto_speak_subtitle">AI ಉತ್ತರಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಓದುತ್ತದೆ</string>
+    <string name="voice_greeting">ನಮಸ್ಕಾರ! ನಿಮ್ಮ ಹೊಲದ ಬಗ್ಗೆ ಏನೂ ಕೇಳಿ.</string>
+    <string name="voice_unsupported_lang">ಈ ಭಾಷೆಗೆ ಧ್ವನಿ ಸಂಪೂರ್ಣ ಬೆಂಬಲ ಇಲ್ಲ. ಇಂಗ್ಲಿಷ್ ಬಳಸಲಾಗುತ್ತಿದೆ.</string>
+    <string name="voice_mic_rationale">ನಿಮ್ಮ ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಲು ಮೈಕ್ರೋಫೋನ್ ಬೇಕು.</string>
+
+    <!-- Notifications (Phase 8) -->
+    <string name="notif_channel_name">AgriSense ಎಚ್ಚರಿಕೆಗಳು</string>
+    <string name="notif_channel_desc">ಸ್ಮಾರ್ಟ್ ನೀರಾವರಿ ಮತ್ತು ಹೊಲ ಆರೋಗ್ಯ ಎಚ್ಚರಿಕೆಗಳು</string>
+    <string name="notif_center_title">ಅಧಿಸೂಚನೆಗಳು</string>
+    <string name="notif_empty">ಇನ್ನೂ ಯಾವುದೇ ಅಧಿಸೂಚನೆ ಇಲ್ಲ</string>
+    <string name="notif_mark_all_read">ಎಲ್ಲವನ್ನೂ ಓದಿದ್ದಾಗಿ ಗುರುತಿಸಿ</string>
+    <string name="notif_type_water">ನೀರು ಅಗತ್ಯ</string>
+    <string name="notif_type_pump">ಪಂಪ್ ಪ್ರಾರಂಭವಾಯಿತು</string>
+    <string name="notif_type_healthy">ಹೊಲ ಆರೋಗ್ಯಕರ</string>
+    <string name="notif_type_risk">ಹೆಚ್ಚಿನ ಅಪಾಯ</string>
+    <string name="notif_type_system">ಸಿಸ್ಟಮ್ ಎಚ್ಚರಿಕೆ</string>
+    <string name="notif_msg_water">AI ಕಡಿಮೆ ಮಣ್ಣಿನ ತೇವಾಂಶ ಪತ್ತೆ ಮಾಡಿದೆ. ಶೀಘ್ರವಾಗಿ ನೀರಾವರಿ ಪ್ರಾರಂಭಿಸಿ.</string>
+    <string name="notif_msg_pump">ನೀರಾವರಿ ವ್ಯವಸ್ಥೆ ಯಶಸ್ವಿಯಾಗಿ ಪ್ರಾರಂಭವಾಗಿದೆ.</string>
+    <string name="notif_msg_healthy">ನೀರಾವರಿ ಅಗತ್ಯವಿಲ್ಲ. ಹೊಲ ಆರೋಗ್ಯ ಸ್ಥಿರವಾಗಿದೆ.</string>
+    <string name="notif_msg_risk">ಬೆಳೆ ಒತ್ತಡ ಪತ್ತೆಯಾಗಿದೆ. ತಕ್ಷಣ ಕ್ರಮ ತೆಗೆದುಕೊಳ್ಳಿ.</string>
+    <string name="notif_msg_system">ಸಾಧನ ಸಂಪರ್ಕ ಪರೀಕ್ಷಿಸಿ.</string>
+    <string name="notif_enabled">ಅಧಿಸೂಚನೆಗಳು</string>
+    <string name="notif_enabled_subtitle">ಹೊಲ ಎಚ್ಚರಿಕೆ ಮತ್ತು ನೆನಪೂಟ ಪಡೆಯಿರಿ</string>
+    <string name="notif_sound">ಅಧಿಸೂಚನೆ ಶಬ್ದ</string>
+    <string name="notif_sound_subtitle">ಮಹತ್ವದ ಎಚ್ಚರಿಕೆಗಳಿಗೆ ಶಬ್ದ ಮಾಡಿ</string>
+    <string name="notif_just_now">ಈಗಷ್ಟೇ</string>
+    <string name="notif_unread_badge">ಹೊಸದು</string>
+</resources>

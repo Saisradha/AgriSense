@@ -1,0 +1,24 @@
+<resources>
+    <!-- 8dp Grid Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+
+    <!-- Card Radii -->
+    <dimen name="radius_card">20dp</dimen>
+    <dimen name="radius_card_lg">28dp</dimen>
+    <dimen name="radius_badge">12dp</dimen>
+
+    <!-- Icon Sizes -->
+    <dimen name="icon_size">22dp</dimen>
+    <dimen name="icon_size_lg">32dp</dimen>
+    <dimen name="icon_container">44dp</dimen>
+    <dimen name="icon_container_lg">72dp</dimen>
+
+    <!-- Progress Indicators -->
+    <dimen name="progress_size_md">64dp</dimen>
+    <dimen name="progress_size_lg">92dp</dimen>
+    <dimen name="progress_thickness">6dp</dimen>
+</resources>

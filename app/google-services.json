@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "922709076910",
+    "firebase_url": "https://agrisenseai-e98bf-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "agrisenseai-e98bf",
+    "storage_bucket": "agrisenseai-e98bf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:922709076910:android:7973501e0d12a6f253763f",
+        "android_client_info": {
+          "package_name": "com.jo.agrisenseai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxUvy6RsQ0w-JFAfIqLqsaEcgWcP-67p0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
