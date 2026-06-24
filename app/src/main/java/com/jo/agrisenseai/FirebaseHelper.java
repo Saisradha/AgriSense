@@ -151,6 +151,19 @@ public class FirebaseHelper {
         rootRef.child(node).removeEventListener(listener);
     }
 
+    /**
+     * Seeds realistic demo sensor readings when Firebase has no sensorData yet,
+     * so the Farm Status cards show live values on first launch.
+     */
+    public void seedDemoSensorDataIfMissing() {
+        rootRef.child(NODE_SENSOR_DATA).get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful() || task.getResult() == null || !task.getResult().exists()) {
+                SensorData demo = new SensorData(28, 65, 420, 720);
+                rootRef.child(NODE_SENSOR_DATA).setValue(demo);
+            }
+        });
+    }
+
     // ---------------------------------------------------------
     // AI ENGINE INTEGRATION
     // ---------------------------------------------------------

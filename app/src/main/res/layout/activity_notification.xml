@@ -3,13 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/android:colorBackground"
+    android:background="@color/background"
     android:orientation="vertical">
 
     <!-- TOP BAR -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:elevation="4dp"
         android:gravity="center_vertical"
         android:padding="@dimen/spacing_md">
 
@@ -18,31 +20,30 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="@drawable/bg_icon_circle"
-            android:backgroundTint="@color/surface"
+            android:backgroundTint="@color/icon_bg_green"
+            android:contentDescription="@string/dialog_cancel"
             android:padding="11dp"
-            android:src="@drawable/ic_chevron_right"
-            android:tint="?attr/colorOnSurface"
             android:rotation="180"
-            android:contentDescription="@string/dialog_cancel" />
+            android:src="@drawable/ic_chevron_right"
+            android:tint="@color/primary_green" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginStart="@dimen/spacing_sm"
+            android:layout_weight="1"
             android:text="@string/notif_center_title"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.AgriSense.Title" />
 
         <TextView
             android:id="@+id/btnMarkAllRead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_sm"
             android:text="@string/notif_mark_all_read"
             android:textColor="@color/primary_green"
             android:textSize="13sp"
-            android:padding="@dimen/spacing_sm" />
+            android:textStyle="bold" />
 
     </LinearLayout>
 

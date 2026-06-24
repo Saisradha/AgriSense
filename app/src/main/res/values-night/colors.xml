@@ -2,6 +2,7 @@
 <resources>
     <!-- Brand -->
     <color name="primary_green">#4CAF50</color>
+    <color name="secondary_green">#66BB6A</color>
     <color name="primary_green_light">#C8E6C9</color>
     <color name="primary_green_dark_container">#1B3320</color>
     <color name="accent_orange">#FFB74D</color>
@@ -30,6 +31,12 @@
     <color name="status_healthy">#66BB6A</color>
     <color name="status_medium">#FFB74D</color>
     <color name="status_critical">#EF5350</color>
+
+    <color name="status_info">#4FC3F7</color>
+
+    <color name="chat_user_bubble">#2E7D32</color>
+    <color name="chat_ai_bubble">#16201A</color>
+    <color name="chat_input_bg">#16201A</color>
 
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
