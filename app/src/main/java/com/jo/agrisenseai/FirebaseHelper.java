@@ -168,7 +168,7 @@ public class FirebaseHelper {
     public void seedDemoSensorDataIfMissing() {
         rootRef.child(NODE_SENSOR_DATA).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful() || task.getResult() == null || !task.getResult().exists()) {
-                SensorData demo = new SensorData(28, 65, 420, 720);
+                SensorData demo = new SensorData(28, 65, 420, 720, 75.0, "OFF");
                 rootRef.child(NODE_SENSOR_DATA).setValue(demo);
             }
         });
