@@ -68,6 +68,8 @@ public class FarmAdapter extends RecyclerView.Adapter<FarmAdapter.FarmViewHolder
                 stripColorRes = R.color.status_critical;
                 break;
             case "Medium":
+            case "Water Required":
+            case "Monitor":
                 textColorRes = R.color.status_medium;
                 bgColorRes = R.color.icon_bg_orange;
                 stripColorRes = R.color.status_medium;
