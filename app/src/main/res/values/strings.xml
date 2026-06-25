@@ -149,14 +149,14 @@
 
     <!-- Smart Water Loss Localization (Phase 9) -->
     <string name="wl_card_title">Smart Water Loss Localization</string>
-    <string name="wl_water_entered">Water Entered</string>
-    <string name="wl_avg_moisture">Average Moisture</string>
-    <string name="wl_estimated_loss">Estimated Water Loss</string>
+    <string name="wl_water_entered">Water Entered (Liters)</string>
+    <string name="wl_avg_moisture">Average Moisture (%)</string>
+    <string name="wl_estimated_loss">Estimated Water Loss (Liters)</string>
     <string name="wl_north">North Moisture</string>
     <string name="wl_east">East Moisture</string>
     <string name="wl_south">South Moisture</string>
     <string name="wl_west">West Moisture</string>
-    <string name="wl_suspected_boundary">Suspected Boundary</string>
+    <string name="wl_suspected_boundary">Boundary Status</string>
     <string name="wl_status">Detection Status</string>
     <string name="wl_recommendation">Farmer Recommendation</string>
     <string name="wl_litres">L</string>

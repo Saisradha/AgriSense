@@ -37,6 +37,9 @@ dependencies {
     implementation libs.constraintlayout
     implementation 'androidx.cardview:cardview:1.0.0'
 
+    // Charts – MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:33.5.1')
     implementation 'com.google.firebase:firebase-database'
