@@ -37,6 +37,18 @@
             android:name=".NotificationActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".AddFarmActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".FarmDetailsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".EditFarmActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

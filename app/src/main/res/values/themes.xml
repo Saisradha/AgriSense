@@ -4,14 +4,32 @@
         <item name="colorPrimary">@color/primary_green</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryContainer">@color/primary_green_light</item>
-        <item name="colorSecondary">@color/accent_orange</item>
+        <item name="colorOnPrimaryContainer">@color/primary_green_dark_container</item>
+        <item name="colorSecondary">@color/secondary_green</item>
+        <item name="colorOnSecondary">@color/white</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorSurfaceVariant">@color/background</item>
         <item name="android:colorBackground">@color/background</item>
         <item name="android:statusBarColor">@color/primary_green</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="bottomNavigationStyle">@style/Widget.AgriSense.BottomNavigation</item>
+        <item name="materialCardViewStyle">@style/Widget.AgriSense.Card</item>
     </style>
 
     <style name="Theme.AgriSenseAi" parent="Base.Theme.AgriSenseAi" />
+
+    <style name="Widget.AgriSense.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/surface</item>
+        <item name="itemIconTint">@color/bottom_nav_color</item>
+        <item name="itemTextColor">@color/bottom_nav_color</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.AgriSense.BottomNav.ActiveIndicator</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="elevation">8dp</item>
+    </style>
+
+    <style name="Widget.AgriSense.BottomNav.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/icon_bg_green</item>
+    </style>
 
 </resources>

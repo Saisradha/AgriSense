@@ -3,21 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/android:colorBackground"
-    android:fillViewport="true">
+    android:background="@color/background"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/spacing_md">
+        android:padding="@dimen/spacing_md"
+        android:paddingBottom="@dimen/spacing_xl">
 
         <!-- Top Bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
             android:layout_marginBottom="@dimen/spacing_lg"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
@@ -26,10 +29,9 @@
                 android:layout_weight="1"
                 android:text="@string/app_name"
                 android:textColor="@color/primary_green"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_card_title"
                 android:textStyle="bold" />
 
-            <!-- Bell with unread badge -->
             <FrameLayout
                 android:id="@+id/notifBellContainer"
                 android:layout_width="@dimen/icon_container"
@@ -40,12 +42,11 @@
                     android:layout_height="@dimen/icon_container"
                     android:background="@drawable/bg_icon_circle"
                     android:backgroundTint="@color/icon_bg_green"
+                    android:contentDescription="@string/notif_center_title"
                     android:padding="11dp"
                     android:src="@drawable/ic_notifications"
-                    android:tint="@color/primary_green"
-                    android:contentDescription="@string/notif_center_title" />
+                    android:tint="@color/primary_green" />
 
-                <!-- Red dot badge for unread count -->
                 <View
                     android:id="@+id/notifUnreadDot"
                     android:layout_width="10dp"
@@ -61,32 +62,38 @@
 
         </LinearLayout>
 
-        <!-- Greeting -->
+        <!-- Welcome Section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/home_greeting"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="24sp"
+            android:textAppearance="@style/TextAppearance.AgriSense.Headline" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="@string/home_farmer_name"
+            android:textColor="@color/primary_green"
+            android:textSize="@dimen/text_title"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/spacing_xs"
             android:layout_marginBottom="@dimen/spacing_lg"
             android:text="@string/home_subtitle"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+            android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
 
-        <!-- FARM HEALTH CARD -->
+        <!-- Crop Health Hero Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_md"
+            android:layout_marginBottom="@dimen/spacing_lg"
             app:cardBackgroundColor="@color/primary_green"
             app:cardCornerRadius="@dimen/radius_card_lg"
-            app:cardElevation="0dp">
+            app:cardElevation="@dimen/card_elevation">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,10 +111,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:letterSpacing="0.1"
-                        android:text="@string/farm_health_label"
+                        android:letterSpacing="0.08"
+                        android:text="@string/insight_crop_health_title"
                         android:textColor="@color/primary_green_light"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/text_caption"
                         android:textStyle="bold" />
 
                     <LinearLayout
@@ -122,7 +129,7 @@
                             android:layout_height="18dp"
                             android:layout_marginEnd="6dp"
                             android:src="@drawable/ic_leaf"
-                            android:tint="@color/white" />
+                            app:tint="@color/white" />
 
                         <TextView
                             android:id="@+id/farmHealthStatusText"
@@ -130,7 +137,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/farm_health_status"
                             android:textColor="@color/white"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_card_title"
                             android:textStyle="bold" />
 
                     </LinearLayout>
@@ -141,7 +148,7 @@
                         android:layout_marginTop="@dimen/spacing_sm"
                         android:text="@string/updated_recently"
                         android:textColor="@color/primary_green_light"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/text_caption" />
 
                 </LinearLayout>
 
@@ -151,8 +158,8 @@
 
                     <com.google.android.material.progressindicator.CircularProgressIndicator
                         android:id="@+id/farmHealthProgress"
-                        android:layout_width="136dp"
-                        android:layout_height="119dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:indeterminate="false"
                         android:max="100"
                         android:progress="92"
@@ -177,75 +184,301 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- AI RECOMMENDATION CARD -->
+        <!-- Farm Status Summary -->
+        <TextView
+            style="@style/Widget.AgriSense.SectionHeader"
+            android:layout_marginTop="0dp"
+            android:text="@string/section_farm_status" />
+
+        <!-- Row 1: Moisture + Temperature -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_xs"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="@dimen/radius_card_sm"
+                app:cardElevation="@dimen/card_elevation_sm">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/sensor_card_min_height"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_md">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_icon_circle"
+                        android:backgroundTint="@color/icon_bg_green"
+                        android:contentDescription="@string/sensor_soil_moisture"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_moisture"
+                        android:tint="@color/primary_green" />
+
+                    <TextView
+                        android:id="@+id/soilMoistureValueText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="—%"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_card_title"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/sensor_soil_moisture"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_xs"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="@dimen/radius_card_sm"
+                app:cardElevation="@dimen/card_elevation_sm">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/sensor_card_min_height"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_md">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_icon_circle"
+                        android:backgroundTint="@color/icon_bg_orange"
+                        android:contentDescription="@string/sensor_temperature"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_temperature"
+                        android:tint="@color/accent_orange" />
+
+                    <TextView
+                        android:id="@+id/temperatureValueText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="—°C"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_card_title"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/sensor_temperature"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <!-- Row 2: Humidity + Water Level -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_md"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_xs"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="@dimen/radius_card_sm"
+                app:cardElevation="@dimen/card_elevation_sm">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/sensor_card_min_height"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_md">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_icon_circle"
+                        android:backgroundTint="@color/icon_bg_blue"
+                        android:contentDescription="@string/sensor_humidity"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_humidity"
+                        android:tint="@color/accent_blue" />
+
+                    <TextView
+                        android:id="@+id/humidityValueText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="—%"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_card_title"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/sensor_humidity"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_xs"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="@dimen/radius_card_sm"
+                app:cardElevation="@dimen/card_elevation_sm">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/sensor_card_min_height"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_md">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_icon_circle"
+                        android:backgroundTint="@color/icon_bg_teal"
+                        android:contentDescription="@string/sensor_water_level"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_water_drop"
+                        android:tint="@color/status_info" />
+
+                    <TextView
+                        android:id="@+id/waterLevelValueText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="—%"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_card_title"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/sensor_water_level"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <!-- Smart Insights -->
+        <TextView
+            style="@style/Widget.AgriSense.SectionHeader"
+            android:text="@string/section_smart_insights" />
+
+        <!-- Smart Irrigation Recommendation -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_md"
             app:cardBackgroundColor="@color/surface"
             app:cardCornerRadius="@dimen/radius_card"
-            app:cardElevation="0dp">
+            app:cardElevation="@dimen/card_elevation_sm">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:padding="@dimen/spacing_md">
 
-                <ImageView
-                    android:layout_width="@dimen/icon_container"
-                    android:layout_height="@dimen/icon_container"
-                    android:layout_marginEnd="@dimen/spacing_md"
-                    android:background="@drawable/bg_icon_circle"
-                    android:backgroundTint="@color/icon_bg_green"
-                    android:padding="11dp"
-                    android:src="@drawable/ic_robot"
-                    android:tint="@color/primary_green" />
-
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_container"
+                        android:layout_height="@dimen/icon_container"
+                        android:layout_marginEnd="@dimen/spacing_md"
+                        android:background="@drawable/bg_icon_circle"
+                        android:backgroundTint="@color/icon_bg_green"
+                        android:padding="11dp"
+                        android:src="@drawable/ic_robot"
+                        android:tint="@color/primary_green" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/insight_irrigation_title"
+                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/ai_recommendation_label"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp"
+                        android:background="@drawable/bg_badge"
+                        android:backgroundTint="@color/icon_bg_green"
+                        android:paddingStart="10dp"
+                        android:paddingTop="5dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="5dp"
+                        android:text="@string/risk_low"
+                        android:textColor="@color/status_healthy"
+                        android:textSize="@dimen/text_caption"
                         android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/aiRecommendationText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/ai_recommendation_text"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="13sp" />
 
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="@dimen/icon_size"
-                    android:layout_height="@dimen/icon_size"
-                    android:src="@drawable/ic_chevron_right"
-                    android:tint="@color/text_secondary" />
+                <TextView
+                    android:id="@+id/aiRecommendationText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:lineSpacingMultiplier="1.3"
+                    android:text="@string/ai_recommendation_text"
+                    android:textAppearance="@style/TextAppearance.AgriSense.Body"
+                    android:textColor="@color/text_secondary" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- PUMP STATUS CARD -->
+        <!-- Pump Status -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_md"
             app:cardBackgroundColor="@color/surface"
             app:cardCornerRadius="@dimen/radius_card"
-            app:cardElevation="0dp">
+            app:cardElevation="@dimen/card_elevation_sm">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -280,9 +513,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/pump_title"
-                            android:textColor="?attr/colorOnSurface"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
+                            android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
 
                         <TextView
                             android:id="@+id/pumpSubtitleText"
@@ -290,25 +521,16 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="@string/pump_subtitle"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="13sp" />
+                            android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
 
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/pumpStatusBadge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge"
+                        style="@style/Widget.AgriSense.StatusChip"
                         android:backgroundTint="@color/icon_bg_red"
-                        android:paddingStart="12dp"
-                        android:paddingTop="6dp"
-                        android:paddingEnd="12dp"
-                        android:paddingBottom="6dp"
                         android:text="@string/pump_off"
-                        android:textColor="@color/status_critical"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/status_critical" />
 
                 </LinearLayout>
 
@@ -331,23 +553,14 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/risk_level_title"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp" />
+                        android:textAppearance="@style/TextAppearance.AgriSense.Body" />
 
                     <TextView
                         android:id="@+id/riskLevelBadge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge"
+                        style="@style/Widget.AgriSense.StatusChip"
                         android:backgroundTint="@color/icon_bg_green"
-                        android:paddingStart="12dp"
-                        android:paddingTop="6dp"
-                        android:paddingEnd="12dp"
-                        android:paddingBottom="6dp"
                         android:text="@string/risk_low"
-                        android:textColor="@color/status_healthy"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/status_healthy" />
 
                 </LinearLayout>
 
@@ -359,19 +572,188 @@
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    app:cornerRadius="@dimen/radius_card" />
+                    app:cornerRadius="@dimen/radius_card_sm" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- WATER / ENERGY / MONEY SAVED CARD -->
+        <!-- Water Loss Localization -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_md"
             app:cardBackgroundColor="@color/surface"
             app:cardCornerRadius="@dimen/radius_card"
-            app:cardElevation="0dp">
+            app:cardElevation="@dimen/card_elevation_sm">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_md">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_md"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_container"
+                        android:layout_height="@dimen/icon_container"
+                        android:layout_marginEnd="@dimen/spacing_sm"
+                        android:background="@drawable/bg_icon_circle"
+                        android:backgroundTint="@color/icon_bg_blue"
+                        android:padding="11dp"
+                        android:src="@drawable/ic_water_drop"
+                        android:tint="@color/accent_blue" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/wl_card_title"
+                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
+
+                    <TextView
+                        android:id="@+id/wlStatusBadge"
+                        style="@style/Widget.AgriSense.StatusChip"
+                        android:backgroundTint="@color/icon_bg_green"
+                        android:text="@string/wl_status"
+                        android:textColor="@color/status_healthy" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_sm"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/wl_suspected_boundary"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                    <TextView
+                        android:id="@+id/wlBoundaryText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Body"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/wl_estimated_loss"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                    <TextView
+                        android:id="@+id/wlEstimatedLossText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="— L"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Body"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Weather Insights -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_md"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="@dimen/card_elevation_sm">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_md">
+
+                <ImageView
+                    android:layout_width="@dimen/icon_container"
+                    android:layout_height="@dimen/icon_container"
+                    android:layout_marginEnd="@dimen/spacing_md"
+                    android:background="@drawable/bg_icon_circle"
+                    android:backgroundTint="@color/icon_bg_orange"
+                    android:padding="11dp"
+                    android:src="@drawable/ic_weather"
+                    android:tint="@color/accent_orange" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/insight_weather_title"
+                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/insight_weather_text"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge"
+                    android:backgroundTint="@color/icon_bg_blue"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/insight_weather_status"
+                    android:textColor="@color/status_info"
+                    android:textSize="@dimen/text_caption"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Monthly Savings -->
+        <TextView
+            style="@style/Widget.AgriSense.SectionHeader"
+            android:text="@string/section_savings" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_md"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="@dimen/card_elevation_sm">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -379,7 +761,6 @@
                 android:orientation="horizontal"
                 android:padding="@dimen/spacing_md">
 
-                <!-- Water -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -402,21 +783,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="320 L"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="@string/stat_water_saved"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
 
                 </LinearLayout>
 
-                <!-- Energy -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -439,21 +816,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1.8 kWh"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="@string/stat_energy_saved"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
 
                 </LinearLayout>
 
-                <!-- Money -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -475,195 +848,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="₹145"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="@string/stat_money_saved"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
 
                 </LinearLayout>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- SMART WATER LOSS LOCALIZATION CARD -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_md"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="@dimen/radius_card"
-            app:cardElevation="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/spacing_md">
-
-                <!-- Header row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="@dimen/spacing_md"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="@dimen/icon_container"
-                        android:layout_height="@dimen/icon_container"
-                        android:layout_marginEnd="@dimen/spacing_sm"
-                        android:background="@drawable/bg_icon_circle"
-                        android:backgroundTint="@color/icon_bg_blue"
-                        android:padding="11dp"
-                        android:src="@drawable/ic_water_drop"
-                        android:tint="@color/accent_blue" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/wl_card_title"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/wlStatusBadge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge"
-                        android:backgroundTint="@color/icon_bg_green"
-                        android:paddingStart="10dp"
-                        android:paddingTop="5dp"
-                        android:paddingEnd="10dp"
-                        android:paddingBottom="5dp"
-                        android:text="@string/wl_status"
-                        android:textColor="@color/status_healthy"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <!-- Leakage status row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="@dimen/spacing_sm"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/wl_suspected_boundary"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:id="@+id/wlBoundaryText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="—"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <!-- Estimated loss row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/wl_estimated_loss"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:id="@+id/wlEstimatedLossText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="— L"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- WATER LOSS SIMULATOR CARD -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_md"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="@dimen/radius_card"
-            app:cardElevation="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/spacing_md">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/spacing_md"
-                    android:text="@string/wl_simulator_title"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSimNormal"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginBottom="@dimen/spacing_sm"
-                    android:backgroundTint="@color/status_healthy"
-                    android:text="@string/wl_sim_normal"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:cornerRadius="@dimen/radius_card" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSimEast"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginBottom="@dimen/spacing_sm"
-                    android:backgroundTint="@color/status_medium"
-                    android:text="@string/wl_sim_east"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:cornerRadius="@dimen/radius_card" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSimWest"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:backgroundTint="@color/status_critical"
-                    android:text="@string/wl_sim_west"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:cornerRadius="@dimen/radius_card" />
 
             </LinearLayout>
 

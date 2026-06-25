@@ -3,7 +3,6 @@ package com.jo.agrisenseai;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -24,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
@@ -33,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         NotificationHelper.createChannel(this);
 
         // Starts the offline AI Irrigation Engine and smart notification watcher
+        FirebaseHelper.getInstance().seedDemoSensorDataIfMissing();
         FirebaseHelper.getInstance().runAIEngine();
         AINotificationWatcher.start(this);
 

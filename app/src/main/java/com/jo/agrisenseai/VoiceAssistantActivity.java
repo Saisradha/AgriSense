@@ -241,6 +241,6 @@ public class VoiceAssistantActivity extends AppCompatActivity {
     private void setStatus(String status, boolean listening) {
         voiceStatusText.setText(status);
         micButton.setBackgroundTintList(
-                getColorStateList(listening ? R.color.status_critical : R.color.primary_green));
+                ContextCompat.getColorStateList(this, listening ? R.color.status_critical : R.color.primary_green));
     }
 }

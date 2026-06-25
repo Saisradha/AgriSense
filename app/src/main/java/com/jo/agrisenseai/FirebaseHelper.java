@@ -29,6 +29,7 @@ public class FirebaseHelper {
     public static final String NODE_HISTORY      = "history";
     public static final String NODE_DASHBOARD    = "dashboard";
     public static final String NODE_FARM         = "farm";
+    public static final String NODE_FARMS        = "farms";
     public static final String NODE_WATER_LOSS   = "waterLossDetection";
     public static final String PUMP_ON           = "ON";
 
@@ -99,6 +100,15 @@ public class FirebaseHelper {
          * @param errorMessage human-readable description of the failure
          */
         void onHistoryError(String errorMessage);
+    }
+
+    public interface FarmsListener {
+        void onFarmsUpdate(java.util.List<Farm> farms);
+    }
+
+    public interface FarmByIdListener {
+        void onFarmLoaded(Farm farm);
+        void onFarmNotFound();
     }
 
     // ---------------------------------------------------------
@@ -299,6 +309,185 @@ public class FirebaseHelper {
 
     public void removeListener(String node, ValueEventListener listener) {
         rootRef.child(node).removeEventListener(listener);
+    }
+
+    /**
+     * Seeds realistic demo sensor readings when Firebase has no sensorData yet,
+     * so the Farm Status cards show live values on first launch.
+     */
+    public void seedDemoSensorDataIfMissing() {
+        rootRef.child(NODE_SENSOR_DATA).get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful() || task.getResult() == null || !task.getResult().exists()) {
+                SensorData demo = new SensorData(28, 65, 420, 720, 75.0, "OFF");
+                rootRef.child(NODE_SENSOR_DATA).setValue(demo);
+            }
+        });
+    }
+
+    /** Remove a real-time listener attached to a specific farm node. */
+    public void removeListenerForFarm(String farmId, ValueEventListener listener) {
+        rootRef.child(NODE_FARMS).child(farmId).removeEventListener(listener);
+    }
+
+    /** Listen for all farms dynamically in real-time. */
+    public ValueEventListener listenFarms(final FarmsListener listener) {
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                java.util.List<Farm> farms = new java.util.ArrayList<>();
+
+                for (DataSnapshot farmSnapshot : snapshot.getChildren()) {
+                    Farm farm = farmSnapshot.getValue(Farm.class);
+
+                    if (farm != null) {
+                        if (farm.getFarmId() == null || farm.getFarmId().isEmpty()) {
+                            farm.setFarmId(farmSnapshot.getKey());
+                        }
+                        farms.add(farm);
+                    }
+                }
+
+                listener.onFarmsUpdate(farms);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        };
+
+        rootRef.child(NODE_FARMS).addValueEventListener(valueEventListener);
+        return valueEventListener;
+    }
+
+    /** Add a new farm with a generated key. */
+    public void addFarm(Farm farm,
+                        DatabaseReference.CompletionListener listener) {
+
+        DatabaseReference farmsReference = rootRef.child(NODE_FARMS);
+        String key = farmsReference.push().getKey();
+
+        if (key != null) {
+            farm.setFarmId(key);
+            farmsReference.child(key).setValue(farm, listener);
+        }
+    }
+
+    /** Query database to check if a farm name already exists. */
+    public void checkDuplicateFarmName(String farmName,
+                                       ValueEventListener listener) {
+
+        rootRef.child(NODE_FARMS)
+                .orderByChild("farmName")
+                .equalTo(farmName)
+                .addListenerForSingleValueEvent(listener);
+    }
+
+    /**
+     * Real-time listener for a single farm node.
+     * Used by FarmDetailsActivity.
+     */
+    public ValueEventListener listenFarmById(
+            String farmId,
+            final FarmByIdListener listener) {
+
+        ValueEventListener vel = new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if (snapshot.exists()) {
+
+                    Farm farm = snapshot.getValue(Farm.class);
+
+                    if (farm != null) {
+
+                        if (farm.getFarmId() == null || farm.getFarmId().isEmpty()) {
+                            farm.setFarmId(snapshot.getKey());
+                        }
+
+                        listener.onFarmLoaded(farm);
+
+                    } else {
+                        listener.onFarmNotFound();
+                    }
+
+                } else {
+                    listener.onFarmNotFound();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                listener.onFarmNotFound();
+            }
+        };
+
+        rootRef.child(NODE_FARMS)
+                .child(farmId)
+                .addValueEventListener(vel);
+
+        return vel;
+    }
+
+    /** Partial update of an existing farm. */
+    public void updateFarm(
+            String farmId,
+            Map<String, Object> updates,
+            DatabaseReference.CompletionListener listener) {
+
+        rootRef.child(NODE_FARMS)
+                .child(farmId)
+                .updateChildren(updates, listener);
+    }
+
+    /** Permanently remove a farm record. */
+    public void deleteFarm(
+            String farmId,
+            DatabaseReference.CompletionListener listener) {
+
+        rootRef.child(NODE_FARMS)
+                .child(farmId)
+                .removeValue(listener);
+    }
+
+    /** Fetch a single farm once (used by EditFarmActivity). */
+    public void getFarmOnce(
+            String farmId,
+            final FarmByIdListener listener) {
+
+        rootRef.child(NODE_FARMS)
+                .child(farmId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        if (snapshot.exists()) {
+
+                            Farm farm = snapshot.getValue(Farm.class);
+
+                            if (farm != null) {
+
+                                if (farm.getFarmId() == null || farm.getFarmId().isEmpty()) {
+                                    farm.setFarmId(snapshot.getKey());
+                                }
+
+                                listener.onFarmLoaded(farm);
+
+                            } else {
+                                listener.onFarmNotFound();
+                            }
+
+                        } else {
+                            listener.onFarmNotFound();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        listener.onFarmNotFound();
+                    }
+                });
     }
 
     // ---------------------------------------------------------

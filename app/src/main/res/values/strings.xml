@@ -9,8 +9,30 @@
     <string name="nav_profile">Profile</string>
 
     <!-- Home -->
-    <string name="home_greeting">Good Morning, Ramesh 👋</string>
+    <string name="home_greeting">Good Morning 🌱</string>
+    <string name="home_farmer_name">Ramesh</string>
     <string name="home_subtitle">Here is your farm overview</string>
+    <string name="section_farm_status">Farm Status</string>
+    <string name="section_quick_actions">Quick Actions</string>
+    <string name="section_smart_insights">Smart Insights</string>
+    <string name="sensor_soil_moisture">Soil Moisture</string>
+    <string name="sensor_temperature">Temperature</string>
+    <string name="sensor_humidity">Humidity</string>
+    <string name="sensor_water_level">Water Level</string>
+    <string name="quick_action_pump">Pump Control</string>
+    <string name="quick_action_pump_sub">Start or stop irrigation</string>
+    <string name="quick_action_ai">AI Assistant</string>
+    <string name="quick_action_ai_sub">Ask your farm advisor</string>
+    <string name="quick_action_farm">My Farm</string>
+    <string name="quick_action_farm_sub">View field profiles</string>
+    <string name="quick_action_insights">Insights</string>
+    <string name="quick_action_insights_sub">Analytics &amp; trends</string>
+    <string name="insight_irrigation_title">Smart Irrigation</string>
+    <string name="insight_crop_health_title">Crop Health</string>
+    <string name="insight_weather_title">Weather Insights</string>
+    <string name="insight_weather_text">Clear skies • 28°C • No rain expected for 18 hrs</string>
+    <string name="insight_weather_status">Favourable</string>
+    <string name="section_savings">This Month</string>
     <string name="farm_health_label">FARM HEALTH</string>
     <string name="farm_health_value">92%</string>
     <string name="farm_health_status">Healthy</string>
@@ -28,7 +50,13 @@
     <!-- My Farm -->
     <string name="my_farm_title">My Farm</string>
     <string name="my_farm_subtitle">Manage your fields</string>
-    <string name="farm_overview_subtitle">3 Fields • 12 Acres</string>
+    <string name="farm_overview_subtitle">Manage your fields and crop profiles</string>
+    <string name="farm_crop_label">Crop</string>
+    <string name="farm_crop_value">Paddy (Basmati)</string>
+    <string name="farm_name_label">Farm Name</string>
+    <string name="farm_area_label">Area</string>
+    <string name="farm_area_value">4.2 Acres</string>
+    <string name="farm_location_label">Location</string>
     <string name="field_name_placeholder">Field Alpha</string>
     <string name="field_alpha_location">North Block, Plot 4</string>
     <string name="field_status_healthy">Healthy</string>
@@ -50,6 +78,9 @@
     <string name="assistant_status_text">Your crop is healthy</string>
     <string name="assistant_status_subtext">AI has analyzed the current conditions</string>
     <string name="assistant_tap_to_speak">Tap to speak</string>
+    <string name="assistant_online">Online</string>
+    <string name="assistant_chat_hint">Ask about irrigation, crops, or weather…</string>
+    <string name="assistant_chat_sample_user">When should I water Field Alpha?</string>
     <string name="ai_status_title">Why this recommendation?</string>
     <string name="ai_status_item_1">Soil moisture is optimal</string>
     <string name="ai_status_item_2">Weather is favourable</string>
@@ -61,7 +92,11 @@
 
     <!-- Insights -->
     <string name="insights_title">Insights</string>
-    <string name="insights_subtitle">This Month</string>
+    <string name="insights_subtitle">Farm intelligence at a glance</string>
+    <string name="section_irrigation_intelligence">Irrigation Intelligence</string>
+    <string name="section_water_loss">Water Loss Localization</string>
+    <string name="section_crop_analytics">Crop Analytics</string>
+    <string name="section_ai_recommendations">AI Recommendations</string>
     <string name="insight_water_saved">Water Saved</string>
     <string name="insight_energy_saved">Energy Saved</string>
     <string name="insight_yield_prediction">Yield Prediction</string>
@@ -83,6 +118,16 @@
     <string name="risk_high">High</string>
 
     <!-- Profile -->
+    <string name="section_farmer_profile">Farmer Profile</string>
+    <string name="section_farm_statistics">Farm Statistics</string>
+    <string name="section_settings">Settings</string>
+    <string name="section_about">About App</string>
+    <string name="profile_about_title">AgriSense AI</string>
+    <string name="profile_about_subtitle">Smart irrigation for modern farmers • v1.0</string>
+    <string name="stat_fields">Active Fields</string>
+    <string name="stat_fields_value">3</string>
+    <string name="stat_acres">Total Area</string>
+    <string name="stat_acres_value">12 Acres</string>
     <string name="profile_name">Ramesh</string>
     <string name="profile_email">ramesh@example.com</string>
     <string name="profile_language">Language</string>
