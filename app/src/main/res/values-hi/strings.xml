@@ -83,8 +83,8 @@
     <string name="risk_high">उच्च</string>
 
     <!-- Profile -->
-    <string name="profile_name">रमेश</string>
-    <string name="profile_email">ramesh@example.com</string>
+    <string name="profile_name">अन्वेष</string>
+    <string name="profile_email">anvesh@example.com</string>
     <string name="profile_language">भाषा</string>
     <string name="profile_language_value">हिन्दी</string>
     <string name="language_subtitle">ऐप प्रदर्शन भाषा</string>

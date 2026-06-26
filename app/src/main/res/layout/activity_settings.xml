@@ -105,9 +105,7 @@
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switchDarkMode"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:clickable="false" />
+                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 

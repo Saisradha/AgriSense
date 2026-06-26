@@ -1,23 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Base application theme. Common to both Light and Dark mode. -->
     <style name="Base.Theme.AgriSenseAi" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary_green</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryContainer">@color/primary_green_light</item>
-        <item name="colorOnPrimaryContainer">@color/primary_green_dark_container</item>
-        <item name="colorSecondary">@color/secondary_green</item>
-        <item name="colorOnSecondary">@color/white</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/on_surface</item>
         <item name="colorSurfaceVariant">@color/background</item>
         <item name="android:colorBackground">@color/background</item>
-        <item name="android:statusBarColor">@color/primary_green</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="bottomNavigationStyle">@style/Widget.AgriSense.BottomNavigation</item>
         <item name="materialCardViewStyle">@style/Widget.AgriSense.Card</item>
     </style>
 
-    <style name="Theme.AgriSenseAi" parent="Base.Theme.AgriSenseAi" />
+    <!-- Theme variant used in Light mode -->
+    <style name="Theme.AgriSenseAi" parent="Base.Theme.AgriSenseAi">
+        <item name="colorPrimaryContainer">@color/primary_green_light</item>
+        <item name="colorOnPrimaryContainer">@color/primary_green_dark_container</item>
+        <item name="colorSecondary">@color/secondary_green</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">@color/primary_green</item>
+    </style>
 
     <style name="Widget.AgriSense.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
         <item name="android:background">@color/surface</item>
