@@ -15,6 +15,34 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Load API Keys securely from Environment variables or local.properties
+        def localProperties = new Properties()
+        def localPropertiesFile = rootProject.file('local.properties')
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.withReader('UTF-8') { reader ->
+                localProperties.load(reader)
+            }
+        }
+        def apiKey = System.getenv("GEMINI_API_KEY")
+        if (apiKey == null || apiKey.isEmpty()) {
+            apiKey = localProperties.getProperty("GEMINI_API_KEY")
+        }
+        if (apiKey == null) {
+            apiKey = ""
+        }
+        apiKey = apiKey.trim().replace("\"", "").replace("'", "")
+        buildConfigField "String", "GEMINI_API_KEY", "\"${apiKey}\""
+
+        def weatherKey = System.getenv("OPENWEATHER_API_KEY")
+        if (weatherKey == null || weatherKey.isEmpty()) {
+            weatherKey = localProperties.getProperty("OPENWEATHER_API_KEY")
+        }
+        if (weatherKey == null) {
+            weatherKey = ""
+        }
+        weatherKey = weatherKey.trim().replace("\"", "").replace("'", "")
+        buildConfigField "String", "OPENWEATHER_API_KEY", "\"${weatherKey}\""
     }
 
     buildTypes {
@@ -27,6 +55,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -46,7 +78,18 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.5.1')
     implementation 'com.google.firebase:firebase-database'
 
+    // Network & JSON Parsing for Gemini API
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Gemini integration uses OkHttp REST API directly (no SDK needed)
+
+    // Room Database
+    implementation 'androidx.room:room-runtime:2.6.1'
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 }
+

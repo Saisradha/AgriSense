@@ -49,6 +49,11 @@
             android:name=".EditFarmActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ConversationBrowserActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

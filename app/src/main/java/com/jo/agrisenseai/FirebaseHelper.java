@@ -535,6 +535,90 @@ public class FirebaseHelper {
         rootRef.child(NODE_FARM).child("nextWatering").setValue(result.getNextWatering());
     }
 
+    /**
+     * Reads the latest unified telemetry data from multiple Firebase nodes asynchronously.
+     */
+    public void getUnifiedTelemetry(final TelemetryCallback callback) {
+        final Map<String, Object> results = new HashMap<>();
+
+        class Tracker {
+            int completed = 0;
+            boolean failed = false;
+
+            synchronized void checkCompletion() {
+                if (failed) return;
+                completed++;
+                if (completed == 3) {
+                    SensorData sensor = (SensorData) results.get("sensor");
+                    DashboardData dash = (DashboardData) results.get("dash");
+                    FarmData farm = (FarmData) results.get("farm");
+
+                    double temp = sensor != null ? sensor.getTemperature() : 0.0;
+                    double hum = sensor != null ? sensor.getHumidity() : 0.0;
+                    double soil = sensor != null ? sensor.getSoilMoisture() : 0.0;
+                    double water = sensor != null ? sensor.getFarmWaterLevel() : 0.0;
+                    String pump = dash != null ? dash.getPumpStatus() : "UNKNOWN";
+                    String prediction = dash != null ? dash.getAiRecommendation() : "UNKNOWN";
+                    String name = farm != null ? farm.getFieldName() : "UNKNOWN";
+
+                    FarmTelemetry telemetry = new FarmTelemetry(temp, hum, soil, water, pump, prediction, name, null);
+                    callback.onTelemetryLoaded(telemetry);
+                }
+            }
+
+            synchronized void fail(String message) {
+                if (!failed) {
+                    failed = true;
+                    callback.onTelemetryError(message);
+                }
+            }
+        }
+
+        final Tracker tracker = new Tracker();
+
+        rootRef.child(NODE_SENSOR_DATA).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                SensorData data = snapshot.getValue(SensorData.class);
+                results.put("sensor", data);
+                tracker.checkCompletion();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                tracker.fail(error.getMessage());
+            }
+        });
+
+        rootRef.child(NODE_DASHBOARD).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DashboardData data = snapshot.getValue(DashboardData.class);
+                results.put("dash", data);
+                tracker.checkCompletion();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                tracker.fail(error.getMessage());
+            }
+        });
+
+        rootRef.child(NODE_FARM).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                FarmData data = snapshot.getValue(FarmData.class);
+                results.put("farm", data);
+                tracker.checkCompletion();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                tracker.fail(error.getMessage());
+            }
+        });
+    }
+
     // ---------------------------------------------------------
     // WRITE (used by "Water Now" button now, hardware later)
     // ---------------------------------------------------------
