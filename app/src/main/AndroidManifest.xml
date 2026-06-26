@@ -42,6 +42,10 @@
             android:name=".EmailLoginActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".EmailSignUpActivity"
+            android:exported="false" />
+
 
 
         <activity

@@ -53,12 +53,22 @@ public class LanguageSelectionActivity extends AppCompatActivity {
             params.rowSpec = GridLayout.spec(i / 2);
             params.setMargins(8, 8, 8, 8);
             card.setLayoutParams(params);
-            card.setCardElevation(4f);
+            
+            // Make the outer card completely transparent
+            card.setCardElevation(0f);
             card.setRadius(getResources().getDimensionPixelSize(R.dimen.radius_card_sm));
-            card.setContentPadding(32, 32, 32, 32);
+            card.setStrokeWidth(0);
+            card.setStrokeColor(android.graphics.Color.TRANSPARENT);
+            card.setCardBackgroundColor(android.graphics.Color.TRANSPARENT);
             card.setClickable(true);
             card.setFocusable(true);
             card.setCheckable(true);
+
+            // Container layout to hold text and draw glassmorphic background
+            android.widget.LinearLayout container = new android.widget.LinearLayout(this);
+            container.setOrientation(android.widget.LinearLayout.VERTICAL);
+            container.setGravity(Gravity.CENTER);
+            container.setPadding(24, 24, 24, 24);
 
             // Language name text
             TextView label = new TextView(this);
@@ -67,27 +77,21 @@ public class LanguageSelectionActivity extends AppCompatActivity {
             label.setTextColor(ContextCompat.getColor(this, R.color.on_surface));
             label.setGravity(Gravity.CENTER);
             label.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+            container.addView(label);
 
             // Subtitle: English name for non-English languages
             String subtitle = getEnglishName(i);
             if (subtitle != null) {
-                label.append("\n");
                 label.setLineSpacing(4f, 1f);
                 TextView sub = new TextView(this);
                 sub.setText(subtitle);
                 sub.setTextSize(12f);
                 sub.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
                 sub.setGravity(Gravity.CENTER);
-
-                android.widget.LinearLayout container = new android.widget.LinearLayout(this);
-                container.setOrientation(android.widget.LinearLayout.VERTICAL);
-                container.setGravity(Gravity.CENTER);
-                container.addView(label);
                 container.addView(sub);
-                card.addView(container);
-            } else {
-                card.addView(label);
             }
+            
+            card.addView(container);
 
             card.setOnClickListener(v -> {
                 selectedIndex = index;
@@ -114,16 +118,15 @@ public class LanguageSelectionActivity extends AppCompatActivity {
     private void updateCardSelection() {
         for (int i = 0; i < languageCards.length; i++) {
             MaterialCardView card = languageCards[i];
-            if (i == selectedIndex) {
-                card.setStrokeWidth(4);
-                card.setStrokeColor(ContextCompat.getColor(this, R.color.primary_green));
-                card.setCardBackgroundColor(ContextCompat.getColor(this, R.color.icon_bg_green));
-                card.setChecked(true);
-            } else {
-                card.setStrokeWidth(1);
-                card.setStrokeColor(ContextCompat.getColor(this, R.color.card_stroke));
-                card.setCardBackgroundColor(ContextCompat.getColor(this, R.color.surface));
-                card.setChecked(false);
+            android.widget.LinearLayout container = (android.widget.LinearLayout) card.getChildAt(0);
+            if (container != null) {
+                if (i == selectedIndex) {
+                    container.setBackgroundResource(R.drawable.bg_language_card_selected);
+                    card.setChecked(true);
+                } else {
+                    container.setBackgroundResource(R.drawable.bg_language_card);
+                    card.setChecked(false);
+                }
             }
         }
     }

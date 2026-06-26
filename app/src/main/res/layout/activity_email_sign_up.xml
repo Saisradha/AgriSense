@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_futuristic_gradient"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="28dp"
+        android:gravity="center_horizontal">
+
+        <!-- Futuristic Header Logo & Title -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="24dp">
+
+            <View
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_icon_circle"
+                android:backgroundTint="#2010B981" />
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="-50dp"
+                android:src="@drawable/ic_leaf"
+                app:tint="@color/primary_green"
+                android:contentDescription="AgriSense Logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="AgriSense AI"
+                android:textAppearance="@style/TextAppearance.AgriSense.Headline"
+                android:textColor="?attr/colorOnSurface"
+                android:letterSpacing="0.05"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Future of Automated Smart Farming"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:letterSpacing="0.02" />
+
+        </LinearLayout>
+
+        <!-- Glassmorphic Wizard Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_liquid_glass_card"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Dynamic Section Header -->
+            <TextView
+                android:id="@+id/tvSignUpTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create Account"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSignUpSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Join AgriSense automated farming platform"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:layout_marginBottom="20dp" />
+
+            <!-- STEP 1: Basic Info (Name & Email) -->
+            <LinearLayout
+                android:id="@+id/layoutStep1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <!-- Full Name Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Full Name"
+                    android:textColor="@color/primary_green"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/etSignUpName"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/selector_glass_input"
+                    android:hint="Enter your full name"
+                    android:inputType="textPersonName"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textColorHint="@color/text_secondary"
+                    android:textSize="15sp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:maxLines="1"
+                    android:drawableStart="@drawable/ic_person"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/text_secondary" />
+
+                <!-- Email Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email Address"
+                    android:textColor="@color/primary_green"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/etSignUpEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/selector_glass_input"
+                    android:hint="farmer@agrisense.com"
+                    android:inputType="textEmailAddress"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textColorHint="@color/text_secondary"
+                    android:textSize="15sp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:maxLines="1"
+                    android:drawableStart="@drawable/ic_place"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/text_secondary" />
+
+                <!-- Send OTP Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSendOtp"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Send Verification Code"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/primary_green"
+                    app:cornerRadius="14dp"
+                    app:elevation="0dp" />
+
+            </LinearLayout>
+
+            <!-- STEP 2: OTP Verification -->
+            <LinearLayout
+                android:id="@+id/layoutStep2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvOtpPrompt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="We have sent a 6-digit verification code to your email. Please enter it below to verify."
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:layout_marginBottom="20dp" />
+
+                <!-- OTP Input Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Verification Code"
+                    android:textColor="@color/primary_green"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/etOtpCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/selector_glass_input"
+                    android:hint="Enter 6-digit OTP"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textColorHint="@color/text_secondary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:letterSpacing="0.2"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+                <!-- Resend Link & Timer -->
+                <TextView
+                    android:id="@+id/tvResendOtp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="12dp"
+                    android:text="Resend Code in 30s"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:clickable="false"
+                    android:focusable="true" />
+
+                <!-- Verify Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVerifyOtp"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Verify Code"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/primary_green"
+                    app:cornerRadius="14dp"
+                    app:elevation="0dp" />
+
+            </LinearLayout>
+
+            <!-- STEP 3: Password Creation -->
+            <LinearLayout
+                android:id="@+id/layoutStep3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- Password Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create Password"
+                    android:textColor="@color/primary_green"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/etSignUpPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/selector_glass_input"
+                    android:hint="Minimum 6 characters"
+                    android:inputType="textPassword"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textColorHint="@color/text_secondary"
+                    android:textSize="15sp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:maxLines="1"
+                    android:drawableStart="@drawable/ic_lock"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/text_secondary" />
+
+                <!-- Confirm Password Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Confirm Password"
+                    android:textColor="@color/primary_green"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/etSignUpConfirmPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/selector_glass_input"
+                    android:hint="Re-enter password"
+                    android:inputType="textPassword"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textColorHint="@color/text_secondary"
+                    android:textSize="15sp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:maxLines="1"
+                    android:drawableStart="@drawable/ic_lock"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/text_secondary" />
+
+                <!-- Signup Complete Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSignUpComplete"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Complete Registration"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/primary_green"
+                    app:cornerRadius="14dp"
+                    app:elevation="0dp" />
+
+            </LinearLayout>
+
+            <!-- Error message view -->
+            <TextView
+                android:id="@+id/tvSignUpError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/accent_red"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:visibility="gone" />
+
+            <!-- Progress Loader -->
+            <ProgressBar
+                android:id="@+id/progressSignUp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:indeterminateTint="@color/primary_green"
+                android:visibility="gone" />
+
+            <!-- Sign In Link -->
+            <TextView
+                android:id="@+id/tvSignInLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="Already have an account? Sign In"
+                android:textColor="@color/primary_green"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/phone_terms"
+            android:textSize="11sp"
+            android:textColor="@color/text_secondary"
+            android:gravity="center" />
+
+    </LinearLayout>
+</ScrollView>

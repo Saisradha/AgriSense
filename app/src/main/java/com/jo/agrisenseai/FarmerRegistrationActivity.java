@@ -50,6 +50,14 @@ public class FarmerRegistrationActivity extends AppCompatActivity {
         progressReg = findViewById(R.id.progressReg);
 
         btnCompleteProfile.setOnClickListener(v -> saveProfile());
+
+        // Pre-fill name if passed from signup
+        if (getIntent() != null && getIntent().hasExtra("name")) {
+            String name = getIntent().getStringExtra("name");
+            if (!TextUtils.isEmpty(name)) {
+                etRegName.setText(name);
+            }
+        }
     }
 
     private void saveProfile() {
