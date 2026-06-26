@@ -49,6 +49,19 @@
             android:name=".EditFarmActivity"
             android:exported="false" />
 
+        <!--
+            SettingsActivity: Notification Settings screen.
+            exported="false" → only launched from within our own app (ProfileFragment).
+        -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".NotificationSettingsActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
