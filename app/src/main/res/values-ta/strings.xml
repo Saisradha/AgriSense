@@ -83,8 +83,8 @@
     <string name="risk_high">அதிகம்</string>
 
     <!-- Profile -->
-    <string name="profile_name">ரமேஷ்</string>
-    <string name="profile_email">ramesh@example.com</string>
+    <string name="profile_name">அன்வேஷ்</string>
+    <string name="profile_email">anvesh@example.com</string>
     <string name="profile_language">மொழி</string>
     <string name="profile_language_value">தமிழ்</string>
     <string name="language_subtitle">பயன்பாட்டு காட்சி மொழி</string>

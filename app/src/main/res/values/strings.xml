@@ -10,7 +10,7 @@
 
     <!-- Home -->
     <string name="home_greeting">Good Morning 🌱</string>
-    <string name="home_farmer_name">Ramesh</string>
+    <string name="home_farmer_name">Anvesh</string>
     <string name="home_subtitle">Here is your farm overview</string>
     <string name="section_farm_status">Farm Status</string>
     <string name="section_quick_actions">Quick Actions</string>
@@ -118,17 +118,12 @@
     <string name="risk_high">High</string>
     <!-- Profile -->
     <string name="section_farmer_profile">Farmer Profile</string>
-    <string name="section_farm_statistics">Farm Statistics</string>
     <string name="section_settings">Settings</string>
     <string name="section_about">About App</string>
     <string name="profile_about_title">AgriSense AI</string>
     <string name="profile_about_subtitle">Smart irrigation for modern farmers &#x2022; v1.0</string>
-    <string name="stat_fields">Active Fields</string>
-    <string name="stat_fields_value">3</string>
-    <string name="stat_acres">Total Area</string>
-    <string name="stat_acres_value">12 Acres</string>
-    <string name="profile_name">Ramesh</string>
-    <string name="profile_email">ramesh@example.com</string>
+    <string name="profile_name">Anvesh</string>
+    <string name="profile_email">anvesh@example.com</string>
     <string name="profile_language">Language</string>
     <string name="profile_language_value">English</string>
     <string name="language_subtitle">App display language</string>
