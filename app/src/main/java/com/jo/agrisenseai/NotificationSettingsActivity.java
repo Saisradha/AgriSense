@@ -34,26 +34,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
     private MaterialSwitch switchAlertsEnabled;
     private MaterialSwitch switchNotificationSound;
 
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(
-                    new ActivityResultContracts.RequestPermission(),
-                    isGranted -> {
-                        if (isGranted) {
-                            NotificationHelper.setEnabled(NotificationSettingsActivity.this, true);
-                            syncSwitchState(true);
-                            updateSoundCardState(true);
-                        } else {
-                            NotificationHelper.setEnabled(NotificationSettingsActivity.this, false);
-                            syncSwitchState(false);
-                            updateSoundCardState(false);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                if (!shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
-                                    showNotificationReminderDialog();
-                                }
-                            }
-                        }
-                    }
-            );
+    private boolean isWaitingForPermission = false;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -78,20 +59,8 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         switchAlertsEnabled = findViewById(R.id.switchAlertsEnabled);
         switchNotificationSound = findViewById(R.id.switchNotificationSound);
 
-        // ── Load & set current preferences states ────────────────────────────
-        boolean systemEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled();
-        Log.d("NotificationDebug", "Notification status detected: enabled=" + systemEnabled);
-        boolean alertsEnabled = NotificationHelper.isEnabled(this) && systemEnabled;
-        Log.d("NotificationDebug", "Toggle state restored: switch checked=" + alertsEnabled);
-        boolean soundEnabled = NotificationHelper.isSoundEnabled(this);
-
-        switchAlertsEnabled.setChecked(alertsEnabled);
-        switchNotificationSound.setChecked(soundEnabled);
-        updateSoundCardState(alertsEnabled);
-
-        // ── Toggle Listeners ─────────────────────────────────────────────────
-        switchAlertsEnabled.setOnCheckedChangeListener(this::handleAlertsEnabledSwitchChange);
-
+        // Set sound toggle preference states & listener
+        switchNotificationSound.setChecked(NotificationHelper.isSoundEnabled(this));
         switchNotificationSound.setOnCheckedChangeListener((btn, checked) -> {
             NotificationHelper.setSoundEnabled(NotificationSettingsActivity.this, checked);
         });
@@ -103,27 +72,36 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         cardNotificationSound.setAlpha(alertsEnabled ? 1.0f : 0.5f);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean systemEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled();
+
+        if (isWaitingForPermission && systemEnabled) {
+            NotificationHelper.setEnabled(this, true);
+            isWaitingForPermission = false;
+        }
+
+        boolean alertsEnabled = NotificationHelper.isEnabled(this) && systemEnabled;
+
+        switchAlertsEnabled.setOnCheckedChangeListener(null);
+        switchAlertsEnabled.setChecked(alertsEnabled);
+        switchAlertsEnabled.setEnabled(systemEnabled);
+        switchAlertsEnabled.setOnCheckedChangeListener(this::handleAlertsEnabledSwitchChange);
+
+        updateSoundCardState(alertsEnabled);
+    }
+
     private void handleAlertsEnabledSwitchChange(android.widget.CompoundButton buttonView, boolean checked) {
         if (checked) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    NotificationHelper.setEnabled(this, true);
-                    updateSoundCardState(true);
-                } else {
-                    syncSwitchState(false);
-                    updateSoundCardState(false);
-                    requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
-                }
+            if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+                NotificationHelper.setEnabled(this, true);
+                updateSoundCardState(true);
             } else {
-                if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
-                    NotificationHelper.setEnabled(this, true);
-                    updateSoundCardState(true);
-                } else {
-                    syncSwitchState(false);
-                    updateSoundCardState(false);
-                    showNotificationReminderDialog();
-                }
+                syncSwitchState(false);
+                updateSoundCardState(false);
+                isWaitingForPermission = true;
+                openNotificationSettings();
             }
         } else {
             NotificationHelper.setEnabled(this, false);
@@ -137,36 +115,6 @@ public class NotificationSettingsActivity extends AppCompatActivity {
             switchAlertsEnabled.setChecked(checked);
             switchAlertsEnabled.setOnCheckedChangeListener(this::handleAlertsEnabledSwitchChange);
         }
-    }
-
-    private void showNotificationReminderDialog() {
-        Log.d("NotificationDebug", "Dialog displayed");
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("ALLOW NOTIFICATIONS")
-                .setMessage("Enable notifications to receive important farm alerts such as:\n" +
-                        "• Low Soil Moisture\n" +
-                        "• High Temperature\n" +
-                        "• Low Water Tank Level")
-                .setPositiveButton("ALLOW", (dialogInterface, which) -> {
-                    Log.d("NotificationDebug", "ALLOW button clicked");
-                    openNotificationSettings();
-                })
-                .setNegativeButton("DON'T ALLOW", (dialogInterface, which) -> {
-                    Log.d("NotificationDebug", "DON'T ALLOW button clicked");
-                    dialogInterface.dismiss();
-                })
-                .setCancelable(false)
-                .create();
-
-        dialog.show();
-
-        int greenColor = ContextCompat.getColor(this, R.color.primary_green);
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(greenColor);
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTypeface(null, android.graphics.Typeface.BOLD);
-
-        int grayColor = ContextCompat.getColor(this, R.color.text_secondary);
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(grayColor);
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTypeface(null, android.graphics.Typeface.NORMAL);
     }
 
     private void openNotificationSettings() {

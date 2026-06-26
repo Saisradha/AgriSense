@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         AINotificationWatcher.start(this);
 
         // ── Step 5: Load default fragment ────────────────────────────────────
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null && NotificationManagerCompat.from(this).areNotificationsEnabled()) {
             loadFragment(new HomeFragment());
         }
 
@@ -148,7 +148,15 @@ public class MainActivity extends AppCompatActivity {
         Log.d("NotificationDebug", "Notification status checked");
         boolean enabled = NotificationManagerCompat.from(this).areNotificationsEnabled();
         Log.d("NotificationDebug", "Notifications enabled/disabled result: " + enabled);
-        if (!enabled) {
+        if (enabled) {
+            if (reminderDialog != null && reminderDialog.isShowing()) {
+                reminderDialog.dismiss();
+            }
+            // Load HomeFragment if it isn't loaded yet
+            if (getSupportFragmentManager().findFragmentById(R.id.fragmentContainer) == null) {
+                loadFragment(new HomeFragment());
+            }
+        } else {
             showNotificationReminderDialog();
         }
     }
@@ -163,29 +171,27 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.d("NotificationDebug", "Dialog displayed");
             reminderDialog = new com.google.android.material.dialog.MaterialAlertDialogBuilder(MainActivity.this)
-                    .setTitle("ALLOW NOTIFICATIONS")
-                    .setMessage("Enable notifications to receive important farm alerts:\n\n" +
-                            "• Low Soil Moisture\n" +
-                            "• High Temperature\n" +
-                            "• Low Water Tank Level")
-                    .setPositiveButton("ALLOW", (dialogInterface, which) -> {
-                        Log.d("NotificationDebug", "ALLOW button clicked");
+                    .setTitle("Notifications Required")
+                    .setMessage("AgriSense AI requires notification permission to send irrigation alerts, AI recommendations and pump status updates.")
+                    .setPositiveButton("Open Settings", (dialogInterface, which) -> {
+                        Log.d("NotificationDebug", "Open Settings button clicked");
                         openNotificationSettings();
                     })
-                    .setNegativeButton("DON'T ALLOW", (dialogInterface, which) -> {
-                        dialogInterface.dismiss();
+                    .setNegativeButton("Exit App", (dialogInterface, which) -> {
+                        Log.d("NotificationDebug", "Exit App button clicked");
+                        finish();
                     })
                     .setCancelable(false)
                     .create();
 
             reminderDialog.show();
 
-            // Style ALLOW button: primary green color, bold text
+            // Style Open Settings button: primary green color, bold text
             int greenColor = ContextCompat.getColor(MainActivity.this, R.color.primary_green);
             reminderDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(greenColor);
             reminderDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTypeface(null, android.graphics.Typeface.BOLD);
 
-            // Style DON'T ALLOW button: text secondary color, normal weight
+            // Style Exit App button: text secondary color, normal weight
             int grayColor = ContextCompat.getColor(this, R.color.text_secondary);
             reminderDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(grayColor);
             reminderDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTypeface(null, android.graphics.Typeface.NORMAL);
