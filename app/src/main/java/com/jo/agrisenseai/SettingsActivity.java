@@ -38,7 +38,10 @@ public class SettingsActivity extends AppCompatActivity {
     private MaterialSwitch switchAutoSpeak;
     private MaterialSwitch switchAlertsMaster;
 
-    private boolean isWaitingForPermission = false;
+    private static final int STATE_IDLE = 0;
+    private static final int STATE_WAITING_FOR_ENABLE = 1;
+    private static final int STATE_WAITING_FOR_DISABLE = 2;
+    private int permissionPendingState = STATE_IDLE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,9 +120,24 @@ public class SettingsActivity extends AppCompatActivity {
             boolean systemEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled();
             Log.d("NotificationDebug", "Notification status detected: enabled=" + systemEnabled);
             
-            if (isWaitingForPermission && systemEnabled) {
-                NotificationHelper.setEnabled(this, true);
-                isWaitingForPermission = false;
+            if (permissionPendingState == STATE_WAITING_FOR_ENABLE) {
+                if (systemEnabled) {
+                    NotificationHelper.setEnabled(this, true);
+                }
+                permissionPendingState = STATE_IDLE;
+            } else if (permissionPendingState == STATE_WAITING_FOR_DISABLE) {
+                if (systemEnabled) {
+                    // System notifications are still enabled! Revert toggle back ON, keep preference true, and show message.
+                    NotificationHelper.setEnabled(this, true);
+                    com.google.android.material.snackbar.Snackbar.make(
+                            findViewById(android.R.id.content),
+                            "System notifications are still enabled.",
+                            com.google.android.material.snackbar.Snackbar.LENGTH_LONG
+                    ).show();
+                } else {
+                    NotificationHelper.setEnabled(this, false);
+                }
+                permissionPendingState = STATE_IDLE;
             }
 
             boolean isChecked = NotificationHelper.isEnabled(this) && systemEnabled;
@@ -138,11 +156,26 @@ public class SettingsActivity extends AppCompatActivity {
                 NotificationHelper.setEnabled(this, true);
             } else {
                 syncSwitchState(false);
-                isWaitingForPermission = true;
+                permissionPendingState = STATE_WAITING_FOR_ENABLE;
                 openNotificationSettings();
             }
         } else {
-            NotificationHelper.setEnabled(this, false);
+            // Keep switch checked visually until confirmed by system settings
+            syncSwitchState(true);
+            
+            // Show custom dialog explaining system notifications must be turned OFF manually
+            new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                    .setTitle("Disable System Notifications")
+                    .setMessage("To stop receiving notifications completely, you must manually disable them in Android system settings.")
+                    .setPositiveButton("Go to Settings", (dialogInterface, which) -> {
+                        permissionPendingState = STATE_WAITING_FOR_DISABLE;
+                        openNotificationSettings();
+                    })
+                    .setNegativeButton("Cancel", (dialogInterface, which) -> {
+                        dialogInterface.dismiss();
+                    })
+                    .setCancelable(false)
+                    .show();
         }
     }
 
