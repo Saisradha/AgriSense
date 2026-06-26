@@ -33,6 +33,7 @@ import com.google.android.material.materialswitch.MaterialSwitch;
  */
 public class SettingsActivity extends AppCompatActivity {
 
+    private MaterialSwitch switchDarkMode;
     private MaterialSwitch switchVoice;
     private MaterialSwitch switchAutoSpeak;
     private MaterialSwitch switchAlertsMaster;
@@ -70,11 +71,26 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         // ── Find switches ────────────────────────────────────────────────────
+        switchDarkMode = findViewById(R.id.switchDarkMode);
         switchVoice = findViewById(R.id.switchVoiceEnabled);
         switchAutoSpeak = findViewById(R.id.switchAutoSpeak);
         switchAlertsMaster = findViewById(R.id.switchAlertsMaster);
 
+        // Set initial checked state without firing listener
+        switchDarkMode.setChecked(ThemePreferenceManager.isDarkMode(this));
+
         // ── Bind switch listeners ────────────────────────────────────────────
+        switchDarkMode.setOnCheckedChangeListener((btn, checked) -> {
+            ThemePreferenceManager.setDarkMode(this, checked);
+            if (checked) {
+                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
+            }
+        });
+
         switchVoice.setOnCheckedChangeListener((btn, checked) ->
                 VoicePreferenceManager.setVoiceEnabled(this, checked));
 
@@ -87,9 +103,6 @@ public class SettingsActivity extends AppCompatActivity {
         MaterialCardView cardNotifSettings = findViewById(R.id.cardNotificationSettings);
         cardNotifSettings.setOnClickListener(v ->
                 startActivity(new Intent(SettingsActivity.this, NotificationSettingsActivity.class)));
-
-        // Dark Mode switch is non-interactive (android:clickable="false" in XML).
-        // No Java wiring needed.
     }
 
     @Override
@@ -97,6 +110,20 @@ public class SettingsActivity extends AppCompatActivity {
         super.onResume();
         // Load & synchronize preference values in onResume in case they were modified
         // in sub-pages (e.g. toggled inside NotificationSettingsActivity).
+        if (switchDarkMode != null) {
+            switchDarkMode.setOnCheckedChangeListener(null);
+            switchDarkMode.setChecked(ThemePreferenceManager.isDarkMode(this));
+            switchDarkMode.setOnCheckedChangeListener((btn, checked) -> {
+                ThemePreferenceManager.setDarkMode(this, checked);
+                if (checked) {
+                    androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                            androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
+                } else {
+                    androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                            androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
+                }
+            });
+        }
         if (switchVoice != null) {
             switchVoice.setChecked(VoicePreferenceManager.isVoiceEnabled(this));
         }
