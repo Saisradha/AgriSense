@@ -83,8 +83,8 @@
     <string name="risk_high">বেশি</string>
 
     <!-- Profile -->
-    <string name="profile_name">রমেশ</string>
-    <string name="profile_email">ramesh@example.com</string>
+    <string name="profile_name">অন্বেষ</string>
+    <string name="profile_email">anvesh@example.com</string>
     <string name="profile_language">ভাষা</string>
     <string name="profile_language_value">বাংলা</string>
     <string name="language_subtitle">অ্যাপ প্রদর্শন ভাষা</string>

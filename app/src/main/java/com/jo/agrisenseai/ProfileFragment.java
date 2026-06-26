@@ -1,5 +1,6 @@
 package com.jo.agrisenseai;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.materialswitch.MaterialSwitch;
 
 public class ProfileFragment extends Fragment {
 
@@ -24,35 +24,16 @@ public class ProfileFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        // Language card
+        // Language card — opens language selection dialog
         languageValueText = view.findViewById(R.id.languageValueText);
         MaterialCardView languageCard = view.findViewById(R.id.languageCard);
         languageValueText.setText(LanguageManager.getSavedDisplayName(requireContext()));
         languageCard.setOnClickListener(v -> showLanguageDialog());
 
-        // Voice enabled switch
-        MaterialSwitch switchVoice = view.findViewById(R.id.switchVoiceEnabled);
-        switchVoice.setChecked(VoicePreferenceManager.isVoiceEnabled(requireContext()));
-        switchVoice.setOnCheckedChangeListener((btn, checked) ->
-                VoicePreferenceManager.setVoiceEnabled(requireContext(), checked));
-
-        // Auto speak switch
-        MaterialSwitch switchAutoSpeak = view.findViewById(R.id.switchAutoSpeak);
-        switchAutoSpeak.setChecked(VoicePreferenceManager.isAutoSpeak(requireContext()));
-        switchAutoSpeak.setOnCheckedChangeListener((btn, checked) ->
-                VoicePreferenceManager.setAutoSpeak(requireContext(), checked));
-
-        // Notifications enabled switch
-        MaterialSwitch switchNotif = view.findViewById(R.id.switchNotifEnabled);
-        switchNotif.setChecked(NotificationHelper.isEnabled(requireContext()));
-        switchNotif.setOnCheckedChangeListener((btn, checked) ->
-                NotificationHelper.setEnabled(requireContext(), checked));
-
-        // Notification sound switch
-        MaterialSwitch switchNotifSound = view.findViewById(R.id.switchNotifSound);
-        switchNotifSound.setChecked(NotificationHelper.isSoundEnabled(requireContext()));
-        switchNotifSound.setOnCheckedChangeListener((btn, checked) ->
-                NotificationHelper.setSoundEnabled(requireContext(), checked));
+        // Settings card — opens SettingsActivity
+        MaterialCardView settingsCard = view.findViewById(R.id.settingsCard);
+        settingsCard.setOnClickListener(v ->
+                startActivity(new Intent(requireContext(), SettingsActivity.class)));
 
         return view;
     }

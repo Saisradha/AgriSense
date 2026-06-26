@@ -9,6 +9,7 @@
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
 
     <application
+        android:name=".AgriSenseApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -53,6 +54,19 @@
             android:name=".ConversationBrowserActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!--
+            SettingsActivity: Notification Settings screen.
+            exported="false" → only launched from within our own app (ProfileFragment).
+        -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".NotificationSettingsActivity"
+            android:exported="false" />
 
     </application>
 

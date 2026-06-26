@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_notification_settings.xml
+    ==================================
+    Layout for NotificationSettingsActivity.
+
+    Shows two interactive switch cards:
+      1. Enable Alerts       (ic_notifications / icon_bg_teal   / accent_blue)
+      2. Notification Sound  (ic_bell_badge    / icon_bg_purple / accent_purple)
+
+    Plus one navigation card:
+      3. Open System Settings (ic_tune          / icon_bg_green  / primary_green)
+
+    Top App Bar: green toolbar with back arrow, title "Notification Settings".
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".NotificationSettingsActivity">
+
+    <!-- ── Top App Bar ──────────────────────────────────────────────────── -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarNotifSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_green"
+        app:elevation="4dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarNotifSettings"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/primary_green"
+            app:navigationIconTint="@color/white"
+            app:titleTextColor="@color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- ── Scrollable content ───────────────────────────────────────────── -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md"
+            android:paddingBottom="@dimen/spacing_xl">
+
+            <!-- Card 1: Enable Alerts -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="@dimen/radius_card_sm"
+                app:cardElevation="@dimen/card_elevation_sm">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/spacing_md">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_container"
+                        android:layout_height="@dimen/icon_container"
+                        android:layout_marginEnd="@dimen/spacing_md"
+                        android:background="@drawable/bg_icon_circle"
+                        android:backgroundTint="@color/icon_bg_blue"
+                        android:padding="11dp"
+                        android:src="@drawable/ic_notifications"
+                        android:tint="@color/accent_blue" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/settings_alerts_label"
+                            android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/settings_alerts_subtitle"
+                            android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchAlertsEnabled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 2: Notification Sound -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardNotificationSound"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="@dimen/radius_card_sm"
+                app:cardElevation="@dimen/card_elevation_sm">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/spacing_md">
+
+                    <ImageView
+                        android:id="@+id/iconNotificationSound"
+                        android:layout_width="@dimen/icon_container"
+                        android:layout_height="@dimen/icon_container"
+                        android:layout_marginEnd="@dimen/spacing_md"
+                        android:background="@drawable/bg_icon_circle"
+                        android:backgroundTint="@color/icon_bg_purple"
+                        android:padding="11dp"
+                        android:src="@drawable/ic_bell_badge"
+                        android:tint="@color/accent_purple" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textNotificationSoundTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/settings_sound_label"
+                            android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
+
+                        <TextView
+                            android:id="@+id/textNotificationSoundDesc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/settings_sound_subtitle"
+                            android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchNotificationSound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

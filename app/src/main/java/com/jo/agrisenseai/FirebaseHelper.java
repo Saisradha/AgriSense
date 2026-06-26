@@ -9,408 +9,387 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
- * Centralized access point for all Firebase Realtime Database operations.
- * Keeps Firebase logic out of Fragments/Activities.
+ * Singleton helper that owns every Firebase Realtime Database interaction.
  *
- * Database structure:
- *   sensorData/  -> temperature, humidity, soilMoisture, lightIntensity
- *   dashboard/   -> farmHealth, pumpStatus, aiRecommendation, waterSaved, energySaved
- *   farm/        -> fieldName, fieldStatus, nextWatering
- *   history/     -> {pushKey} -> temperature, humidity, soilMoisture, timestamp
- *                   Every sensor update is permanently archived here.
+ * <p><b>Real-time listeners</b> — every {@code listen*()} method attaches an
+ * {@link com.google.firebase.database.ValueEventListener} via
+ * {@link DatabaseReference#addValueEventListener(ValueEventListener)}, which
+ * means Firebase calls {@code onDataChange()} <em>immediately</em> with the
+ * current value <em>and</em> again on every future change. This is why the
+ * app stays live-synced with the ESP32 data without any manual refresh.</p>
+ *
+ * <p><b>Field mapping – ESP32 → Firebase → Android</b></p>
+ * <pre>
+ * Firebase key        SensorData field          Accessed via
+ * ─────────────────   ────────────────────────  ─────────────────────────────
+ * temperature         temperature (double)      getTemperature()
+ * humidity            humidity    (double)      getHumidity()
+ * averageSoil         soilMoisture(double)      getSoilMoisture()
+ * light               lightIntensity (double)   getLightIntensity()
+ * pumpStatus          pumpStatus  (String)      getPumpStatus()
+ * soil1-4             soil1-4     (double)      getSoil1()…getSoil4()
+ * </pre>
+ *
+ * <p>The mismatch between the ESP32 key names ({@code averageSoil}, {@code light})
+ * and the Java field names ({@code soilMoisture}, {@code lightIntensity}) is
+ * resolved by reading the snapshot children by name inside
+ * {@link #buildSensorDataFromSnapshot(DataSnapshot)} rather than relying on
+ * Firebase's automatic POJO deserialization, which would require matching names.</p>
  */
 public class FirebaseHelper {
 
-    public static final String NODE_SENSOR_DATA  = "sensorData";
-    public static final String NODE_HISTORY      = "history";
-    public static final String NODE_DASHBOARD    = "dashboard";
-    public static final String NODE_FARM         = "farm";
-    public static final String NODE_FARMS        = "farms";
-    public static final String NODE_WATER_LOSS   = "waterLossDetection";
-    public static final String PUMP_ON           = "ON";
+    // ── Firebase node names ────────────────────────────────────────────────
+    public static final String NODE_SENSOR_DATA = "sensorData";
+    public static final String NODE_DASHBOARD   = "dashboard";
+    public static final String NODE_WATER_LOSS  = "waterLossDetection";
+    public static final String NODE_HISTORY     = "history";
+    public static final String NODE_FARMS       = "farms";
+    public static final String NODE_FARM        = "farm";
 
-    /** Max number of history entries returned by listenHistory(). */
-    private static final int HISTORY_LIMIT = 50;
+    // ── Pump constants ─────────────────────────────────────────────────────
+    public static final String PUMP_ON  = "ON";
+    public static final String PUMP_OFF = "OFF";
 
-    private final DatabaseReference rootRef;
+    // ── Singleton ──────────────────────────────────────────────────────────
+    private static volatile FirebaseHelper sInstance;
 
-    private static FirebaseHelper instance;
+    private final DatabaseReference mDatabase;
 
     private FirebaseHelper() {
-        rootRef = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     public static FirebaseHelper getInstance() {
-        if (instance == null) {
-            instance = new FirebaseHelper();
+        if (sInstance == null) {
+            synchronized (FirebaseHelper.class) {
+                if (sInstance == null) {
+                    sInstance = new FirebaseHelper();
+                }
+            }
         }
-        return instance;
+        return sInstance;
     }
 
-    // ---------------------------------------------------------
-    // Listener interfaces
-    // ---------------------------------------------------------
+    // ══════════════════════════════════════════════════════════════════════
+    // Callback interfaces
+    // ══════════════════════════════════════════════════════════════════════
 
-    public interface DashboardListener {
-        void onDashboardUpdate(DashboardData data);
-    }
-
-    public interface FarmListener {
-        void onFarmUpdate(FarmData data);
-    }
-
+    /** Delivers live {@link SensorData} updates from {@code sensorData/}. */
     public interface SensorListener {
         void onSensorUpdate(SensorData data);
     }
 
-    /** Used by HomeFragment and InsightsFragment for water loss card. */
+    /** Delivers live {@link DashboardData} updates from {@code dashboard/}. */
+    public interface DashboardListener {
+        void onDashboardUpdate(DashboardData data);
+    }
+
+    /** Delivers live {@link WaterLossData} updates from {@code waterLossDetection/}. */
     public interface WaterLossListener {
         void onWaterLossUpdate(WaterLossData data);
     }
 
-    /**
-     * Delivers the most recent {@value #HISTORY_LIMIT} history entries
-     * ordered by timestamp (oldest first) whenever the history node changes.
-     * Deserializes entries as {@link SensorHistory} (used by HistoryFragment).
-     */
+    /** Delivers live lists of {@link SensorHistory} entries from {@code history/}. */
     public interface HistoryListener {
-        void onHistoryUpdate(java.util.List<SensorHistory> entries);
+        void onHistoryLoaded(List<SensorHistory> entries);
     }
 
-    /**
-     * Delivers the most recent {@value #HISTORY_LIMIT} history entries
-     * ordered by timestamp (oldest first) whenever the history node changes.
-     * Deserializes entries as {@link HistoryModel} (used by InsightsFragment).
-     *
-     * <p>Called on the main thread; safe to update UI directly inside
-     * {@link HistoryModelListener#onHistoryLoaded(java.util.ArrayList)}.</p>
-     */
+    /** Delivers live lists of {@link HistoryModel} entries (for charts). */
     public interface HistoryModelListener {
-        /** @param entries non-null, may be empty, sorted oldest-to-newest. */
-        void onHistoryLoaded(java.util.ArrayList<HistoryModel> entries);
-
-        /**
-         * Called when Firebase cancels the listener (e.g. permission denied,
-         * network failure). The UI should display an appropriate error state.
-         *
-         * @param errorMessage human-readable description of the failure
-         */
+        void onHistoryLoaded(ArrayList<HistoryModel> entries);
         void onHistoryError(String errorMessage);
     }
 
+    /** Delivers live lists of {@link Farm} objects from {@code farms/}. */
     public interface FarmsListener {
-        void onFarmsUpdate(java.util.List<Farm> farms);
+        void onFarmsLoaded(List<Farm> farms);
     }
 
+    /** Delivers a single {@link Farm} by its ID (live or one-shot). */
     public interface FarmByIdListener {
         void onFarmLoaded(Farm farm);
         void onFarmNotFound();
     }
 
-    // ---------------------------------------------------------
-    // READ (real-time listeners)
-    // ---------------------------------------------------------
+    // ══════════════════════════════════════════════════════════════════════
+    // REAL-TIME SENSOR DATA  (sensorData/)
+    //
+    // The ESP32 writes to sensorData/ with these exact keys:
+    //   temperature, humidity, soil1, soil2, soil3, soil4,
+    //   averageSoil, light, pumpStatus
+    //
+    // addValueEventListener fires on EVERY change → live sync.
+    // ══════════════════════════════════════════════════════════════════════
 
-    /** Used by Home & Insights screens. */
-    public ValueEventListener listenDashboard(final DashboardListener listener) {
-        ValueEventListener valueEventListener = new ValueEventListener() {
+    /**
+     * Attaches a permanent real-time listener to {@code sensorData/}.
+     *
+     * <p>Firebase calls {@code onDataChange} immediately with the current
+     * snapshot and again every time the ESP32 writes a new value. The app
+     * therefore reflects sensor changes within the Firebase propagation
+     * latency (~1 s) without any polling or manual refresh.</p>
+     *
+     * @param listener callback that receives a populated {@link SensorData}
+     * @return the attached {@link ValueEventListener} so the caller can
+     *         remove it in {@code onDestroyView()} / {@code onDestroy()}
+     */
+    public ValueEventListener listenSensorData(SensorListener listener) {
+        ValueEventListener vel = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                DashboardData data = snapshot.getValue(DashboardData.class);
-                if (data != null) {
-                    listener.onDashboardUpdate(data);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Intentionally left blank for this phase.
-            }
-        };
-        rootRef.child(NODE_DASHBOARD).addValueEventListener(valueEventListener);
-        return valueEventListener;
-    }
-
-    /** Used by My Farm screen. */
-    public ValueEventListener listenFarm(final FarmListener listener) {
-        ValueEventListener valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                FarmData data = snapshot.getValue(FarmData.class);
-                if (data != null) {
-                    listener.onFarmUpdate(data);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Intentionally left blank for this phase.
-            }
-        };
-        rootRef.child(NODE_FARM).addValueEventListener(valueEventListener);
-        return valueEventListener;
-    }
-
-    /** Reserved for future AI engine / sensor display use. */
-    public ValueEventListener listenSensorData(final SensorListener listener) {
-        ValueEventListener valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                SensorData data = snapshot.getValue(SensorData.class);
-                if (data != null) {
+                if (snapshot.exists()) {
+                    SensorData data = buildSensorDataFromSnapshot(snapshot);
                     listener.onSensorUpdate(data);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Intentionally left blank for this phase.
+                android.util.Log.e("FirebaseHelper",
+                        "sensorData listener cancelled: " + error.getMessage());
             }
         };
-        rootRef.child(NODE_SENSOR_DATA).addValueEventListener(valueEventListener);
-        return valueEventListener;
+        // addValueEventListener (NOT addListenerForSingleValueEvent) so the
+        // callback fires on every future update, not just the first read.
+        mDatabase.child(NODE_SENSOR_DATA).addValueEventListener(vel);
+        return vel;
     }
 
-    /** Used by HomeFragment and InsightsFragment. */
-    public ValueEventListener listenWaterLoss(final WaterLossListener listener) {
-        ValueEventListener valueEventListener = new ValueEventListener() {
+    /**
+     * Maps the Firebase {@code sensorData} snapshot to a {@link SensorData} object.
+     *
+     * <p>The ESP32 uses {@code averageSoil} and {@code light} as the database keys,
+     * but the Java model uses {@code soilMoisture} and {@code lightIntensity}.
+     * Automatic POJO deserialization ({@code getValue(SensorData.class)}) would
+     * leave those two fields at zero. This method reads each child by name to
+     * bridge that naming gap.</p>
+     */
+    private SensorData buildSensorDataFromSnapshot(DataSnapshot snapshot) {
+        SensorData data = new SensorData();
+
+        Double temperature = getDouble(snapshot, "temperature");
+        Double humidity    = getDouble(snapshot, "humidity");
+        Double soil1       = getDouble(snapshot, "soil1");
+        Double soil2       = getDouble(snapshot, "soil2");
+        Double soil3       = getDouble(snapshot, "soil3");
+        Double soil4       = getDouble(snapshot, "soil4");
+        // ESP32 key is "averageSoil" → maps to SensorData.soilMoisture
+        Double averageSoil = getDouble(snapshot, "averageSoil");
+        // ESP32 key is "light" → maps to SensorData.lightIntensity
+        Double light       = getDouble(snapshot, "light");
+
+        DataSnapshot pumpSnap = snapshot.child("pumpStatus");
+        String pumpStatus = pumpSnap.exists() ? String.valueOf(pumpSnap.getValue()) : PUMP_OFF;
+
+        data.setTemperature(temperature   != null ? temperature  : 0.0);
+        data.setHumidity   (humidity      != null ? humidity     : 0.0);
+        data.setSoilMoisture(averageSoil  != null ? averageSoil : 0.0);
+        data.setLightIntensity(light      != null ? light        : 0.0);
+        data.setSoil1      (soil1         != null ? soil1        : 0.0);
+        data.setSoil2      (soil2         != null ? soil2        : 0.0);
+        data.setSoil3      (soil3         != null ? soil3        : 0.0);
+        data.setSoil4      (soil4         != null ? soil4        : 0.0);
+        data.setPumpStatus (pumpStatus);
+        return data;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // REAL-TIME DASHBOARD  (dashboard/)
+    // ══════════════════════════════════════════════════════════════════════
+
+    /**
+     * Attaches a permanent real-time listener to {@code dashboard/}.
+     *
+     * @return the attached {@link ValueEventListener} for later removal
+     */
+    public ValueEventListener listenDashboard(DashboardListener listener) {
+        ValueEventListener vel = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                WaterLossData data = snapshot.getValue(WaterLossData.class);
-                if (data != null) {
-                    listener.onWaterLossUpdate(data);
-                }
+                DashboardData data = snapshot.exists()
+                        ? snapshot.getValue(DashboardData.class)
+                        : null;
+                if (data == null) data = new DashboardData();
+                listener.onDashboardUpdate(data);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                android.util.Log.e("FirebaseHelper",
+                        "dashboard listener cancelled: " + error.getMessage());
             }
         };
-        rootRef.child(NODE_WATER_LOSS).addValueEventListener(valueEventListener);
-        return valueEventListener;
+        mDatabase.child(NODE_DASHBOARD).addValueEventListener(vel);
+        return vel;
     }
 
-    /**
-     * Listens to the most recent {@value #HISTORY_LIMIT} entries under the
-     * {@code history} node, ordered by the {@code timestamp} field.
-     * <p>
-     * The list delivered to {@link HistoryListener#onHistoryUpdate} is sorted
-     * oldest-to-newest so the UI can display it in chronological order.
-     * <p>
-     * Used by {@link HistoryFragment}.
-     *
-     * @return the attached {@link ValueEventListener}; pass it to
-     *         {@link #removeHistoryListener(ValueEventListener)} when done.
-     */
-    public ValueEventListener listenHistory(final HistoryListener listener) {
-        Query query = rootRef.child(NODE_HISTORY)
-                .orderByChild("timestamp")
-                .limitToLast(HISTORY_LIMIT);
+    // ══════════════════════════════════════════════════════════════════════
+    // REAL-TIME WATER LOSS  (waterLossDetection/)
+    // ══════════════════════════════════════════════════════════════════════
 
-        ValueEventListener valueEventListener = new ValueEventListener() {
+    /**
+     * Attaches a permanent real-time listener to {@code waterLossDetection/}.
+     *
+     * @return the attached {@link ValueEventListener} for later removal
+     */
+    public ValueEventListener listenWaterLoss(WaterLossListener listener) {
+        ValueEventListener vel = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                java.util.List<SensorHistory> entries = new java.util.ArrayList<>();
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    SensorHistory entry = child.getValue(SensorHistory.class);
-                    if (entry != null) {
-                        entries.add(entry);
-                    }
-                }
-                listener.onHistoryUpdate(entries);
+                WaterLossData data = snapshot.exists()
+                        ? snapshot.getValue(WaterLossData.class)
+                        : null;
+                if (data == null) data = new WaterLossData();
+                listener.onWaterLossUpdate(data);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Intentionally left blank for this phase.
+                android.util.Log.e("FirebaseHelper",
+                        "waterLoss listener cancelled: " + error.getMessage());
             }
         };
-        query.addValueEventListener(valueEventListener);
-        return valueEventListener;
+        mDatabase.child(NODE_WATER_LOSS).addValueEventListener(vel);
+        return vel;
     }
 
-    /** Detaches a history listener returned by {@link #listenHistory}. */
-    public void removeHistoryListener(ValueEventListener listener) {
-        rootRef.child(NODE_HISTORY).removeEventListener(listener);
-    }
+    // ══════════════════════════════════════════════════════════════════════
+    // REAL-TIME HISTORY  (history/)  — for HistoryFragment (SensorHistory)
+    // ══════════════════════════════════════════════════════════════════════
 
     /**
-     * Attaches a real-time listener to the {@code history/} node that:
-     * <ol>
-     *   <li>Queries the last {@value #HISTORY_LIMIT} entries ordered by the
-     *       child field {@code timestamp} (matches how
-     *       {@link #saveSensorHistory(SensorData)} writes them).</li>
-     *   <li>Deserializes each child snapshot as a {@link HistoryModel}
-     *       (fields: {@code temperature int}, {@code humidity int},
-     *       {@code soilMoisture int}, {@code timestamp long}).</li>
-     *   <li>Accumulates results into an {@link java.util.ArrayList} that is
-     *       sorted oldest-to-newest before delivery.</li>
-     *   <li>Calls {@link HistoryModelListener#onHistoryError(String)} and
-     *       logs to Logcat when Firebase cancels the query.</li>
-     * </ol>
+     * Attaches a permanent real-time listener that delivers
+     * {@link SensorHistory} entries ordered by {@code timestamp}, last 100.
      *
-     * <p>The listener fires immediately with cached data (if available) and
-     * again every time any child under {@code history/} is added or changed,
-     * so the charts update automatically on every new sensor reading.</p>
-     *
-     * @param listener the callback to receive updates or errors
-     * @return the attached {@link ValueEventListener}; pass it to
-     *         {@link #removeHistoryListener(ValueEventListener)} when done.
+     * @return the attached {@link ValueEventListener} for later removal
      */
-    public ValueEventListener listenHistoryModel(final HistoryModelListener listener) {
-        // Query only entries from the last 7 days (7 days in milliseconds)
-        long cutoff = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000);
-        Query query = rootRef.child(NODE_HISTORY)
+    public ValueEventListener listenHistory(HistoryListener listener) {
+        Query query = mDatabase.child(NODE_HISTORY)
                 .orderByChild("timestamp")
-                .startAt(cutoff);
+                .limitToLast(100);
 
         ValueEventListener vel = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                java.util.ArrayList<HistoryModel> entries = new java.util.ArrayList<>();
-
+                List<SensorHistory> list = new ArrayList<>();
                 for (DataSnapshot child : snapshot.getChildren()) {
-                    try {
-                        HistoryModel model = child.getValue(HistoryModel.class);
-                        if (model != null) {
-                            entries.add(model);
-                        }
-                    } catch (Exception e) {
-                        // Skip malformed entries rather than crashing.
-                        android.util.Log.w("FirebaseHelper",
-                                "Skipping malformed history entry key=" + child.getKey(), e);
-                    }
+                    SensorHistory entry = child.getValue(SensorHistory.class);
+                    if (entry != null) list.add(entry);
                 }
-
-                // Firebase orderByChild("timestamp") already returns children
-                // sorted oldest-to-newest, so no additional sort is needed.
-                android.util.Log.d("FirebaseHelper",
-                        "listenHistoryModel: delivered " + entries.size() + " HistoryModel entries");
-
-                listener.onHistoryLoaded(entries);
+                listener.onHistoryLoaded(list);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                String msg = "history/ query cancelled: "
-                        + error.getMessage() + " (code " + error.getCode() + ")";
-                android.util.Log.e("FirebaseHelper", msg);
-                listener.onHistoryError(msg);
+                android.util.Log.e("FirebaseHelper",
+                        "history listener cancelled: " + error.getMessage());
+                listener.onHistoryLoaded(new ArrayList<>());
             }
         };
-
         query.addValueEventListener(vel);
         return vel;
     }
 
-    public void removeListener(String node, ValueEventListener listener) {
-        rootRef.child(node).removeEventListener(listener);
-    }
+    // ══════════════════════════════════════════════════════════════════════
+    // REAL-TIME HISTORY  (history/)  — for InsightsFragment (HistoryModel)
+    // ══════════════════════════════════════════════════════════════════════
 
     /**
-     * Seeds realistic demo sensor readings when Firebase has no sensorData yet,
-     * so the Farm Status cards show live values on first launch.
+     * Attaches a permanent real-time listener that delivers
+     * {@link HistoryModel} entries (int fields) ordered by {@code timestamp},
+     * last 50 – used by the InsightsFragment charts.
+     *
+     * @return the attached {@link ValueEventListener} for later removal
      */
-    public void seedDemoSensorDataIfMissing() {
-        rootRef.child(NODE_SENSOR_DATA).get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful() || task.getResult() == null || !task.getResult().exists()) {
-                SensorData demo = new SensorData(28, 65, 420, 720, 75.0, "OFF");
-                rootRef.child(NODE_SENSOR_DATA).setValue(demo);
-            }
-        });
-    }
+    public ValueEventListener listenHistoryModel(HistoryModelListener listener) {
+        Query query = mDatabase.child(NODE_HISTORY)
+                .orderByChild("timestamp")
+                .limitToLast(50);
 
-    /** Remove a real-time listener attached to a specific farm node. */
-    public void removeListenerForFarm(String farmId, ValueEventListener listener) {
-        rootRef.child(NODE_FARMS).child(farmId).removeEventListener(listener);
-    }
-
-    /** Listen for all farms dynamically in real-time. */
-    public ValueEventListener listenFarms(final FarmsListener listener) {
-        ValueEventListener valueEventListener = new ValueEventListener() {
+        ValueEventListener vel = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                java.util.List<Farm> farms = new java.util.ArrayList<>();
-
-                for (DataSnapshot farmSnapshot : snapshot.getChildren()) {
-                    Farm farm = farmSnapshot.getValue(Farm.class);
-
-                    if (farm != null) {
-                        if (farm.getFarmId() == null || farm.getFarmId().isEmpty()) {
-                            farm.setFarmId(farmSnapshot.getKey());
-                        }
-                        farms.add(farm);
-                    }
+                ArrayList<HistoryModel> list = new ArrayList<>();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    HistoryModel entry = child.getValue(HistoryModel.class);
+                    if (entry != null) list.add(entry);
                 }
-
-                listener.onFarmsUpdate(farms);
+                listener.onHistoryLoaded(list);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                listener.onHistoryError(error.getMessage());
             }
         };
-
-        rootRef.child(NODE_FARMS).addValueEventListener(valueEventListener);
-        return valueEventListener;
+        query.addValueEventListener(vel);
+        return vel;
     }
 
-    /** Add a new farm with a generated key. */
-    public void addFarm(Farm farm,
-                        DatabaseReference.CompletionListener listener) {
-
-        DatabaseReference farmsReference = rootRef.child(NODE_FARMS);
-        String key = farmsReference.push().getKey();
-
-        if (key != null) {
-            farm.setFarmId(key);
-            farmsReference.child(key).setValue(farm, listener);
-        }
-    }
-
-    /** Query database to check if a farm name already exists. */
-    public void checkDuplicateFarmName(String farmName,
-                                       ValueEventListener listener) {
-
-        rootRef.child(NODE_FARMS)
-                .orderByChild("farmName")
-                .equalTo(farmName)
-                .addListenerForSingleValueEvent(listener);
-    }
+    // ══════════════════════════════════════════════════════════════════════
+    // REAL-TIME FARMS  (farms/)
+    // ══════════════════════════════════════════════════════════════════════
 
     /**
-     * Real-time listener for a single farm node.
-     * Used by FarmDetailsActivity.
+     * Attaches a permanent real-time listener to {@code farms/}.
+     *
+     * @return the attached {@link ValueEventListener} for later removal
      */
-    public ValueEventListener listenFarmById(
-            String farmId,
-            final FarmByIdListener listener) {
-
+    public ValueEventListener listenFarms(FarmsListener listener) {
         ValueEventListener vel = new ValueEventListener() {
-
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                if (snapshot.exists()) {
-
-                    Farm farm = snapshot.getValue(Farm.class);
-
+                List<Farm> farms = new ArrayList<>();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    Farm farm = child.getValue(Farm.class);
                     if (farm != null) {
+                        farm.setFarmId(child.getKey());
+                        farms.add(farm);
+                    }
+                }
+                listener.onFarmsLoaded(farms);
+            }
 
-                        if (farm.getFarmId() == null || farm.getFarmId().isEmpty()) {
-                            farm.setFarmId(snapshot.getKey());
-                        }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                android.util.Log.e("FirebaseHelper",
+                        "farms listener cancelled: " + error.getMessage());
+                listener.onFarmsLoaded(new ArrayList<>());
+            }
+        };
+        mDatabase.child(NODE_FARMS).addValueEventListener(vel);
+        return vel;
+    }
 
+    // ══════════════════════════════════════════════════════════════════════
+    // REAL-TIME SINGLE FARM  (farms/{farmId}/)
+    // ══════════════════════════════════════════════════════════════════════
+
+    /**
+     * Attaches a permanent real-time listener to a single farm node.
+     * Used by {@code FarmDetailsActivity} so the detail screen refreshes
+     * whenever the farm data changes.
+     *
+     * @return the attached {@link ValueEventListener} for later removal
+     */
+    public ValueEventListener listenFarmById(String farmId, FarmByIdListener listener) {
+        ValueEventListener vel = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Farm farm = snapshot.getValue(Farm.class);
+                    if (farm != null) {
+                        farm.setFarmId(snapshot.getKey());
                         listener.onFarmLoaded(farm);
-
                     } else {
                         listener.onFarmNotFound();
                     }
-
                 } else {
                     listener.onFarmNotFound();
                 }
@@ -418,66 +397,36 @@ public class FirebaseHelper {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                listener.onFarmNotFound();
+                android.util.Log.e("FirebaseHelper",
+                        "listenFarmById cancelled: " + error.getMessage());
             }
         };
-
-        rootRef.child(NODE_FARMS)
-                .child(farmId)
-                .addValueEventListener(vel);
-
+        mDatabase.child(NODE_FARMS).child(farmId).addValueEventListener(vel);
         return vel;
     }
 
-    /** Partial update of an existing farm. */
-    public void updateFarm(
-            String farmId,
-            Map<String, Object> updates,
-            DatabaseReference.CompletionListener listener) {
+    // ══════════════════════════════════════════════════════════════════════
+    // ONE-SHOT READS  (edit form pre-fill — single read is correct here)
+    // ══════════════════════════════════════════════════════════════════════
 
-        rootRef.child(NODE_FARMS)
-                .child(farmId)
-                .updateChildren(updates, listener);
-    }
-
-    /** Permanently remove a farm record. */
-    public void deleteFarm(
-            String farmId,
-            DatabaseReference.CompletionListener listener) {
-
-        rootRef.child(NODE_FARMS)
-                .child(farmId)
-                .removeValue(listener);
-    }
-
-    /** Fetch a single farm once (used by EditFarmActivity). */
-    public void getFarmOnce(
-            String farmId,
-            final FarmByIdListener listener) {
-
-        rootRef.child(NODE_FARMS)
-                .child(farmId)
+    /**
+     * Reads a single farm once (used to pre-fill the Edit Farm form).
+     * Using {@code addListenerForSingleValueEvent} is intentional here —
+     * the edit form only needs the current value once, not a live stream.
+     */
+    public void getFarmOnce(String farmId, FarmByIdListener listener) {
+        mDatabase.child(NODE_FARMS).child(farmId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
-
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                         if (snapshot.exists()) {
-
                             Farm farm = snapshot.getValue(Farm.class);
-
                             if (farm != null) {
-
-                                if (farm.getFarmId() == null || farm.getFarmId().isEmpty()) {
-                                    farm.setFarmId(snapshot.getKey());
-                                }
-
+                                farm.setFarmId(snapshot.getKey());
                                 listener.onFarmLoaded(farm);
-
                             } else {
                                 listener.onFarmNotFound();
                             }
-
                         } else {
                             listener.onFarmNotFound();
                         }
@@ -490,49 +439,135 @@ public class FirebaseHelper {
                 });
     }
 
-    // ---------------------------------------------------------
-    // AI ENGINE INTEGRATION
-    // ---------------------------------------------------------
+    // ══════════════════════════════════════════════════════════════════════
+    // WRITE OPERATIONS
+    // ══════════════════════════════════════════════════════════════════════
 
-    /**
-     * Starts the AI Irrigation Engine.
-     * <p>
-     * Every time sensorData changes, runs {@link AIEngine#analyze(SensorData)}
-     * and writes the result back to the database so all screens (and future
-     * hardware/voice/notification features) stay in sync automatically.
-     * <p>
-     * Additionally, every sensor update is permanently archived in the
-     * {@code history} node via {@link #saveSensorHistory(SensorData)}.
-     * <p>
-     * Safe to call once for the lifetime of the app (e.g. from MainActivity).
-     */
-    public ValueEventListener runAIEngine() {
-        return listenSensorData(sensorData -> {
-            // Archive every reading permanently to history/
-            saveSensorHistory(sensorData);
+    /** Writes a new farm under {@code farms/{newPushKey}}. */
+    public void addFarm(Farm farm, com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
+        DatabaseReference ref = mDatabase.child(NODE_FARMS).push();
+        farm.setFarmId(ref.getKey());
+        ref.setValue(farm, onComplete);
+    }
 
-            AIResult result = AIEngine.analyze(sensorData);
-            applyAIResult(result);
-        });
+    /** Updates specific fields in an existing farm. */
+    public void updateFarm(String farmId, java.util.Map<String, Object> updates,
+                           com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
+        mDatabase.child(NODE_FARMS).child(farmId).updateChildren(updates, onComplete);
+    }
+
+    /** Deletes a farm node entirely. */
+    public void deleteFarm(String farmId,
+                           com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
+        mDatabase.child(NODE_FARMS).child(farmId).removeValue(onComplete);
     }
 
     /**
-     * Writes an {@link AIResult} to the database.
-     * Uses partial updates so existing fields (waterSaved, energySaved,
-     * fieldName, fieldStatus, etc.) are preserved.
+     * Checks whether any farm already has the given name (case-insensitive via Firebase query).
+     * Used by {@code AddFarmActivity} to prevent duplicate names.
+     * Single read is correct here.
      */
-    public void applyAIResult(AIResult result) {
-        Map<String, Object> dashboardUpdates = new HashMap<>();
-        dashboardUpdates.put("farmHealth",        result.getFarmHealth());
-        dashboardUpdates.put("pumpStatus",         result.getPumpStatus());
-        dashboardUpdates.put("aiRecommendation",   result.getAiRecommendation());
-        dashboardUpdates.put("riskLevel",          result.getRiskLevel());
-        dashboardUpdates.put("nextWatering",       result.getNextWatering());
-        dashboardUpdates.put("waterRequirement",   result.getWaterRequirement());
-        rootRef.child(NODE_DASHBOARD).updateChildren(dashboardUpdates);
+    public void checkDuplicateFarmName(String farmName, ValueEventListener listener) {
+        mDatabase.child(NODE_FARMS)
+                .orderByChild("farmName")
+                .equalTo(farmName)
+                .addListenerForSingleValueEvent(listener);
+    }
 
-        // Keep the My Farm screen's "Next Watering" in sync with the AI decision.
-        rootRef.child(NODE_FARM).child("nextWatering").setValue(result.getNextWatering());
+    /** Appends one sensor snapshot to {@code history/}. */
+    public void saveSensorHistory(SensorHistory entry) {
+        mDatabase.child(NODE_HISTORY).push().setValue(entry);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // AI ENGINE  — reads live sensor data, writes computed dashboard values
+    // ══════════════════════════════════════════════════════════════════════
+
+    /**
+     * Attaches a real-time listener to {@code sensorData/}, runs
+     * {@link AIEngine#analyze(SensorData)} on every update, and writes
+     * the result to {@code dashboard/}.
+     *
+     * <p>This means the dashboard node always reflects the AI's latest
+     * decision based on the most recent sensor reading from the ESP32.</p>
+     */
+    public void runAIEngine() {
+        mDatabase.child(NODE_SENSOR_DATA).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) return;
+
+                SensorData sensor = buildSensorDataFromSnapshot(snapshot);
+                AIResult result   = AIEngine.analyze(sensor);
+
+                DashboardData dashboard = new DashboardData(
+                        result.getFarmHealth(),
+                        result.getPumpStatus(),
+                        result.getAiRecommendation(),
+                        0,   // waterSaved – reserved for future hardware
+                        0.0  // energySaved – reserved for future hardware
+                );
+                dashboard.setRiskLevel(result.getRiskLevel());
+                dashboard.setNextWatering(result.getNextWatering());
+                dashboard.setWaterRequirement(result.getWaterRequirement());
+
+                mDatabase.child(NODE_DASHBOARD).setValue(dashboard);
+
+                // Append to history every time sensor data changes
+                SensorHistory history = new SensorHistory(
+                        sensor.getTemperature(),
+                        sensor.getHumidity(),
+                        sensor.getSoilMoisture(),
+                        sensor.getLightIntensity(),
+                        System.currentTimeMillis()
+                );
+                mDatabase.child(NODE_HISTORY).push().setValue(history);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                android.util.Log.e("FirebaseHelper",
+                        "runAIEngine listener cancelled: " + error.getMessage());
+            }
+        });
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // SEED DEMO DATA  (only if sensorData node is absent)
+    // ══════════════════════════════════════════════════════════════════════
+
+    /**
+     * Writes placeholder sensor values to {@code sensorData/} only if the
+     * node does not yet exist. This prevents the app showing blank cards
+     * on first launch before the ESP32 connects.
+     */
+    public void seedDemoSensorDataIfMissing() {
+        mDatabase.child(NODE_SENSOR_DATA)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) return; // ESP32 data already present
+
+                        // Write seed values that match the ESP32 schema
+                        java.util.HashMap<String, Object> seed = new java.util.HashMap<>();
+                        seed.put("temperature",  28.0);
+                        seed.put("humidity",     65.0);
+                        seed.put("soil1",        500.0);
+                        seed.put("soil2",        510.0);
+                        seed.put("soil3",        490.0);
+                        seed.put("soil4",        505.0);
+                        seed.put("averageSoil",  501.0);
+                        seed.put("light",        700.0);
+                        seed.put("pumpStatus",   PUMP_OFF);
+                        mDatabase.child(NODE_SENSOR_DATA).setValue(seed);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        android.util.Log.w("FirebaseHelper",
+                                "seedDemoData check cancelled: " + error.getMessage());
+                    }
+                });
     }
 
     /**
@@ -576,7 +611,7 @@ public class FirebaseHelper {
 
         final Tracker tracker = new Tracker();
 
-        rootRef.child(NODE_SENSOR_DATA).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child(NODE_SENSOR_DATA).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 SensorData data = snapshot.getValue(SensorData.class);
@@ -590,7 +625,7 @@ public class FirebaseHelper {
             }
         });
 
-        rootRef.child(NODE_DASHBOARD).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child(NODE_DASHBOARD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 DashboardData data = snapshot.getValue(DashboardData.class);
@@ -604,7 +639,7 @@ public class FirebaseHelper {
             }
         });
 
-        rootRef.child(NODE_FARM).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child(NODE_FARM).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 FarmData data = snapshot.getValue(FarmData.class);
@@ -619,84 +654,56 @@ public class FirebaseHelper {
         });
     }
 
-    // ---------------------------------------------------------
-    // WRITE (used by "Water Now" button now, hardware later)
-    // ---------------------------------------------------------
+    // ══════════════════════════════════════════════════════════════════════
+    // LISTENER REMOVAL  — call from onDestroyView / onDestroy
+    // ══════════════════════════════════════════════════════════════════════
 
-    public void updateDashboard(DashboardData data) {
-        rootRef.child(NODE_DASHBOARD).setValue(data);
-    }
-
-    public void updateFarmData(FarmData data) {
-        rootRef.child(NODE_FARM).setValue(data);
+    /**
+     * Removes a {@link ValueEventListener} from the given top-level node.
+     * Use for {@link #NODE_SENSOR_DATA}, {@link #NODE_DASHBOARD},
+     * {@link #NODE_WATER_LOSS}, and {@link #NODE_FARMS}.
+     */
+    public void removeListener(String node, ValueEventListener listener) {
+        if (listener == null) return;
+        mDatabase.child(node).removeEventListener(listener);
     }
 
     /**
-     * Writes current sensor readings to {@code sensorData/} (overwriting the
-     * live values) and simultaneously stores a permanent copy into
-     * {@code history/} keyed by the current epoch-millisecond timestamp.
-     *
-     * <pre>
-     * history/
-     *   {System.currentTimeMillis()}/      ← timestamp string key, never overwritten
-     *     temperature  : int
-     *     humidity     : int
-     *     soilMoisture : int
-     *     timestamp    : long  (same epoch millis as the key)
-     * </pre>
-     *
-     * Existing functionality (sensorData node, AI engine re-trigger,
-     * prediction, pump status) is completely unaffected; the history
-     * write is purely additive.
+     * Removes a history listener (the query used in {@link #listenHistory}
+     * and {@link #listenHistoryModel} is {@code orderByChild.limitToLast},
+     * so we must remove from the same query reference — calling removeEventListener
+     * on the plain node reference is safe too; Firebase deduplicates internally).
      */
-    public void updateSensorData(SensorData data) {
-        // 1. Overwrite the current live reading (existing behaviour).
-        rootRef.child(NODE_SENSOR_DATA).setValue(data);
-
-        // 2. Archive a permanent snapshot in history/ (new behaviour).
-        saveSensorHistory(data);
+    public void removeHistoryListener(ValueEventListener listener) {
+        if (listener == null) return;
+        mDatabase.child(NODE_HISTORY).removeEventListener(listener);
     }
 
     /**
-     * Stores a single {@link HistoryModel} entry permanently in
-     * {@code history/} using {@link System#currentTimeMillis()} as the node key.
-     *
-     * <p>Using the timestamp string as the key means:</p>
-     * <ul>
-     *   <li>Old records are <b>never overwritten</b> — each key is unique to
-     *       the millisecond.</li>
-     *   <li>Entries are naturally ordered chronologically when queried with
-     *       {@code orderByKey()}.</li>
-     * </ul>
-     *
-     * <p>Called from both {@link #updateSensorData(SensorData)} (manual writes)
-     * and {@link #runAIEngine()} (every real-time sensor change), so every
-     * sensor update is captured regardless of its source.</p>
-     *
-     * @param data the current sensor readings to archive
+     * Removes a listener that was attached to a specific farm node.
+     * Used by {@code FarmDetailsActivity#onDestroy}.
      */
-    public void saveSensorHistory(SensorData data) {
-        long now = System.currentTimeMillis();
-
-        // Use the epoch-millisecond timestamp as the node key so that:
-        //  - each entry is permanently stored (no overwrite)
-        //  - records are implicitly sorted oldest-to-newest by key
-        String timestampKey = String.valueOf(now);
-
-        HistoryModel historyModel = new HistoryModel(
-                (int) data.getTemperature(),
-                (int) data.getHumidity(),
-                (int) data.getSoilMoisture(),
-                now
-        );
-
-        rootRef.child(NODE_HISTORY)
-                .child(timestampKey)
-                .setValue(historyModel);
+    public void removeListenerForFarm(String farmId, ValueEventListener listener) {
+        if (listener == null || farmId == null) return;
+        mDatabase.child(NODE_FARMS).child(farmId).removeEventListener(listener);
     }
 
-    /** Convenience method: toggle pump status only. */
-    public void setPumpStatus(String status) {
-        rootRef.child(NODE_DASHBOARD).child("pumpStatus").setValue(status);
+    // ══════════════════════════════════════════════════════════════════════
+    // PRIVATE UTILITY
+    // ══════════════════════════════════════════════════════════════════════
+
+    /** Safely reads a child as a {@code Double}, handling Long and Double Firebase types. */
+    private Double getDouble(DataSnapshot snapshot, String key) {
+        DataSnapshot child = snapshot.child(key);
+        if (!child.exists()) return null;
+        Object value = child.getValue();
+        if (value instanceof Double)  return (Double) value;
+        if (value instanceof Long)    return ((Long) value).doubleValue();
+        if (value instanceof Integer) return ((Integer) value).doubleValue();
+        if (value instanceof String) {
+            try { return Double.parseDouble((String) value); }
+            catch (NumberFormatException ignored) {}
+        }
+        return null;
     }
 }

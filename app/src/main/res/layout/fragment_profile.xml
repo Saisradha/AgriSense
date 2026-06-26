@@ -24,7 +24,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_lg"
+            android:layout_marginBottom="@dimen/spacing_sm"
             app:cardBackgroundColor="@color/primary_green"
             app:cardCornerRadius="@dimen/radius_card_lg"
             app:cardElevation="@dimen/card_elevation">
@@ -74,111 +74,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Farm Statistics -->
-        <TextView
-            style="@style/Widget.AgriSense.SectionHeader"
-            android:text="@string/section_farm_statistics" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_lg"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_xs"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="@dimen/radius_card_sm"
-                app:cardElevation="@dimen/card_elevation_sm">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="@dimen/spacing_md">
-
-                    <ImageView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_icon_circle"
-                        android:backgroundTint="@color/icon_bg_green"
-                        android:padding="8dp"
-                        android:src="@drawable/ic_nav_farm"
-                        android:tint="@color/primary_green" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:text="@string/stat_fields_value"
-                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/stat_fields"
-                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_xs"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="@dimen/radius_card_sm"
-                app:cardElevation="@dimen/card_elevation_sm">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="@dimen/spacing_md">
-
-                    <ImageView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_icon_circle"
-                        android:backgroundTint="@color/icon_bg_blue"
-                        android:padding="8dp"
-                        android:src="@drawable/ic_location"
-                        android:tint="@color/accent_blue" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:text="@string/stat_acres_value"
-                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/stat_acres"
-                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-        <!-- Settings -->
-        <TextView
-            style="@style/Widget.AgriSense.SectionHeader"
-            android:text="@string/section_settings" />
-
+        <!-- Language card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/languageCard"
             android:layout_width="match_parent"
@@ -245,119 +141,9 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Settings card — opens SettingsActivity -->
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_sm"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="@dimen/radius_card_sm"
-            app:cardElevation="@dimen/card_elevation_sm">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
-
-                <ImageView
-                    android:layout_width="@dimen/icon_container"
-                    android:layout_height="@dimen/icon_container"
-                    android:layout_marginEnd="@dimen/spacing_md"
-                    android:background="@drawable/bg_icon_circle"
-                    android:backgroundTint="@color/icon_bg_purple"
-                    android:padding="11dp"
-                    android:src="@drawable/ic_dark_mode"
-                    android:tint="@color/accent_purple" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/profile_dark_mode"
-                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/dark_mode_subtitle"
-                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
-
-                </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:clickable="false" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_sm"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="@dimen/radius_card_sm"
-            app:cardElevation="@dimen/card_elevation_sm">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
-
-                <ImageView
-                    android:layout_width="@dimen/icon_container"
-                    android:layout_height="@dimen/icon_container"
-                    android:layout_marginEnd="@dimen/spacing_md"
-                    android:background="@drawable/bg_icon_circle"
-                    android:backgroundTint="@color/icon_bg_green"
-                    android:padding="11dp"
-                    android:src="@drawable/ic_mic"
-                    android:tint="@color/primary_green" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/profile_voice_assistant"
-                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/voice_subtitle"
-                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
-
-                </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switchVoiceEnabled"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/settingsCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_sm"
@@ -379,7 +165,7 @@
                     android:background="@drawable/bg_icon_circle"
                     android:backgroundTint="@color/icon_bg_teal"
                     android:padding="11dp"
-                    android:src="@drawable/ic_mic"
+                    android:src="@drawable/ic_tune"
                     android:tint="@color/accent_blue" />
 
                 <LinearLayout
@@ -391,149 +177,32 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/voice_auto_speak"
+                        android:text="@string/profile_settings"
                         android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="@string/voice_auto_speak_subtitle"
+                        android:text="@string/settings_features_subtitle"
                         android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
 
                 </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switchAutoSpeak"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_sm"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="@dimen/radius_card_sm"
-            app:cardElevation="@dimen/card_elevation_sm">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
 
                 <ImageView
-                    android:layout_width="@dimen/icon_container"
-                    android:layout_height="@dimen/icon_container"
-                    android:layout_marginEnd="@dimen/spacing_md"
-                    android:background="@drawable/bg_icon_circle"
-                    android:backgroundTint="@color/icon_bg_orange"
-                    android:padding="11dp"
-                    android:src="@drawable/ic_notifications"
-                    android:tint="@color/accent_orange" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/notif_enabled"
-                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/notif_enabled_subtitle"
-                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
-
-                </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switchNotifEnabled"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true" />
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size"
+                    android:src="@drawable/ic_chevron_right"
+                    android:tint="@color/text_secondary" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- AgriSense AI card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_lg"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="@dimen/radius_card_sm"
-            app:cardElevation="@dimen/card_elevation_sm">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
-
-                <ImageView
-                    android:layout_width="@dimen/icon_container"
-                    android:layout_height="@dimen/icon_container"
-                    android:layout_marginEnd="@dimen/spacing_md"
-                    android:background="@drawable/bg_icon_circle"
-                    android:backgroundTint="@color/icon_bg_blue"
-                    android:padding="11dp"
-                    android:src="@drawable/ic_bolt"
-                    android:tint="@color/accent_blue" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/notif_sound"
-                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/notif_sound_subtitle"
-                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
-
-                </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switchNotifSound"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- About App -->
-        <TextView
-            style="@style/Widget.AgriSense.SectionHeader"
-            android:text="@string/section_about" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_sm"
             app:cardBackgroundColor="@color/surface"
             app:cardCornerRadius="@dimen/radius_card_sm"
             app:cardElevation="@dimen/card_elevation_sm">
@@ -575,61 +244,6 @@
                         android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
 
                 </LinearLayout>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="@dimen/radius_card_sm"
-            app:cardElevation="@dimen/card_elevation_sm">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
-
-                <ImageView
-                    android:layout_width="@dimen/icon_container"
-                    android:layout_height="@dimen/icon_container"
-                    android:layout_marginEnd="@dimen/spacing_md"
-                    android:background="@drawable/bg_icon_circle"
-                    android:backgroundTint="@color/icon_bg_teal"
-                    android:padding="11dp"
-                    android:src="@drawable/ic_tune"
-                    android:tint="@color/accent_blue" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/profile_settings"
-                        android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/settings_subtitle"
-                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
-
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="@dimen/icon_size"
-                    android:layout_height="@dimen/icon_size"
-                    android:src="@drawable/ic_chevron_right"
-                    android:tint="@color/text_secondary" />
 
             </LinearLayout>
 
