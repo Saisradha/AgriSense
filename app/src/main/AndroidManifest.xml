@@ -50,6 +50,11 @@
             android:name=".EditFarmActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ConversationBrowserActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!--
             SettingsActivity: Notification Settings screen.
             exported="false" → only launched from within our own app (ProfileFragment).
