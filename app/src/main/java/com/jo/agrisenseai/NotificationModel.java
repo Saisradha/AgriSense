@@ -12,11 +12,17 @@ package com.jo.agrisenseai;
  */
 public class NotificationModel {
 
-    public static final String TYPE_WATER  = "water_required";
-    public static final String TYPE_PUMP   = "pump_activated";
-    public static final String TYPE_HEALTHY = "farm_healthy";
-    public static final String TYPE_RISK   = "high_risk";
-    public static final String TYPE_SYSTEM = "system_alert";
+    // AI-watcher types (existing)
+    public static final String TYPE_WATER        = "water_required";
+    public static final String TYPE_PUMP         = "pump_activated";
+    public static final String TYPE_HEALTHY      = "farm_healthy";
+    public static final String TYPE_RISK         = "high_risk";
+    public static final String TYPE_SYSTEM       = "system_alert";
+
+    // Sensor-alert types (FirebaseAlertManager)
+    public static final String TYPE_SOIL_MOISTURE = "low_soil_moisture";
+    public static final String TYPE_TEMPERATURE   = "high_temperature";
+    public static final String TYPE_WATER_TANK    = "water_tank_low";
 
     private String notificationId;
     private String title;

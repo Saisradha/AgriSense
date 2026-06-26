@@ -1,6 +1,7 @@
 package com.jo.agrisenseai;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -59,6 +60,8 @@ public class NotificationActivity extends AppCompatActivity {
 
         btnMarkAll.setOnClickListener(v -> markAllRead());
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        findViewById(R.id.btnSettings).setOnClickListener(v ->
+                startActivity(new Intent(NotificationActivity.this, NotificationSettingsActivity.class)));
     }
 
     @Override
