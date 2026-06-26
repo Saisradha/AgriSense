@@ -11,6 +11,8 @@ public class SensorData {
     private double humidity;
     private double soilMoisture;
     private double lightIntensity;
+    private double farmWaterLevel;
+    private String pumpStatus;
 
     /**
      * Placeholder for future rain sensor hardware.
@@ -22,11 +24,14 @@ public class SensorData {
     public SensorData() {
     }
 
-    public SensorData(double temperature, double humidity, double soilMoisture, double lightIntensity) {
+    public SensorData(double temperature, double humidity, double soilMoisture, double lightIntensity,
+                      double farmWaterLevel, String pumpStatus) {
         this.temperature = temperature;
         this.humidity = humidity;
         this.soilMoisture = soilMoisture;
         this.lightIntensity = lightIntensity;
+        this.farmWaterLevel = farmWaterLevel;
+        this.pumpStatus = pumpStatus;
     }
 
     public double getTemperature() {
@@ -59,6 +64,22 @@ public class SensorData {
 
     public void setLightIntensity(double lightIntensity) {
         this.lightIntensity = lightIntensity;
+    }
+
+    public double getFarmWaterLevel() {
+        return farmWaterLevel;
+    }
+
+    public void setFarmWaterLevel(double farmWaterLevel) {
+        this.farmWaterLevel = farmWaterLevel;
+    }
+
+    public String getPumpStatus() {
+        return pumpStatus;
+    }
+
+    public void setPumpStatus(String pumpStatus) {
+        this.pumpStatus = pumpStatus;
     }
 
     public boolean isRainDetected() {
