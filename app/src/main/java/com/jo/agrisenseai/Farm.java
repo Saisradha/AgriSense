@@ -17,6 +17,10 @@ public class Farm {
     private String healthStatus;
     private String nextWatering;
     private int soilMoisture;
+    private String userId;
+    private String soilType;
+    private String plantingDate;
+    private String pumpStatus;
 
     // Required empty constructor for Firebase
     public Farm() {
@@ -37,6 +41,28 @@ public class Farm {
         this.healthStatus = healthStatus;
         this.nextWatering = nextWatering;
         this.soilMoisture = soilMoisture;
+    }
+
+    public Farm(String farmId, String farmName, String location, String totalAcres, String cropType,
+                int moistureThreshold, String irrigationSchedule, String notes, long createdAt,
+                String healthStatus, String nextWatering, int soilMoisture, String userId,
+                String soilType, String plantingDate, String pumpStatus) {
+        this.farmId = farmId;
+        this.farmName = farmName;
+        this.location = location;
+        this.totalAcres = totalAcres;
+        this.cropType = cropType;
+        this.moistureThreshold = moistureThreshold;
+        this.irrigationSchedule = irrigationSchedule;
+        this.notes = notes;
+        this.createdAt = createdAt;
+        this.healthStatus = healthStatus;
+        this.nextWatering = nextWatering;
+        this.soilMoisture = soilMoisture;
+        this.userId = userId;
+        this.soilType = soilType;
+        this.plantingDate = plantingDate;
+        this.pumpStatus = pumpStatus;
     }
 
     // Getters and Setters
@@ -135,5 +161,37 @@ public class Farm {
 
     public void setSoilMoisture(int soilMoisture) {
         this.soilMoisture = soilMoisture;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getSoilType() {
+        return soilType;
+    }
+
+    public void setSoilType(String soilType) {
+        this.soilType = soilType;
+    }
+
+    public String getPlantingDate() {
+        return plantingDate;
+    }
+
+    public void setPlantingDate(String plantingDate) {
+        this.plantingDate = plantingDate;
+    }
+
+    public String getPumpStatus() {
+        return pumpStatus;
+    }
+
+    public void setPumpStatus(String pumpStatus) {
+        this.pumpStatus = pumpStatus;
     }
 }

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_futuristic_gradient">
+
+    <!-- Top Action Bar -->
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/setup_title"
+            android:textAppearance="@style/TextAppearance.AgriSense.CardTitle"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tvSkip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="@string/btn_skip"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true" />
+    </RelativeLayout>
+
+    <!-- Top Progress Line -->
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/setupProgress"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:progress="33"
+        app:indicatorColor="@color/primary_green"
+        app:trackColor="@color/divider"
+        app:layout_constraintTop_toBottomOf="@id/topBar" />
+
+    <!-- ViewPager2 container -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerFarmSetup"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/setupProgress"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+
+    <!-- Error Text overlay (if validation fails) -->
+    <TextView
+        android:id="@+id/tvSetupError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/accent_red"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+
+    <!-- Bottom Navigation Buttons -->
+    <RelativeLayout
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:paddingHorizontal="24dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBack"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:text="Back"
+            android:textColor="@color/text_secondary"
+            android:visibility="invisible" />
+
+        <!-- Simple Dot Indicator (3 dots) -->
+        <LinearLayout
+            android:id="@+id/dotsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/btn_next"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/primary_green"
+            app:cornerRadius="24dp" />
+
+        <ProgressBar
+            android:id="@+id/progressSetup"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="8dp"
+            android:indeterminateTint="@color/primary_green"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

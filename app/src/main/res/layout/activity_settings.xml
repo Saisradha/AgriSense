@@ -60,16 +60,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_sm"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/radius_card_sm"
-                app:cardElevation="@dimen/card_elevation_sm">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="@dimen/spacing_md">
+                    android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                     <ImageView
                         android:layout_width="@dimen/icon_container"
@@ -116,16 +119,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_sm"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/radius_card_sm"
-                app:cardElevation="@dimen/card_elevation_sm">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="@dimen/spacing_md">
+                    android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                     <ImageView
                         android:layout_width="@dimen/icon_container"
@@ -171,16 +177,19 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/radius_card_sm"
-                app:cardElevation="@dimen/card_elevation_sm">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="@dimen/spacing_md">
+                    android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                     <ImageView
                         android:layout_width="@dimen/icon_container"
@@ -230,16 +239,19 @@
                 android:layout_marginTop="@dimen/spacing_sm"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/radius_card_sm"
-                app:cardElevation="@dimen/card_elevation_sm">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="@dimen/spacing_md">
+                    android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                     <ImageView
                         android:layout_width="@dimen/icon_container"

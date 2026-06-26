@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_futuristic_gradient"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <!-- Header -->
+        <View
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/bg_icon_circle"
+            android:backgroundTint="#2010B981" />
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="-64dp"
+            android:src="@drawable/ic_device"
+            app:tint="@color/primary_green"
+            android:contentDescription="@string/device_title" />
+
+        <View android:layout_width="1dp" android:layout_height="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/device_title"
+            android:textAppearance="@style/TextAppearance.AgriSense.Headline"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/device_subtitle"
+            android:textAppearance="@style/TextAppearance.AgriSense.Body"
+            android:textColor="@color/text_secondary"
+            android:gravity="center" />
+
+        <!-- Option 1: Physical Device Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                    android:background="@drawable/bg_liquid_glass_card">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Option 1: Link physical IoT Device"
+                    android:textAppearance="@style/TextAppearance.AgriSense.CardTitle"
+                    android:textColor="@color/primary_green" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Use your ESP32 controller and sensor kit to monitor moisture, temperature, and auto-control your water pump in real-time."
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLinkDevice"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Link Physical Device"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/primary_green"
+                    app:cornerRadius="25dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Option 2: Demo Mode Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                    android:background="@drawable/bg_liquid_glass_card">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/device_demo_mode"
+                    android:textAppearance="@style/TextAppearance.AgriSense.CardTitle"
+                    android:textColor="@color/text_secondary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/device_demo_mode_desc"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnStartDemo"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/btn_start_demo"
+                    android:textColor="@color/primary_green"
+                    android:textStyle="bold"
+                    app:strokeColor="@color/primary_green"
+                    app:strokeWidth="1.5dp"
+                    app:cornerRadius="25dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ProgressBar for Async Firebase update -->
+        <ProgressBar
+            android:id="@+id/progressDeviceCheck"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="24dp"
+            android:indeterminateTint="@color/primary_green"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

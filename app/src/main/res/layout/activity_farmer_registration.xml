@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_futuristic_gradient"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="24dp">
+
+            <View
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_icon_circle"
+                android:backgroundTint="#2010B981" />
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="-50dp"
+                android:src="@drawable/ic_person"
+                app:tint="@color/primary_green"
+                android:contentDescription="@string/reg_title" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/reg_title"
+                android:textAppearance="@style/TextAppearance.AgriSense.Headline"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/reg_subtitle"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Form Card (Glassmorphic) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_liquid_glass_card"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Full Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reg_name_label"
+                android:textColor="@color/primary_green"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etRegName"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="@string/reg_name_hint"
+                android:inputType="textPersonName"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="@color/text_secondary"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:maxLines="1" />
+
+            <View android:layout_width="1dp" android:layout_height="16dp" />
+
+            <!-- Phone Number -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reg_phone_label"
+                android:textColor="@color/primary_green"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etRegPhone"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="@string/reg_phone_hint"
+                android:inputType="phone"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="@color/text_secondary"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:maxLines="1" />
+
+            <View android:layout_width="1dp" android:layout_height="16dp" />
+
+            <!-- Village / Block -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reg_village_label"
+                android:textColor="@color/primary_green"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etRegVillage"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="@string/reg_village_hint"
+                android:inputType="text"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="@color/text_secondary"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:maxLines="1" />
+
+            <View android:layout_width="1dp" android:layout_height="16dp" />
+
+            <!-- District -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="District"
+                android:textColor="@color/primary_green"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etRegDistrict"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="e.g. Guntur"
+                android:inputType="text"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="@color/text_secondary"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:maxLines="1" />
+
+            <View android:layout_width="1dp" android:layout_height="16dp" />
+
+            <!-- State -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reg_state_label"
+                android:textColor="@color/primary_green"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etRegState"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="@string/reg_state_hint"
+                android:inputType="text"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="@color/text_secondary"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:maxLines="1" />
+
+        </LinearLayout>
+
+        <!-- Error Text -->
+        <TextView
+            android:id="@+id/tvRegError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/accent_red"
+            android:textSize="13sp"
+            android:gravity="center"
+            android:visibility="gone" />
+
+        <!-- Complete Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCompleteProfile"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/btn_complete_profile"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/primary_green"
+            app:cornerRadius="14dp"
+            app:elevation="0dp" />
+
+        <!-- Progress -->
+        <ProgressBar
+            android:id="@+id/progressReg"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:indeterminateTint="@color/primary_green"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

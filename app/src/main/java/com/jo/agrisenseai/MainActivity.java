@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentManager;
 
 // ── Material UI ───────────────────────────────────────────────────────────────
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * MainActivity — App entry point.
@@ -65,6 +66,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Auth check redirect
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent intent = new Intent(this, SplashActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
         BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);

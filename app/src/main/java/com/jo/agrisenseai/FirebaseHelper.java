@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +116,11 @@ public class FirebaseHelper {
     public interface FarmByIdListener {
         void onFarmLoaded(Farm farm);
         void onFarmNotFound();
+    }
+
+    /** Delivers UserProfile loaded from Firebase */
+    public interface UserProfileListener {
+        void onProfileLoaded(UserProfile profile);
     }
 
     // ══════════════════════════════════════════════════════════════════════
@@ -439,6 +445,32 @@ public class FirebaseHelper {
                 });
     }
 
+    /** Retrieves the user profile from Users/{uid}/profile */
+    public void getUserProfile(String uid, UserProfileListener listener) {
+        mDatabase.child("Users").child(uid).child("profile")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        UserProfile profile = snapshot.getValue(UserProfile.class);
+                        listener.onProfileLoaded(profile);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        listener.onProfileLoaded(null);
+                    }
+                });
+    }
+
+    /** Saves/updates the user profile at Users/{uid}/profile */
+    public void saveUserProfile(UserProfile profile, com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
+        if (profile.getUid() != null) {
+            mDatabase.child("Users").child(profile.getUid()).child("profile")
+                    .setValue(profile, onComplete);
+        }
+    }
+
+
     // ══════════════════════════════════════════════════════════════════════
     // WRITE OPERATIONS
     // ══════════════════════════════════════════════════════════════════════
@@ -450,17 +482,93 @@ public class FirebaseHelper {
         ref.setValue(farm, onComplete);
     }
 
+    /** Writes a new farm under both {@code farms/} and {@code Users/{uid}/farms/}. */
+    public void addFarmForUser(String uid, Farm farm, com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
+        DatabaseReference ref = mDatabase.child(NODE_FARMS).push();
+        String farmId = ref.getKey();
+        farm.setFarmId(farmId);
+        farm.setUserId(uid);
+        ref.setValue(farm, (error, dbRef) -> {
+            if (error == null) {
+                mDatabase.child("Users").child(uid).child("farms").child(farmId).setValue(farm, onComplete);
+            } else if (onComplete != null) {
+                onComplete.onComplete(error, dbRef);
+            }
+        });
+    }
+
+
     /** Updates specific fields in an existing farm. */
     public void updateFarm(String farmId, java.util.Map<String, Object> updates,
                            com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
         mDatabase.child(NODE_FARMS).child(farmId).updateChildren(updates, onComplete);
     }
 
-    /** Deletes a farm node entirely. */
+    /** Deletes a farm node entirely from both global and user-specific paths. */
     public void deleteFarm(String farmId,
                            com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
-        mDatabase.child(NODE_FARMS).child(farmId).removeValue(onComplete);
+        mDatabase.child(NODE_FARMS).child(farmId).removeValue((error, ref) -> {
+            if (error == null) {
+                String uid = FirebaseAuth.getInstance().getUid();
+                if (uid != null) {
+                    mDatabase.child("Users").child(uid).child("farms").child(farmId).removeValue(onComplete);
+                } else if (onComplete != null) {
+                    onComplete.onComplete(null, ref);
+                }
+            } else if (onComplete != null) {
+                onComplete.onComplete(error, ref);
+            }
+        });
     }
+
+    /** Listens for all farms belonging to a user under Users/{uid}/farms/ */
+    public com.google.firebase.database.ValueEventListener listenUserFarms(String uid, FarmsListener listener) {
+        com.google.firebase.database.ValueEventListener valListener = new com.google.firebase.database.ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                java.util.List<Farm> farms = new java.util.ArrayList<>();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    Farm farm = child.getValue(Farm.class);
+                    if (farm != null) {
+                        farms.add(farm);
+                    }
+                }
+                listener.onFarmsLoaded(farms);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        };
+        mDatabase.child("Users").child(uid).child("farms").addValueEventListener(valListener);
+        return valListener;
+    }
+
+
+    /** Sets the pump status (ON/OFF) for a specific farm, syncing to the legacy single-pump node too. */
+    public void setPumpStatus(String farmId, String status, com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
+        mDatabase.child(NODE_FARMS).child(farmId).child("pumpStatus").setValue(status, (error, ref) -> {
+            if (error == null) {
+                // Backward compatibility for legacy hardware
+                mDatabase.child(NODE_SENSOR_DATA).child("pumpStatus").setValue(status);
+
+                String uid = FirebaseAuth.getInstance().getUid();
+                if (uid != null) {
+                    mDatabase.child("Users").child(uid).child("farms").child(farmId).child("pumpStatus").setValue(status, onComplete);
+                } else if (onComplete != null) {
+                    onComplete.onComplete(null, ref);
+                }
+            } else if (onComplete != null) {
+                onComplete.onComplete(error, ref);
+            }
+        });
+    }
+
+    /** Listens to pump status changes for a specific farm. */
+    public void listenFarmPumpStatus(String farmId, ValueEventListener listener) {
+        mDatabase.child(NODE_FARMS).child(farmId).child("pumpStatus").addValueEventListener(listener);
+    }
+
 
     /**
      * Checks whether any farm already has the given name (case-insensitive via Firebase query).

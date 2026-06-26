@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/bg_futuristic_gradient"
     android:clipToPadding="false"
     android:fillViewport="true"
     android:scrollbars="none">
@@ -62,29 +62,86 @@
 
         </LinearLayout>
 
-        <!-- Welcome Section -->
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Welcome & Farm Selector Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/home_greeting"
-            android:textAppearance="@style/TextAppearance.AgriSense.Headline" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/spacing_md">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:text="@string/home_farmer_name"
-            android:textColor="@color/primary_green"
-            android:textSize="@dimen/text_title"
-            android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:layout_marginBottom="@dimen/spacing_lg"
-            android:text="@string/home_subtitle"
-            android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+                <TextView
+                    android:id="@+id/tvWelcomeGreeting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_greeting"
+                    android:textAppearance="@style/TextAppearance.AgriSense.Headline" />
+
+                <TextView
+                    android:id="@+id/tvFarmerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Farmer Name"
+                    android:textColor="@color/primary_green"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Farm Dropdown Spinner / Selector -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardFarmSelector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="12dp"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_liquid_glass_card">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_place"
+                        app:tint="@color/primary_green" />
+
+                    <TextView
+                        android:id="@+id/tvSelectedFarm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="Main Farm"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_green" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="4dp"
+                        android:src="@drawable/ic_logout"
+                        android:rotation="90"
+                        app:tint="@color/text_secondary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
 
         <!-- Crop Health Hero Card -->
         <com.google.android.material.card.MaterialCardView
@@ -93,7 +150,7 @@
             android:layout_marginBottom="@dimen/spacing_lg"
             app:cardBackgroundColor="@color/primary_green"
             app:cardCornerRadius="@dimen/radius_card_lg"
-            app:cardElevation="@dimen/card_elevation">
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -203,16 +260,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_xs"
                 android:layout_weight="1"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/radius_card_sm"
-                app:cardElevation="@dimen/card_elevation_sm">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/sensor_card_min_height"
                     android:orientation="vertical"
-                    android:padding="@dimen/spacing_md">
+                    android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                     <ImageView
                         android:layout_width="36dp"
@@ -250,16 +310,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_xs"
                 android:layout_weight="1"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/radius_card_sm"
-                app:cardElevation="@dimen/card_elevation_sm">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/sensor_card_min_height"
                     android:orientation="vertical"
-                    android:padding="@dimen/spacing_md">
+                    android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                     <ImageView
                         android:layout_width="36dp"
@@ -307,16 +370,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_xs"
                 android:layout_weight="1"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/radius_card_sm"
-                app:cardElevation="@dimen/card_elevation_sm">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/sensor_card_min_height"
                     android:orientation="vertical"
-                    android:padding="@dimen/spacing_md">
+                    android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                     <ImageView
                         android:layout_width="36dp"
@@ -354,16 +420,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_xs"
                 android:layout_weight="1"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/radius_card_sm"
-                app:cardElevation="@dimen/card_elevation_sm">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/sensor_card_min_height"
                     android:orientation="vertical"
-                    android:padding="@dimen/spacing_md">
+                    android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                     <ImageView
                         android:layout_width="36dp"
@@ -408,15 +477,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_md"
-            app:cardBackgroundColor="@color/surface"
+            app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
             app:cardCornerRadius="@dimen/radius_card"
-            app:cardElevation="@dimen/card_elevation_sm">
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/spacing_md">
+                android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -476,15 +548,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_md"
-            app:cardBackgroundColor="@color/surface"
+            app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
             app:cardCornerRadius="@dimen/radius_card"
-            app:cardElevation="@dimen/card_elevation_sm">
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/spacing_md">
+                android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -565,6 +640,7 @@
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnWaterNow"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:backgroundTint="@color/primary_green"
@@ -583,15 +659,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_md"
-            app:cardBackgroundColor="@color/surface"
+            app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
             app:cardCornerRadius="@dimen/radius_card"
-            app:cardElevation="@dimen/card_elevation_sm">
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/spacing_md">
+                android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -682,16 +761,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_md"
-            app:cardBackgroundColor="@color/surface"
+            app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
             app:cardCornerRadius="@dimen/radius_card"
-            app:cardElevation="@dimen/card_elevation_sm">
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
+                android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                 <ImageView
                     android:layout_width="@dimen/icon_container"
@@ -751,15 +833,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_md"
-            app:cardBackgroundColor="@color/surface"
+            app:cardBackgroundColor="@android:color/transparent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent"
             app:cardCornerRadius="@dimen/radius_card"
-            app:cardElevation="@dimen/card_elevation_sm">
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
+                android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
 
                 <LinearLayout
                     android:layout_width="0dp"

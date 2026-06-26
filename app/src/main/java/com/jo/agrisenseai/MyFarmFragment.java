@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public class MyFarmFragment extends Fragment {
         adapter = new FarmAdapter(requireContext(), new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
-        // Click listener for the dash card
+        // Click listener for the add farm card
         View addFarmCard = view.findViewById(R.id.addFarmCard);
         if (addFarmCard != null) {
             addFarmCard.setOnClickListener(v -> {
@@ -61,17 +63,21 @@ public class MyFarmFragment extends Fragment {
     }
 
     private void loadFarms() {
-        farmsListener = FirebaseHelper.getInstance().listenFarms(farms -> {
-            if (!isAdded()) return;
-            adapter.updateList(farms);
-        });
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            farmsListener = FirebaseHelper.getInstance().listenUserFarms(user.getUid(), farms -> {
+                if (!isAdded()) return;
+                adapter.updateList(farms);
+            });
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (farmsListener != null) {
-            FirebaseHelper.getInstance().removeListener(FirebaseHelper.NODE_FARMS, farmsListener);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (farmsListener != null && user != null) {
+            FirebaseHelper.getInstance().removeListener("Users/" + user.getUid() + "/farms", farmsListener);
         }
     }
 }

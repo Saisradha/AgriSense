@@ -23,7 +23,7 @@
     </style>
 
     <style name="Widget.AgriSense.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:background">@color/surface</item>
+        <item name="android:background">@color/background</item>
         <item name="itemIconTint">@color/bottom_nav_color</item>
         <item name="itemTextColor">@color/bottom_nav_color</item>
         <item name="itemActiveIndicatorStyle">@style/Widget.AgriSense.BottomNav.ActiveIndicator</item>

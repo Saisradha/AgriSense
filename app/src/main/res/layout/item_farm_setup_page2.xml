@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setup_slide2_title"
+            android:textAppearance="@style/TextAppearance.AgriSense.Headline"
+            android:textColor="@color/white"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/setup_slide2_desc"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:gravity="center" />
+
+        <!-- Glass Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_liquid_glass_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Crop Type -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setup_crop_type"
+                android:textColor="@color/primary_green_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etCropType"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="@string/setup_crop_hint"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="#60FFFFFF"
+                android:textSize="14sp"
+                android:paddingHorizontal="12dp"
+                android:maxLines="1" />
+
+            <View android:layout_width="1dp" android:layout_height="16dp" />
+
+            <!-- Crop Planting Date -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Crop Planting Date"
+                android:textColor="@color/primary_green_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etPlantingDate"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="YYYY-MM-DD"
+                android:inputType="date"
+                android:focusable="false"
+                android:clickable="true"
+                android:textColor="@color/white"
+                android:textColorHint="#60FFFFFF"
+                android:textSize="14sp"
+                android:paddingHorizontal="12dp"
+                android:maxLines="1" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

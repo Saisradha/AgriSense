@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setup_slide1_title"
+            android:textAppearance="@style/TextAppearance.AgriSense.Headline"
+            android:textColor="@color/white"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/setup_slide1_desc"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:gravity="center" />
+
+        <!-- Glass Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_liquid_glass_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Field Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setup_field_name"
+                android:textColor="@color/primary_green_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etFarmName"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="@string/setup_field_hint"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="#60FFFFFF"
+                android:textSize="14sp"
+                android:paddingHorizontal="12dp"
+                android:maxLines="1" />
+
+            <View android:layout_width="1dp" android:layout_height="14dp" />
+
+            <!-- Location -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location / Plot"
+                android:textColor="@color/primary_green_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etFarmLocation"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="e.g. North Block, Plot 4"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="#60FFFFFF"
+                android:textSize="14sp"
+                android:paddingHorizontal="12dp"
+                android:maxLines="1" />
+
+            <View android:layout_width="1dp" android:layout_height="14dp" />
+
+            <!-- Area -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setup_field_area"
+                android:textColor="@color/primary_green_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etFarmArea"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="@string/setup_field_area_hint"
+                android:inputType="numberDecimal"
+                android:textColor="@color/white"
+                android:textColorHint="#60FFFFFF"
+                android:textSize="14sp"
+                android:paddingHorizontal="12dp"
+                android:maxLines="1" />
+
+            <View android:layout_width="1dp" android:layout_height="14dp" />
+
+            <!-- Soil Type -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Soil Type"
+                android:textColor="@color/primary_green_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etSoilType"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/selector_glass_input"
+                android:hint="e.g. Clay, Sandy, Black Soil"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="#60FFFFFF"
+                android:textSize="14sp"
+                android:paddingHorizontal="12dp"
+                android:maxLines="1" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

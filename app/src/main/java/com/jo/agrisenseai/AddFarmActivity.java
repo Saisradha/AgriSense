@@ -21,6 +21,7 @@ import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -183,24 +184,33 @@ public class AddFarmActivity extends AppCompatActivity {
                     tilFarmName.setError("Farm name already exists");
                     showSnackbar("Duplicate Farm Name! Please choose a unique name.");
                 } else {
-                    // Create farm object with default details
-                    Farm newFarm = new Farm(
-                            null,
-                            farmName,
-                            location,
-                            area,
-                            crop,
-                            threshold,
-                            schedule,
-                            notes,
-                            System.currentTimeMillis(),
-                            "Healthy",
-                            "Tomorrow 6:00 AM",
-                            500
-                    );
+                    String uid = FirebaseAuth.getInstance().getUid();
+                    if (uid == null) {
+                        btnSave.setEnabled(true);
+                        showSnackbar("Authentication session expired.");
+                        return;
+                    }
 
-                    // Save Farm to Firebase
-                    FirebaseHelper.getInstance().addFarm(newFarm, (error, ref) -> {
+                    // Create farm object with default details
+                    Farm newFarm = new Farm();
+                    newFarm.setFarmName(farmName);
+                    newFarm.setLocation(location);
+                    newFarm.setTotalAcres(area);
+                    newFarm.setCropType(crop);
+                    newFarm.setMoistureThreshold(threshold);
+                    newFarm.setIrrigationSchedule(schedule);
+                    newFarm.setNotes(notes);
+                    newFarm.setCreatedAt(System.currentTimeMillis());
+                    newFarm.setHealthStatus("Healthy");
+                    newFarm.setNextWatering("Tomorrow 6:00 AM");
+                    newFarm.setSoilMoisture(60);
+                    newFarm.setUserId(uid);
+                    newFarm.setSoilType("Clay Loam");
+                    newFarm.setPlantingDate("Not Specified");
+                    newFarm.setPumpStatus("OFF");
+
+                    // Save Farm to Firebase user-scoped paths
+                    FirebaseHelper.getInstance().addFarmForUser(uid, newFarm, (error, ref) -> {
                         if (error == null) {
                             Toast.makeText(AddFarmActivity.this, "Farm Added Successfully", Toast.LENGTH_SHORT).show();
                             finishWithTransition();

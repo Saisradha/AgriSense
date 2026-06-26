@@ -223,4 +223,98 @@
     <string name="notif_title_water_tank">Water Tank Low</string>
     <string name="notif_msg_water_tank">Please refill the water tank.</string>
 
+    <!-- Phone Login Flow -->
+    <string name="phone_login_title">Enter Phone Number</string>
+    <string name="phone_login_subtitle">We will send a 6-digit code to verify your phone number</string>
+    <string name="phone_label">Mobile Number</string>
+    <string name="phone_hint">98765 43210</string>
+    <string name="btn_send_otp">Send OTP</string>
+    <string name="phone_terms">By continuing, you agree to AgriSense\'s Terms of Service and Privacy Policy.</string>
+    <string name="phone_error_invalid">Please enter a valid 10-digit mobile number</string>
+    <string name="phone_error_failed">Verification failed. Check connectivity or phone number.</string>
+    <string name="phone_error_auth">Authentication failed. Invalid credential.</string>
+
+    <!-- OTP Verification Flow -->
+    <string name="otp_title">Verify OTP</string>
+    <string name="otp_subtitle">Enter the 6-digit verification code sent to %s</string>
+    <string name="otp_hint">Enter OTP</string>
+    <string name="btn_verify">Verify &amp; Continue</string>
+    <string name="otp_resend">Resend Code</string>
+    <string name="otp_resend_timer">Resend code in %ds</string>
+    <string name="otp_error_invalid">Invalid code. Please check and try again.</string>
+    <string name="otp_error_failed">Code verification failed</string>
+
+    <!-- Farmer Registration -->
+    <string name="reg_title">Complete Profile</string>
+    <string name="reg_subtitle">Let\'s personalize AgriSense AI for your farm</string>
+    <string name="reg_name_label">Full Name</string>
+    <string name="reg_name_hint">Anvesh Reddy</string>
+    <string name="reg_village_label">Village / Block</string>
+    <string name="reg_village_hint">Guntur</string>
+    <string name="reg_state_label">State</string>
+    <string name="reg_state_hint">Andhra Pradesh</string>
+    <string name="btn_complete_profile">Save &amp; Continue</string>
+    <string name="reg_error_empty">All fields are required</string>
+
+    <!-- Farm Onboarding / Setup -->
+    <string name="setup_title">Set up your Farm</string>
+    <string name="setup_subtitle">Configure fields to start monitoring and automated watering</string>
+    <string name="setup_slide1_title">Add Your First Field</string>
+    <string name="setup_slide1_desc">Provide your field name and details to start tracking.</string>
+    <string name="setup_slide2_title">Select Crop Type</string>
+    <string name="setup_slide2_desc">Choose what you are growing to receive customized AI recommendations.</string>
+    <string name="setup_slide3_title">Link Irrigation Pump</string>
+    <string name="setup_slide3_desc">Configure hardware details to enable automated water control.</string>
+    <string name="btn_next">Next</string>
+    <string name="btn_get_started">Get Started</string>
+    <string name="btn_skip">Skip</string>
+    <string name="setup_field_name">Field Name</string>
+    <string name="setup_field_hint">e.g., Rice Field North</string>
+    <string name="setup_crop_type">Crop Type</string>
+    <string name="setup_crop_hint">e.g., Paddy, Cotton, Wheat</string>
+    <string name="setup_field_area">Field Area (Acres)</string>
+    <string name="setup_field_area_hint">e.g., 2.5</string>
+    <string name="setup_pump_id">Pump Controller ID (Optional)</string>
+    <string name="setup_pump_hint">e.g., ESP32_PUMP_01</string>
+
+    <!-- Device Check Flow -->
+    <string name="device_title">Device Sync</string>
+    <string name="device_subtitle">Connecting to AgriSense IoT devices</string>
+    <string name="device_searching">Searching for hardware controllers...</string>
+    <string name="device_found">Hardware controller found!</string>
+    <string name="device_status_online">Online &amp; Synchronizing</string>
+    <string name="device_status_offline">Offline</string>
+    <string name="btn_continue">Continue</string>
+    <string name="btn_retry">Retry Search</string>
+    <string name="device_demo_mode">Or run in Demo Mode</string>
+    <string name="device_demo_mode_desc">Explore all features using simulated sensors and pump controls</string>
+    <string name="btn_start_demo">Start Demo Mode</string>
+
+    <!-- Language Selection -->
+    <string name="select_language_title">Choose Language</string>
+    <string name="select_language_subtitle">Select your preferred language to customize the app display</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_tagline">Smart Irrigation &amp; Crop Intelligence</string>
+    <string name="splash_version">Version 1.0</string>
+
+    <!-- Email Login / Signup -->
+    <string name="email_login_title">Welcome to AgriSense AI</string>
+    <string name="email_login_subtitle">Sign in with your email and password to manage your fields</string>
+    <string name="email_label">Email Address</string>
+    <string name="email_hint">farmer@agrisense.com</string>
+    <string name="password_label">Password</string>
+    <string name="password_hint">••••••••</string>
+    <string name="confirm_password_label">Confirm Password</string>
+    <string name="confirm_password_hint">••••••••</string>
+    <string name="btn_login">Sign In</string>
+    <string name="btn_signup">Create Account</string>
+    <string name="login_to_signup_prompt">Don\'t have an account? Sign Up</string>
+    <string name="signup_to_login_prompt">Already have an account? Sign In</string>
+    <string name="error_invalid_email">Please enter a valid email address</string>
+    <string name="error_invalid_password">Password must be at least 6 characters</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
+    <string name="error_auth_failed">Authentication failed. Please check your credentials.</string>
+    <string name="reg_phone_label">Phone Number (Optional)</string>
+    <string name="reg_phone_hint">98765 43210</string>
 </resources>

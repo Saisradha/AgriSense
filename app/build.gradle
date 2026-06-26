@@ -71,18 +71,25 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
     implementation 'androidx.core:core:1.13.1'
 
+    // ViewPager2 for onboarding flow
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+
     // Charts – MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:33.5.1')
     implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-auth'
 
     // Network & JSON Parsing for Gemini API
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.google.code.gson:gson:2.10.1'
 
     // Gemini integration uses OkHttp REST API directly (no SDK needed)
+
+    // Lottie animations for splash & loading screens
+    implementation 'com.airbnb.android:lottie:6.3.0'
 
     // Room Database
     implementation 'androidx.room:room-runtime:2.6.1'

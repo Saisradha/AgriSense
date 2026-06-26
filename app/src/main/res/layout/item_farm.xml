@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/spacing_sm"
     android:transitionName="farm_card_transition"
-    app:cardBackgroundColor="@color/surface"
+    app:cardBackgroundColor="@android:color/transparent"
     app:cardCornerRadius="@dimen/radius_card"
     app:cardElevation="0dp"
     app:strokeWidth="0dp">
@@ -15,7 +15,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+                    android:background="@drawable/bg_liquid_glass_card">
 
         <!-- Status strip indicator on the left side of the card -->
         <View
@@ -200,6 +201,44 @@
 
                 </LinearLayout>
 
+            </LinearLayout>
+
+            <!-- Divider 2 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/divider" />
+
+            <!-- Quick Pump Control Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_device"
+                    app:tint="@color/text_secondary"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Pump Control"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchFarmPump"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    app:useMaterialThemeColors="true" />
             </LinearLayout>
 
         </LinearLayout>
