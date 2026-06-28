@@ -561,10 +561,11 @@
                 android:padding="@dimen/spacing_md"
                     android:background="@drawable/bg_liquid_glass_card">
 
+                <!-- Header row: icon + title + status badge -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/spacing_md"
+                    android:layout_marginBottom="@dimen/spacing_sm"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -609,6 +610,80 @@
 
                 </LinearLayout>
 
+                <!-- Extended info: Current Mode / Last Activated / Reason -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/pump_mode_current"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                    <TextView
+                        android:id="@+id/tvPumpModeInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Automatic"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Body"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/pump_last_activated"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                    <TextView
+                        android:id="@+id/tvLastActivated"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Body"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_md"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/pump_reason_label"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                    <TextView
+                        android:id="@+id/tvPumpReason"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pump_reason_ai"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Body"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Risk Level row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -639,20 +714,84 @@
 
                 </LinearLayout>
 
+                <!-- ── Pump Mode selector ── -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/pump_mode_label"
+                    android:textAppearance="@style/TextAppearance.AgriSense.Body"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnModeAuto"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="42dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/primary_green"
+                        android:text="@string/pump_mode_auto"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="@dimen/radius_card_sm"
+                        app:strokeColor="@color/primary_green"
+                        app:strokeWidth="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnModeManual"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="42dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@android:color/transparent"
+                        android:text="@string/pump_mode_manual"
+                        android:textColor="@color/primary_green"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="@dimen/radius_card_sm"
+                        app:strokeColor="@color/primary_green"
+                        app:strokeWidth="1dp" />
+
+                </LinearLayout>
+
+                <!-- Caption: shown in AUTO mode -->
+                <TextView
+                    android:id="@+id/tvPumpModeCaption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/pump_caption_auto"
+                    android:textAppearance="@style/TextAppearance.AgriSense.Caption"
+                    android:textColor="@color/text_secondary"
+                    android:gravity="center"
+                    android:visibility="visible" />
+
+                <!-- Water Now button (disabled in AUTO, enabled in MANUAL) -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnWaterNow"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:backgroundTint="@color/primary_green"
-                    android:text="@string/water_now"
+                    android:text="@string/pump_controlled_auto"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
+                    android:enabled="false"
                     app:cornerRadius="@dimen/radius_card_sm" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
 
         <!-- Water Loss Localization -->
         <com.google.android.material.card.MaterialCardView

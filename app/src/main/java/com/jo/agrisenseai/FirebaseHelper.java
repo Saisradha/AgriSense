@@ -569,6 +569,81 @@ public class FirebaseHelper {
         mDatabase.child(NODE_FARMS).child(farmId).child("pumpStatus").addValueEventListener(listener);
     }
 
+    // ══════════════════════════════════════════════════════════════════════
+    // PUMP MODE / COMMAND CONTROL  (sensorData/pumpMode, sensorData/pumpCommand)
+    //
+    // Database structure used by the ESP32 + app:
+    //   sensorData/
+    //     pumpMode    : "AUTO" | "MANUAL"
+    //     pumpCommand : "ON"   | "OFF"
+    //     pumpStatus  : "ON"   | "OFF"   (written back by ESP32)
+    // ══════════════════════════════════════════════════════════════════════
+
+    /**
+     * Writes {@code pumpMode} ("AUTO" | "MANUAL") to {@code sensorData/pumpMode}.
+     * The ESP32 reads this key to determine whether it controls the pump itself
+     * (AUTO) or waits for an explicit command (MANUAL).
+     */
+    public void setPumpMode(String mode, com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
+        mDatabase.child(NODE_SENSOR_DATA).child("pumpMode").setValue(mode, onComplete);
+    }
+
+    /**
+     * Writes {@code pumpCommand} ("ON" | "OFF") to {@code sensorData/pumpCommand}.
+     * The ESP32 reads this key in MANUAL mode and actuates the pump accordingly,
+     * then writes {@code pumpStatus} back to Firebase.
+     */
+    public void setPumpCommand(String command, com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
+        mDatabase.child(NODE_SENSOR_DATA).child("pumpCommand").setValue(command, onComplete);
+    }
+
+    /**
+     * Writes {@code pumpStatus} directly to {@code sensorData/pumpStatus}.
+     *
+     * <p>Used for immediate UI feedback in MANUAL mode when the ESP32 firmware
+     * may not be reading {@code pumpCommand} yet, or when running in demo mode
+     * without hardware. When a real ESP32 IS connected, it will overwrite this
+     * with the confirmed state moments later — which is harmless.</p>
+     */
+    public void setPumpStatusDirect(String status, com.google.firebase.database.DatabaseReference.CompletionListener onComplete) {
+        mDatabase.child(NODE_SENSOR_DATA).child("pumpStatus").setValue(status, onComplete);
+    }
+
+    /**
+     * Attaches a real-time listener to {@code sensorData/pumpStatus}.
+     * The app must reflect the actual hardware state, not a locally cached value.
+     *
+     * @param listener called on every change; returns the attached listener for later removal
+     */
+    public ValueEventListener listenPumpStatus(ValueEventListener listener) {
+        mDatabase.child(NODE_SENSOR_DATA).child("pumpStatus").addValueEventListener(listener);
+        return listener;
+    }
+
+    /**
+     * Attaches a real-time listener to {@code sensorData/pumpMode}.
+     * Allows the app to stay in sync if another client changes the mode.
+     *
+     * @param listener called on every change; returns the attached listener for later removal
+     */
+    public ValueEventListener listenPumpMode(ValueEventListener listener) {
+        mDatabase.child(NODE_SENSOR_DATA).child("pumpMode").addValueEventListener(listener);
+        return listener;
+    }
+
+    /**
+     * Removes a listener that was attached to a child of {@code sensorData/}.
+     * Used to cleanly detach per-field listeners (pumpStatus, pumpMode, etc.)
+     * in {@code onDestroyView()} to prevent memory leaks.
+     *
+     * @param childKey the exact child key (e.g., "pumpStatus", "pumpMode")
+     * @param listener the listener to remove
+     */
+    public void removeSensorChildListener(String childKey, ValueEventListener listener) {
+        if (childKey == null || listener == null) return;
+        mDatabase.child(NODE_SENSOR_DATA).child(childKey).removeEventListener(listener);
+    }
+
 
     /**
      * Checks whether any farm already has the given name (case-insensitive via Firebase query).

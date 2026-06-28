@@ -317,4 +317,24 @@
     <string name="error_auth_failed">Authentication failed. Please check your credentials.</string>
     <string name="reg_phone_label">Phone Number (Optional)</string>
     <string name="reg_phone_hint">98765 43210</string>
+
+    <!-- Pump Mode Control -->
+    <string name="pump_mode_label">Pump Mode</string>
+    <string name="pump_mode_auto">Automatic</string>
+    <string name="pump_mode_manual">Manual</string>
+    <string name="pump_controlled_auto">Pump Controlled Automatically</string>
+    <string name="pump_caption_auto">Pump is controlled by AI.</string>
+    <string name="pump_turn_on">Turn Pump ON</string>
+    <string name="pump_turn_off">Turn Pump OFF</string>
+    <string name="pump_mode_current">Current Mode:</string>
+    <string name="pump_last_activated">Last Activated: —</string>
+    <string name="pump_reason_label">Reason:</string>
+    <string name="pump_reason_ai">AI Irrigation</string>
+    <string name="pump_reason_manual">Manual Control</string>
+
+    <!-- Insights / Charts -->
+    <string name="no_history_data">No historical data available</string>
+    <string name="chart_range_24h">Last 24 Hours</string>
+    <string name="chart_range_7d">Last 7 Days</string>
+    <string name="chart_range_30d">Last 30 Days</string>
 </resources>

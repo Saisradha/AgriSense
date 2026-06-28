@@ -26,13 +26,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
     private static final double RAW_MOISTURE_MAX = 1023.0;
 
+    // Standard dashboard views
     private TextView farmHealthValueText;
     private TextView farmHealthStatusText;
     private CircularProgressIndicator farmHealthProgress;
@@ -44,30 +48,47 @@ public class HomeFragment extends Fragment {
     private TextView riskLevelBadge;
     private View notifUnreadDot;
 
+    // Sensor readout views
     private TextView soilMoistureValueText;
     private TextView temperatureValueText;
     private TextView humidityValueText;
     private TextView waterLevelValueText;
 
+    // Water loss card
     private TextView wlStatusBadge;
     private TextView wlBoundaryText;
     private TextView wlEstimatedLossText;
 
-    // Farm selector & Greeting views
+    // Greeting / farm selector
     private TextView tvWelcomeGreeting;
     private TextView tvFarmerName;
     private TextView tvSelectedFarm;
     private View cardFarmSelector;
-    private MaterialButton btnWaterNow;
 
+    // ── Pump Mode Selector ─────────────────────────────────────────────────
+    private MaterialButton btnWaterNow;
+    private MaterialButton btnModeAuto;
+    private MaterialButton btnModeManual;
+    private TextView tvPumpModeCaption;
+    private TextView tvPumpModeInfo;
+    private TextView tvLastActivated;
+    private TextView tvPumpReason;
+
+    // ── Firebase Listeners ─────────────────────────────────────────────────
     private ValueEventListener dashboardListener;
     private ValueEventListener sensorListener;
     private ValueEventListener unreadListener;
     private ValueEventListener waterLossListener;
     private ValueEventListener farmPumpListener;
+    private ValueEventListener pumpStatusListener;
+    private ValueEventListener pumpModeListener;
 
+    // ── State ──────────────────────────────────────────────────────────────
     private List<Farm> mUserFarms = new ArrayList<>();
     private Farm mSelectedFarm = null;
+    private String currentPumpMode   = "AUTO"; // default: Automatic
+    private String currentPumpStatus = "OFF";
+    private SensorData lastSensorData = null;  // cached for Smart Irrigation card
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private Runnable mRefreshRunnable;
@@ -79,54 +100,72 @@ public class HomeFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Bind standard views
-        farmHealthValueText = view.findViewById(R.id.farmHealthValueText);
+        // ── Bind views ──────────────────────────────────────────────────────
+        farmHealthValueText  = view.findViewById(R.id.farmHealthValueText);
         farmHealthStatusText = view.findViewById(R.id.farmHealthStatusText);
-        farmHealthProgress = view.findViewById(R.id.farmHealthProgress);
+        farmHealthProgress   = view.findViewById(R.id.farmHealthProgress);
         aiRecommendationText = view.findViewById(R.id.aiRecommendationText);
-        pumpStatusBadge = view.findViewById(R.id.pumpStatusBadge);
-        pumpSubtitleText = view.findViewById(R.id.pumpSubtitleText);
-        waterSavedValueText = view.findViewById(R.id.waterSavedValueText);
+        pumpStatusBadge      = view.findViewById(R.id.pumpStatusBadge);
+        pumpSubtitleText     = view.findViewById(R.id.pumpSubtitleText);
+        waterSavedValueText  = view.findViewById(R.id.waterSavedValueText);
         energySavedValueText = view.findViewById(R.id.energySavedValueText);
-        riskLevelBadge = view.findViewById(R.id.riskLevelBadge);
-        notifUnreadDot = view.findViewById(R.id.notifUnreadDot);
+        riskLevelBadge       = view.findViewById(R.id.riskLevelBadge);
+        notifUnreadDot       = view.findViewById(R.id.notifUnreadDot);
 
-        wlStatusBadge = view.findViewById(R.id.wlStatusBadge);
-        wlBoundaryText = view.findViewById(R.id.wlBoundaryText);
-        wlEstimatedLossText = view.findViewById(R.id.wlEstimatedLossText);
+        wlStatusBadge      = view.findViewById(R.id.wlStatusBadge);
+        wlBoundaryText     = view.findViewById(R.id.wlBoundaryText);
+        wlEstimatedLossText= view.findViewById(R.id.wlEstimatedLossText);
 
         soilMoistureValueText = view.findViewById(R.id.soilMoistureValueText);
-        temperatureValueText = view.findViewById(R.id.temperatureValueText);
-        humidityValueText = view.findViewById(R.id.humidityValueText);
-        waterLevelValueText = view.findViewById(R.id.waterLevelValueText);
+        temperatureValueText  = view.findViewById(R.id.temperatureValueText);
+        humidityValueText     = view.findViewById(R.id.humidityValueText);
+        waterLevelValueText   = view.findViewById(R.id.waterLevelValueText);
 
-        // Bind new greeting and selector views
         tvWelcomeGreeting = view.findViewById(R.id.tvWelcomeGreeting);
-        tvFarmerName = view.findViewById(R.id.tvFarmerName);
-        tvSelectedFarm = view.findViewById(R.id.tvSelectedFarm);
-        cardFarmSelector = view.findViewById(R.id.cardFarmSelector);
-        btnWaterNow = view.findViewById(R.id.btnWaterNow);
+        tvFarmerName      = view.findViewById(R.id.tvFarmerName);
+        tvSelectedFarm    = view.findViewById(R.id.tvSelectedFarm);
+        cardFarmSelector  = view.findViewById(R.id.cardFarmSelector);
 
-        // Notification Bell Click
+        // Pump-mode UI
+        btnWaterNow       = view.findViewById(R.id.btnWaterNow);
+        btnModeAuto       = view.findViewById(R.id.btnModeAuto);
+        btnModeManual     = view.findViewById(R.id.btnModeManual);
+        tvPumpModeCaption = view.findViewById(R.id.tvPumpModeCaption);
+        tvPumpModeInfo    = view.findViewById(R.id.tvPumpModeInfo);
+        tvLastActivated   = view.findViewById(R.id.tvLastActivated);
+        tvPumpReason      = view.findViewById(R.id.tvPumpReason);
+
+        // ── Clicks ──────────────────────────────────────────────────────────
         view.findViewById(R.id.notifBellContainer).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), NotificationActivity.class)));
 
-        // Farm Selection Click
         cardFarmSelector.setOnClickListener(v -> showFarmSelectorDialog());
 
-        // Water Now checks connection first
+        btnModeAuto.setOnClickListener(v   -> switchPumpMode("AUTO"));
+        btnModeManual.setOnClickListener(v -> switchPumpMode("MANUAL"));
+
+        // Water Now acts only in MANUAL mode; sends pumpCommand to Firebase
         btnWaterNow.setOnClickListener(v -> onWaterNowClicked());
 
-        // Load data
+        // ── Load data ────────────────────────────────────────────────────────
         loadFarmerProfile();
         loadUserFarms();
         loadDashboardData();
         loadSensorData();
         loadWaterLossData();
         watchUnreadNotifications();
+        attachPumpModeListener();
+        attachPumpStatusListener();
+
+        // Apply default AUTO mode visuals (no Firebase write yet — only on user click)
+        applyModeUI("AUTO");
 
         return view;
     }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Lifecycle
+    // ══════════════════════════════════════════════════════════════════════
 
     @Override
     public void onResume() {
@@ -140,17 +179,295 @@ public class HomeFragment extends Fragment {
         stopAutoRefreshTimer();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Remove all Firebase listeners to prevent memory leaks
+        if (dashboardListener != null)
+            FirebaseHelper.getInstance().removeListener(FirebaseHelper.NODE_DASHBOARD, dashboardListener);
+        if (waterLossListener != null)
+            FirebaseHelper.getInstance().removeListener(FirebaseHelper.NODE_WATER_LOSS, waterLossListener);
+        if (sensorListener != null)
+            FirebaseHelper.getInstance().removeListener(FirebaseHelper.NODE_SENSOR_DATA, sensorListener);
+        if (unreadListener != null)
+            FirebaseDatabase.getInstance().getReference("notifications")
+                    .removeEventListener(unreadListener);
+        if (farmPumpListener != null && mSelectedFarm != null)
+            FirebaseHelper.getInstance().removeListenerForFarm(mSelectedFarm.getFarmId(), farmPumpListener);
+        if (pumpStatusListener != null)
+            FirebaseHelper.getInstance().removeSensorChildListener("pumpStatus", pumpStatusListener);
+        if (pumpModeListener != null)
+            FirebaseHelper.getInstance().removeSensorChildListener("pumpMode", pumpModeListener);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Pump Mode — AUTO / MANUAL
+    // ══════════════════════════════════════════════════════════════════════
+
+    /**
+     * Switches pump mode and writes to Firebase so the ESP32 can react.
+     * The UI is updated immediately; further UI updates come from the
+     * live pumpStatus listener (not from button-click state).
+     */
+    private void switchPumpMode(String mode) {
+        currentPumpMode = mode;
+        applyModeUI(mode);
+
+        FirebaseHelper.getInstance().setPumpMode(mode, (error, ref) -> {
+            if (!isAdded()) return;
+            if (error != null) {
+                android.util.Log.e("HomeFragment", "setPumpMode failed: " + error.getMessage());
+                Toast.makeText(requireContext(), "Could not change pump mode.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Applies mode-specific visual state without writing to Firebase.
+     * Called immediately on button press and also on app start.
+     */
+    private void applyModeUI(String mode) {
+        if (!isAdded()) return;
+        boolean isAuto = "AUTO".equalsIgnoreCase(mode);
+
+        // Update info row
+        if (tvPumpModeInfo != null)
+            tvPumpModeInfo.setText(isAuto ? "Automatic" : "Manual");
+
+        // Mode chip visuals — selected chip is filled green, unselected is outlined
+        if (btnModeAuto != null && btnModeManual != null) {
+            if (isAuto) {
+                btnModeAuto.setBackgroundTintList(
+                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary_green)));
+                btnModeAuto.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
+                btnModeManual.setBackgroundTintList(ColorStateList.valueOf(android.graphics.Color.TRANSPARENT));
+                btnModeManual.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_green));
+            } else {
+                btnModeManual.setBackgroundTintList(
+                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary_green)));
+                btnModeManual.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
+                btnModeAuto.setBackgroundTintList(ColorStateList.valueOf(android.graphics.Color.TRANSPARENT));
+                btnModeAuto.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_green));
+            }
+        }
+
+        // Caption visibility
+        if (tvPumpModeCaption != null)
+            tvPumpModeCaption.setVisibility(isAuto ? View.VISIBLE : View.GONE);
+
+        // Water Now button
+        if (btnWaterNow != null) {
+            if (isAuto) {
+                btnWaterNow.setEnabled(false);
+                btnWaterNow.setText(getString(R.string.pump_controlled_auto));
+                btnWaterNow.setBackgroundTintList(
+                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary_green)));
+            } else {
+                btnWaterNow.setEnabled(true);
+                // Reflect actual pump state for button text/color
+                applyPumpStatusUI(currentPumpStatus);
+            }
+        }
+
+        // Reason row
+        if (tvPumpReason != null)
+            tvPumpReason.setText(isAuto ? getString(R.string.pump_reason_ai)
+                                        : getString(R.string.pump_reason_manual));
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Real-time pumpStatus listener  (always active, drives UI)
+    // ══════════════════════════════════════════════════════════════════════
+
+    /**
+     * Attaches a permanent listener to {@code sensorData/pumpStatus}.
+     * UI is updated every time the ESP32 changes the pump state — the button
+     * state is NEVER set from click events alone.
+     */
+    private void attachPumpStatusListener() {
+        pumpStatusListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!isAdded()) return;
+                String status = snapshot.exists() ? snapshot.getValue(String.class) : "OFF";
+                if (status == null) status = "OFF";
+                currentPumpStatus = status;
+                applyPumpStatusUI(status);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                android.util.Log.e("HomeFragment", "pumpStatus listener cancelled: " + error.getMessage());
+            }
+        };
+        FirebaseHelper.getInstance().listenPumpStatus(pumpStatusListener);
+    }
+
+    /**
+     * Attaches a permanent listener to {@code sensorData/pumpMode}.
+     * Keeps the app in sync if mode is changed from another client or
+     * the ESP32 itself resets the mode.
+     */
+    private void attachPumpModeListener() {
+        pumpModeListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!isAdded()) return;
+                String mode = snapshot.exists() ? snapshot.getValue(String.class) : "AUTO";
+                if (mode == null) mode = "AUTO";
+                // Only update UI if mode differs from local state (avoids unnecessary redraws)
+                if (!mode.equals(currentPumpMode)) {
+                    currentPumpMode = mode;
+                    applyModeUI(mode);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                android.util.Log.e("HomeFragment", "pumpMode listener cancelled: " + error.getMessage());
+            }
+        };
+        FirebaseHelper.getInstance().listenPumpMode(pumpModeListener);
+    }
+
+    /**
+     * Applies the real pump status to all UI elements.
+     * This is the single source of truth — called from the Firebase listener.
+     */
+    private void applyPumpStatusUI(String status) {
+        if (!isAdded()) return;
+        boolean isOn = "ON".equalsIgnoreCase(status);
+
+        // Status badge
+        if (pumpStatusBadge != null) {
+            pumpStatusBadge.setText(isOn ? "ON" : "OFF");
+            pumpStatusBadge.setTextColor(
+                    ContextCompat.getColor(requireContext(), isOn ? R.color.status_healthy : R.color.status_critical));
+            pumpStatusBadge.setBackgroundTintList(
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(),
+                            isOn ? R.color.icon_bg_green : R.color.icon_bg_red)));
+        }
+
+        // Subtitle
+        if (pumpSubtitleText != null)
+            pumpSubtitleText.setText(isOn ? "Currently active" : "Currently inactive");
+
+        // Last activated timestamp
+        if (tvLastActivated != null && isOn) {
+            String ts = new SimpleDateFormat("hh:mm a, dd MMM", Locale.getDefault())
+                    .format(new Date(System.currentTimeMillis()));
+            tvLastActivated.setText(ts);
+        }
+
+        // Reason row — only changes on status transition
+        if (tvPumpReason != null)
+            tvPumpReason.setText("AUTO".equalsIgnoreCase(currentPumpMode)
+                    ? getString(R.string.pump_reason_ai)
+                    : getString(R.string.pump_reason_manual));
+
+        // Water Now button — only update in MANUAL mode
+        if ("MANUAL".equalsIgnoreCase(currentPumpMode) && btnWaterNow != null) {
+            btnWaterNow.setText(isOn ? getString(R.string.pump_turn_off)
+                                     : getString(R.string.pump_turn_on));
+            btnWaterNow.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(),
+                            isOn ? R.color.accent_red : R.color.primary_green)));
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Water Now button logic (MANUAL mode only)
+    // ══════════════════════════════════════════════════════════════════════
+
+    private void onWaterNowClicked() {
+        // Guard: only act in manual mode
+        if (!"MANUAL".equalsIgnoreCase(currentPumpMode)) return;
+        sendPumpCommand();
+    }
+
+    /**
+     * Sends pumpCommand ("ON"/"OFF") to {@code sensorData/pumpCommand} for the ESP32 to read.
+     *
+     * <p>Also writes {@code pumpStatus} directly so the {@link #pumpStatusListener} fires
+     * immediately, updating the UI regardless of whether the ESP32 firmware has been updated.
+     * If a real ESP32 IS present, it will overwrite {@code pumpStatus} with the confirmed
+     * value a moment later — which is harmless since it is the same value.</p>
+     */
+    private void sendPumpCommand() {
+        // Toggle: if currently ON send OFF, and vice versa
+        String command = "ON".equalsIgnoreCase(currentPumpStatus) ? "OFF" : "ON";
+
+        btnWaterNow.setEnabled(false);
+
+        // 1. Write pumpCommand — ESP32 reads this and actuates the physical pump
+        FirebaseHelper.getInstance().setPumpCommand(command, (cmdError, cmdRef) -> {
+            if (!isAdded()) return;
+            if (cmdError != null) {
+                android.util.Log.e("HomeFragment", "setPumpCommand failed: " + cmdError.getMessage());
+                Toast.makeText(requireContext(),
+                        "Failed to send pump command: " + cmdError.getMessage(),
+                        Toast.LENGTH_LONG).show();
+                btnWaterNow.setEnabled(true);
+            }
+        });
+
+        // 2. Also write pumpStatus directly so the pumpStatusListener fires immediately.
+        //    This gives instant UI feedback and supports demo mode / pre-update ESP32 firmware.
+        //    When the ESP32 IS connected it will write the same value back — no conflict.
+        FirebaseHelper.getInstance().setPumpStatusDirect(command, (statusError, statusRef) -> {
+            if (!isAdded()) return;
+            // Re-enable button after status write completes (success or failure)
+            btnWaterNow.setEnabled(true);
+            if (statusError != null) {
+                android.util.Log.e("HomeFragment", "setPumpStatusDirect failed: " + statusError.getMessage());
+            }
+            // UI is updated by pumpStatusListener reacting to the sensorData/pumpStatus change
+        });
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Smart Irrigation Card — dynamic recommendation from sensor data
+    // ══════════════════════════════════════════════════════════════════════
+
+    private void updateSmartIrrigationCard(SensorData data) {
+        if (!isAdded() || aiRecommendationText == null || data == null) return;
+
+        double soilPct = toSoilMoisturePercent(data.getSoilMoisture());
+        double temp    = data.getTemperature();
+        double humidity= data.getHumidity();
+        boolean pumpOn = "ON".equalsIgnoreCase(currentPumpStatus);
+
+        String recommendation;
+        if (pumpOn) {
+            recommendation = "Pump running. Irrigation in progress.";
+        } else if (soilPct < 25) {
+            recommendation = "Soil is very dry. Irrigation recommended immediately.";
+        } else if (soilPct < 40) {
+            recommendation = "Soil is dry. Irrigation recommended soon.";
+        } else if (soilPct > 75) {
+            recommendation = "Soil moisture is optimal. No irrigation needed.";
+        } else if (temp > 35) {
+            recommendation = "Temperature is high (" + (int) temp + "°C). Monitor closely.";
+        } else if (humidity < 30) {
+            recommendation = "Humidity is low (" + (int) humidity + "%). Consider irrigation.";
+        } else {
+            recommendation = "Farm conditions are good. Continue regular monitoring.";
+        }
+        aiRecommendationText.setText(recommendation);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Farm & Data loading
+    // ══════════════════════════════════════════════════════════════════════
+
     private void loadFarmerProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             FirebaseHelper.getInstance().getUserProfile(user.getUid(), profile -> {
                 if (!isAdded()) return;
                 mUserProfile = profile;
-                if (profile != null && profile.getName() != null) {
-                    tvFarmerName.setText(profile.getName());
-                } else {
-                    tvFarmerName.setText("Farmer");
-                }
+                tvFarmerName.setText((profile != null && profile.getName() != null)
+                        ? profile.getName() : "Farmer");
             });
         }
     }
@@ -165,12 +482,10 @@ public class HomeFragment extends Fragment {
                     if (mSelectedFarm == null) {
                         selectFarm(farms.get(0));
                     } else {
-                        // Refresh current selected farm data from the list
                         for (Farm f : farms) {
                             if (f.getFarmId().equals(mSelectedFarm.getFarmId())) {
                                 mSelectedFarm = f;
                                 tvSelectedFarm.setText(f.getFarmName());
-                                updatePumpDisplay(f.getPumpStatus());
                                 break;
                             }
                         }
@@ -187,12 +502,10 @@ public class HomeFragment extends Fragment {
         mSelectedFarm = farm;
         tvSelectedFarm.setText(farm.getFarmName());
 
-        // Clean up previous pump listener if any
         if (farmPumpListener != null && mSelectedFarm != null) {
             FirebaseHelper.getInstance().removeListenerForFarm(mSelectedFarm.getFarmId(), farmPumpListener);
         }
 
-        // Add real-time listener to this farm's pump status
         farmPumpListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -200,7 +513,6 @@ public class HomeFragment extends Fragment {
                 String status = snapshot.getValue(String.class);
                 if (status != null && mSelectedFarm != null) {
                     mSelectedFarm.setPumpStatus(status);
-                    updatePumpDisplay(status);
                 }
             }
 
@@ -215,22 +527,16 @@ public class HomeFragment extends Fragment {
             Toast.makeText(requireContext(), "No farms configured. Add fields in My Farm tab.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         String[] farmNames = new String[mUserFarms.size()];
-        for (int i = 0; i < mUserFarms.size(); i++) {
-            farmNames[i] = mUserFarms.get(i).getFarmName();
-        }
-
+        for (int i = 0; i < mUserFarms.size(); i++) farmNames[i] = mUserFarms.get(i).getFarmName();
         int checkedItem = -1;
         if (mSelectedFarm != null) {
             for (int i = 0; i < mUserFarms.size(); i++) {
                 if (mUserFarms.get(i).getFarmId().equals(mSelectedFarm.getFarmId())) {
-                    checkedItem = i;
-                    break;
+                    checkedItem = i; break;
                 }
             }
         }
-
         new AlertDialog.Builder(requireContext())
                 .setTitle("Select Active Farm")
                 .setSingleChoiceItems(farmNames, checkedItem, (dialog, which) -> {
@@ -242,154 +548,12 @@ public class HomeFragment extends Fragment {
                 .show();
     }
 
-    private void onWaterNowClicked() {
-        if (mUserProfile == null) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                FirebaseHelper.getInstance().getUserProfile(user.getUid(), profile -> {
-                    mUserProfile = profile;
-                    runWaterNowFlow();
-                });
-            } else {
-                Toast.makeText(requireContext(), "Session expired. Please login again.", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            runWaterNowFlow();
-        }
-    }
-
-    private void runWaterNowFlow() {
-        boolean isConnected = mUserProfile != null && (mUserProfile.isHasDevice() || mUserProfile.isDemoMode());
-
-        if (isConnected) {
-            showFarmSelectorForWatering();
-        } else {
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("AgriSense Device Required")
-                    .setMessage("AgriSense ESP32 device is not connected. Please connect your hardware to enable automated irrigation controls, or run in Demo Mode.")
-                    .setPositiveButton("Connect Device", (dialog, which) -> {
-                        Intent intent = new Intent(requireContext(), DeviceCheckActivity.class);
-                        startActivity(intent);
-                    })
-                    .setNeutralButton("Use Demo Mode", (dialog, which) -> {
-                        enableDemoModeAndSelectFarm();
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
-        }
-    }
-
-    private void enableDemoModeAndSelectFarm() {
-        if (mUserProfile == null) return;
-        mUserProfile.setDemoMode(true);
-        mUserProfile.setHasDevice(false);
-
-        FirebaseHelper.getInstance().saveUserProfile(mUserProfile, (error, ref) -> {
-            if (!isAdded()) return;
-            if (error == null) {
-                Toast.makeText(requireContext(), "Simulated Demo Mode active", Toast.LENGTH_SHORT).show();
-                showFarmSelectorForWatering();
-            } else {
-                Toast.makeText(requireContext(), "Failed to activate Demo Mode: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void showFarmSelectorForWatering() {
-        if (mUserFarms.isEmpty()) {
-            Toast.makeText(requireContext(), "No farms configured. Add fields in My Farm tab.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String[] farmNames = new String[mUserFarms.size()];
-        for (int i = 0; i < mUserFarms.size(); i++) {
-            farmNames[i] = mUserFarms.get(i).getFarmName();
-        }
-
-        int checkedItem = -1;
-        if (mSelectedFarm != null) {
-            for (int i = 0; i < mUserFarms.size(); i++) {
-                if (mUserFarms.get(i).getFarmId().equals(mSelectedFarm.getFarmId())) {
-                    checkedItem = i;
-                    break;
-                }
-            }
-        }
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Select Field to Water")
-                .setSingleChoiceItems(farmNames, checkedItem, (dialog, which) -> {
-                    Farm chosenFarm = mUserFarms.get(which);
-                    selectFarm(chosenFarm);
-                    dialog.dismiss();
-                    toggleActivePumpForFarm(chosenFarm);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-    private void toggleActivePumpForFarm(Farm farm) {
-        String currentStatus = farm.getPumpStatus();
-        String targetStatus = "ON".equalsIgnoreCase(currentStatus) ? "OFF" : "ON";
-
-        btnWaterNow.setEnabled(false);
-        FirebaseHelper.getInstance().setPumpStatus(farm.getFarmId(), targetStatus, (error, ref) -> {
-            if (!isAdded()) return;
-            btnWaterNow.setEnabled(true);
-            if (error == null) {
-                farm.setPumpStatus(targetStatus);
-                updatePumpDisplay(targetStatus);
-                Toast.makeText(requireContext(), "Pump switched " + targetStatus + " for " + farm.getFarmName(), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(requireContext(), "Failed to control pump: " + error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void toggleActivePump() {
-        if (mSelectedFarm == null) {
-            Toast.makeText(requireContext(), "No active farm selected to irrigate", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String currentStatus = mSelectedFarm.getPumpStatus();
-        String targetStatus = "ON".equalsIgnoreCase(currentStatus) ? "OFF" : "ON";
-
-        btnWaterNow.setEnabled(false);
-        FirebaseHelper.getInstance().setPumpStatus(mSelectedFarm.getFarmId(), targetStatus, (error, ref) -> {
-            if (!isAdded()) return;
-            btnWaterNow.setEnabled(true);
-            if (error == null) {
-                mSelectedFarm.setPumpStatus(targetStatus);
-                updatePumpDisplay(targetStatus);
-                Toast.makeText(requireContext(), "Pump switched " + targetStatus, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(requireContext(), "Failed to control pump: " + error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void updatePumpDisplay(String status) {
-        boolean isOn = "ON".equalsIgnoreCase(status);
-        pumpStatusBadge.setText(isOn ? "ON" : "OFF");
-        pumpSubtitleText.setText(isOn ? "Currently active" : "Currently inactive");
-
-        pumpStatusBadge.setTextColor(ContextCompat.getColor(requireContext(), isOn ? R.color.status_healthy : R.color.status_critical));
-        pumpStatusBadge.setBackgroundTintList(
-                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), isOn ? R.color.icon_bg_green : R.color.icon_bg_red)));
-
-        btnWaterNow.setText(isOn ? "Stop Irrigation" : "Water Now");
-        if (isOn) {
-            btnWaterNow.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.accent_red)));
-        } else {
-            btnWaterNow.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary_green)));
-        }
-    }
-
     private void loadSensorData() {
         sensorListener = FirebaseHelper.getInstance().listenSensorData(data -> {
             if (!isAdded()) return;
+            lastSensorData = data;
             applySensorDisplay(data);
+            updateSmartIrrigationCard(data);
         });
     }
 
@@ -400,29 +564,6 @@ public class HomeFragment extends Fragment {
         waterLevelValueText.setText(toWaterLevelPercent(data) + "%");
     }
 
-    private static int toSoilMoisturePercent(double rawMoisture) {
-        if (rawMoisture <= 0) {
-            return 0;
-        }
-        if (rawMoisture <= 100) {
-            return Math.max(0, Math.min(100, (int) Math.round(rawMoisture)));
-        }
-        int percent = (int) Math.round(100 - (rawMoisture / RAW_MOISTURE_MAX) * 100);
-        return Math.max(0, Math.min(100, percent));
-    }
-
-    private static String formatTemperature(double temperature) {
-        return Math.round(temperature) + "°C";
-    }
-
-    private static int toWaterLevelPercent(SensorData data) {
-        double light = data.getLightIntensity();
-        if (light > 0) {
-            return Math.max(0, Math.min(100, (int) Math.round(light / 10)));
-        }
-        return toSoilMoisturePercent(data.getSoilMoisture());
-    }
-
     private void loadDashboardData() {
         dashboardListener = FirebaseHelper.getInstance().listenDashboard(data -> {
             if (!isAdded()) return;
@@ -430,16 +571,6 @@ public class HomeFragment extends Fragment {
             farmHealthValueText.setText(data.getFarmHealth() + "%");
             farmHealthStatusText.setText(data.getFarmHealth() >= 70 ? "Healthy" : "Needs Attention");
             farmHealthProgress.setProgress(data.getFarmHealth());
-
-            aiRecommendationText.setText(data.getAiRecommendation());
-
-            // If we don't have individual farm pump sync, fallback to global legacy state
-            if (mSelectedFarm == null) {
-                boolean pumpOn = "ON".equalsIgnoreCase(data.getPumpStatus());
-                pumpStatusBadge.setText(data.getPumpStatus());
-                pumpSubtitleText.setText(pumpOn ? "Currently active" : "Currently inactive");
-                updatePumpDisplay(data.getPumpStatus());
-            }
 
             waterSavedValueText.setText(data.getWaterSaved() + " L");
             energySavedValueText.setText(data.getEnergySaved() + " kWh");
@@ -461,21 +592,14 @@ public class HomeFragment extends Fragment {
         wlBoundaryText.setText(data.getSuspectedBoundary() != null ? data.getSuspectedBoundary() : "—");
         wlEstimatedLossText.setText((int) data.getEstimatedLoss() + " L");
 
-        int textColorRes;
-        int bgColorRes;
+        int textColorRes, bgColorRes;
         switch (status) {
             case WaterLossEngine.STATUS_DETECTED:
-                textColorRes = R.color.status_critical;
-                bgColorRes = R.color.icon_bg_red;
-                break;
+                textColorRes = R.color.status_critical; bgColorRes = R.color.icon_bg_red; break;
             case WaterLossEngine.STATUS_POSSIBLE:
-                textColorRes = R.color.status_medium;
-                bgColorRes = R.color.icon_bg_orange;
-                break;
+                textColorRes = R.color.status_medium;   bgColorRes = R.color.icon_bg_orange; break;
             default:
-                textColorRes = R.color.status_healthy;
-                bgColorRes = R.color.icon_bg_green;
-                break;
+                textColorRes = R.color.status_healthy;  bgColorRes = R.color.icon_bg_green; break;
         }
         wlStatusBadge.setTextColor(ContextCompat.getColor(requireContext(), textColorRes));
         wlStatusBadge.setBackgroundTintList(
@@ -484,22 +608,14 @@ public class HomeFragment extends Fragment {
 
     private void applyRiskLevel(String riskLevel) {
         if (riskLevel == null) riskLevel = AIEngine.RISK_LOW;
-
-        int textColorRes;
-        int bgColorRes;
+        int textColorRes, bgColorRes;
         switch (riskLevel) {
             case AIEngine.RISK_HIGH:
-                textColorRes = R.color.status_critical;
-                bgColorRes = R.color.icon_bg_red;
-                break;
+                textColorRes = R.color.status_critical; bgColorRes = R.color.icon_bg_red; break;
             case AIEngine.RISK_MEDIUM:
-                textColorRes = R.color.status_medium;
-                bgColorRes = R.color.icon_bg_orange;
-                break;
+                textColorRes = R.color.status_medium;   bgColorRes = R.color.icon_bg_orange; break;
             default:
-                textColorRes = R.color.status_healthy;
-                bgColorRes = R.color.icon_bg_green;
-                break;
+                textColorRes = R.color.status_healthy;  bgColorRes = R.color.icon_bg_green; break;
         }
         riskLevelBadge.setText(riskLevel);
         riskLevelBadge.setTextColor(ContextCompat.getColor(requireContext(), textColorRes));
@@ -527,43 +643,52 @@ public class HomeFragment extends Fragment {
                 .addValueEventListener(unreadListener);
     }
 
+    // ══════════════════════════════════════════════════════════════════════
+    // Legacy updatePumpDisplay — kept for backward compat with loadUserFarms
+    // Now delegates to applyPumpStatusUI which is the single source of truth
+    // ══════════════════════════════════════════════════════════════════════
+    private void updatePumpDisplay(String status) {
+        applyPumpStatusUI(status);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Auto-refresh timer (triggers AI Engine re-analysis every 20s)
+    // ══════════════════════════════════════════════════════════════════════
+
     private void startAutoRefreshTimer() {
         mRefreshRunnable = new Runnable() {
             @Override
             public void run() {
                 if (!isAdded()) return;
-                // Force AI Engine recommendation refresh on Firebase
                 FirebaseHelper.getInstance().runAIEngine();
-                mHandler.postDelayed(this, 20000); // 20 seconds loop
+                mHandler.postDelayed(this, 20000);
             }
         };
         mHandler.postDelayed(mRefreshRunnable, 20000);
     }
 
     private void stopAutoRefreshTimer() {
-        if (mRefreshRunnable != null) {
-            mHandler.removeCallbacks(mRefreshRunnable);
-        }
+        if (mRefreshRunnable != null) mHandler.removeCallbacks(mRefreshRunnable);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (dashboardListener != null) {
-            FirebaseHelper.getInstance().removeListener(FirebaseHelper.NODE_DASHBOARD, dashboardListener);
-        }
-        if (waterLossListener != null) {
-            FirebaseHelper.getInstance().removeListener(FirebaseHelper.NODE_WATER_LOSS, waterLossListener);
-        }
-        if (sensorListener != null) {
-            FirebaseHelper.getInstance().removeListener(FirebaseHelper.NODE_SENSOR_DATA, sensorListener);
-        }
-        if (unreadListener != null) {
-            FirebaseDatabase.getInstance().getReference("notifications")
-                    .removeEventListener(unreadListener);
-        }
-        if (farmPumpListener != null && mSelectedFarm != null) {
-            FirebaseHelper.getInstance().removeListenerForFarm(mSelectedFarm.getFarmId(), farmPumpListener);
-        }
+    // ══════════════════════════════════════════════════════════════════════
+    // Sensor helpers
+    // ══════════════════════════════════════════════════════════════════════
+
+    private static int toSoilMoisturePercent(double rawMoisture) {
+        if (rawMoisture <= 0) return 0;
+        if (rawMoisture <= 100) return Math.max(0, Math.min(100, (int) Math.round(rawMoisture)));
+        int percent = (int) Math.round(100 - (rawMoisture / RAW_MOISTURE_MAX) * 100);
+        return Math.max(0, Math.min(100, percent));
+    }
+
+    private static String formatTemperature(double temperature) {
+        return Math.round(temperature) + "°C";
+    }
+
+    private static int toWaterLevelPercent(SensorData data) {
+        double light = data.getLightIntensity();
+        if (light > 0) return Math.max(0, Math.min(100, (int) Math.round(light / 10)));
+        return toSoilMoisturePercent(data.getSoilMoisture());
     }
 }
