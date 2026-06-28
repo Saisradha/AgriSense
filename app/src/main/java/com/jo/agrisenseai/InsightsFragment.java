@@ -261,6 +261,7 @@ public class InsightsFragment extends Fragment {
         SimpleDateFormat dayLabel = new SimpleDateFormat("EEE", Locale.getDefault()); // Mon, Tue…
 
         for (HistoryModel m : entries) {
+            if (m == null) continue;
             String key = dayKey.format(new java.util.Date(m.getTimestamp()));
             float[] bucket = dayBuckets.get(key);
             if (bucket == null) {
@@ -303,7 +304,7 @@ public class InsightsFragment extends Fragment {
 
             @Override
             public void onHistoryLoaded(java.util.ArrayList<HistoryModel> allEntries) {
-                if (!isAdded()) return;
+                if (getContext() == null) return;
 
                 // ── FIX: Always hide loading immediately (was only hidden inside
                 // the non-empty branch, causing infinite spinner on empty data).
@@ -342,6 +343,7 @@ public class InsightsFragment extends Fragment {
                 double sumTodayTemp = 0, sumTodayHum = 0, sumTodaySoil = 0;
                 int todayCount = 0;
                 for (HistoryModel m : allEntries) {
+                    if (m == null) continue;
                     String k;
                     try { k = dayKeyFmt.format(new java.util.Date(m.getTimestamp())); }
                     catch (Exception e) { continue; }
@@ -384,12 +386,14 @@ public class InsightsFragment extends Fragment {
                     double oldSoilSum = 0, newSoilSum = 0;
                     for (int i = 0; i < half; i++) {
                         HistoryModel m = allEntries.get(i);
+                        if (m == null) continue;
                         oldTempSum += m.getTemperature();
                         oldHumSum  += m.getHumidity();
                         oldSoilSum += m.getSoilMoisture();
                     }
                     for (int i = half; i < totalCount; i++) {
                         HistoryModel m = allEntries.get(i);
+                        if (m == null) continue;
                         newTempSum += m.getTemperature();
                         newHumSum  += m.getHumidity();
                         newSoilSum += m.getSoilMoisture();
@@ -441,9 +445,9 @@ public class InsightsFragment extends Fragment {
                 setChartXLabels(chartSoilMoisture, xLabels);
 
                 // ── Push data to charts (animate only first time) ─────────
-                int tempColor = ContextCompat.getColor(requireContext(), R.color.accent_orange);
-                int humColor  = ContextCompat.getColor(requireContext(), R.color.accent_blue);
-                int soilColor = ContextCompat.getColor(requireContext(), R.color.primary_green);
+                int tempColor = ContextCompat.getColor(getContext(), R.color.accent_orange);
+                int humColor  = ContextCompat.getColor(getContext(), R.color.accent_blue);
+                int soilColor = ContextCompat.getColor(getContext(), R.color.primary_green);
 
                 applyTemperatureData(tempEntries, tempColor);
                 applyHumidityData(humEntries, humColor);
@@ -527,9 +531,9 @@ public class InsightsFragment extends Fragment {
                 }
                 insightWlStatusBadge.setText(wlStatusBadgeText);
                 insightWlStatusBadge.setTextColor(
-                        ContextCompat.getColor(requireContext(), badgeTextColorRes));
+                        ContextCompat.getColor(getContext(), badgeTextColorRes));
                 insightWlStatusBadge.setBackgroundTintList(
-                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), badgeBgColorRes)));
+                        ColorStateList.valueOf(ContextCompat.getColor(getContext(), badgeBgColorRes)));
 
                 insightWlRecommendation.setText(wlPercent > 25.0
                         ? "Possible water leakage detected.\nCheck irrigation lines."
@@ -552,7 +556,7 @@ public class InsightsFragment extends Fragment {
 
             @Override
             public void onHistoryError(String errorMessage) {
-                if (!isAdded()) return;
+                if (getContext() == null) return;
                 // Always clear loading on error
                 layoutLoadingInsights.setVisibility(View.GONE);
                 layoutMainContent.setVisibility(View.GONE);
@@ -604,7 +608,7 @@ public class InsightsFragment extends Fragment {
     // ─────────────────────────────────────────────────────────────────────
     private void loadWaterLossData() {
         waterLossListener = FirebaseHelper.getInstance().listenWaterLoss(data -> {
-            if (!isAdded()) return;
+            if (getContext() == null) return;
             try {
                 insightWlFlowInput.setText((int) data.getFlowInput() + " L");
                 insightWlAvgMoisture.setText((int) data.getAverageMoisture() + "%");

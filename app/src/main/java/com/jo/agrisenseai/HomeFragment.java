@@ -28,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -160,6 +161,11 @@ public class HomeFragment extends Fragment {
         // Apply default AUTO mode visuals (no Firebase write yet — only on user click)
         applyModeUI("AUTO");
 
+        // Set dynamic greeting based on time of day
+        if (tvWelcomeGreeting != null) {
+            tvWelcomeGreeting.setText(getGreeting());
+        }
+
         return view;
     }
 
@@ -214,10 +220,10 @@ public class HomeFragment extends Fragment {
         applyModeUI(mode);
 
         FirebaseHelper.getInstance().setPumpMode(mode, (error, ref) -> {
-            if (!isAdded()) return;
+            if (getContext() == null) return;
             if (error != null) {
                 android.util.Log.e("HomeFragment", "setPumpMode failed: " + error.getMessage());
-                Toast.makeText(requireContext(), "Could not change pump mode.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Could not change pump mode.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -227,7 +233,7 @@ public class HomeFragment extends Fragment {
      * Called immediately on button press and also on app start.
      */
     private void applyModeUI(String mode) {
-        if (!isAdded()) return;
+        if (getContext() == null) return;
         boolean isAuto = "AUTO".equalsIgnoreCase(mode);
 
         // Update info row
@@ -238,16 +244,16 @@ public class HomeFragment extends Fragment {
         if (btnModeAuto != null && btnModeManual != null) {
             if (isAuto) {
                 btnModeAuto.setBackgroundTintList(
-                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary_green)));
-                btnModeAuto.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
+                        ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.primary_green)));
+                btnModeAuto.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
                 btnModeManual.setBackgroundTintList(ColorStateList.valueOf(android.graphics.Color.TRANSPARENT));
-                btnModeManual.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_green));
+                btnModeManual.setTextColor(ContextCompat.getColor(getContext(), R.color.primary_green));
             } else {
                 btnModeManual.setBackgroundTintList(
-                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary_green)));
-                btnModeManual.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
+                        ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.primary_green)));
+                btnModeManual.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
                 btnModeAuto.setBackgroundTintList(ColorStateList.valueOf(android.graphics.Color.TRANSPARENT));
-                btnModeAuto.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_green));
+                btnModeAuto.setTextColor(ContextCompat.getColor(getContext(), R.color.primary_green));
             }
         }
 
@@ -261,7 +267,7 @@ public class HomeFragment extends Fragment {
                 btnWaterNow.setEnabled(false);
                 btnWaterNow.setText(getString(R.string.pump_controlled_auto));
                 btnWaterNow.setBackgroundTintList(
-                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary_green)));
+                        ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.primary_green)));
             } else {
                 btnWaterNow.setEnabled(true);
                 // Reflect actual pump state for button text/color
@@ -288,7 +294,7 @@ public class HomeFragment extends Fragment {
         pumpStatusListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!isAdded()) return;
+                if (getContext() == null) return;
                 String status = snapshot.exists() ? snapshot.getValue(String.class) : "OFF";
                 if (status == null) status = "OFF";
                 currentPumpStatus = status;
@@ -312,7 +318,7 @@ public class HomeFragment extends Fragment {
         pumpModeListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!isAdded()) return;
+                if (getContext() == null) return;
                 String mode = snapshot.exists() ? snapshot.getValue(String.class) : "AUTO";
                 if (mode == null) mode = "AUTO";
                 // Only update UI if mode differs from local state (avoids unnecessary redraws)
@@ -335,16 +341,16 @@ public class HomeFragment extends Fragment {
      * This is the single source of truth — called from the Firebase listener.
      */
     private void applyPumpStatusUI(String status) {
-        if (!isAdded()) return;
+        if (getContext() == null) return;
         boolean isOn = "ON".equalsIgnoreCase(status);
 
         // Status badge
         if (pumpStatusBadge != null) {
             pumpStatusBadge.setText(isOn ? "ON" : "OFF");
             pumpStatusBadge.setTextColor(
-                    ContextCompat.getColor(requireContext(), isOn ? R.color.status_healthy : R.color.status_critical));
+                    ContextCompat.getColor(getContext(), isOn ? R.color.status_healthy : R.color.status_critical));
             pumpStatusBadge.setBackgroundTintList(
-                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(),
+                    ColorStateList.valueOf(ContextCompat.getColor(getContext(),
                             isOn ? R.color.icon_bg_green : R.color.icon_bg_red)));
         }
 
@@ -370,7 +376,7 @@ public class HomeFragment extends Fragment {
             btnWaterNow.setText(isOn ? getString(R.string.pump_turn_off)
                                      : getString(R.string.pump_turn_on));
             btnWaterNow.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(requireContext(),
+                    ContextCompat.getColor(getContext(),
                             isOn ? R.color.accent_red : R.color.primary_green)));
         }
     }
@@ -401,10 +407,10 @@ public class HomeFragment extends Fragment {
 
         // 1. Write pumpCommand — ESP32 reads this and actuates the physical pump
         FirebaseHelper.getInstance().setPumpCommand(command, (cmdError, cmdRef) -> {
-            if (!isAdded()) return;
+            if (getContext() == null) return;
             if (cmdError != null) {
                 android.util.Log.e("HomeFragment", "setPumpCommand failed: " + cmdError.getMessage());
-                Toast.makeText(requireContext(),
+                Toast.makeText(getContext(),
                         "Failed to send pump command: " + cmdError.getMessage(),
                         Toast.LENGTH_LONG).show();
                 btnWaterNow.setEnabled(true);
@@ -415,7 +421,7 @@ public class HomeFragment extends Fragment {
         //    This gives instant UI feedback and supports demo mode / pre-update ESP32 firmware.
         //    When the ESP32 IS connected it will write the same value back — no conflict.
         FirebaseHelper.getInstance().setPumpStatusDirect(command, (statusError, statusRef) -> {
-            if (!isAdded()) return;
+            if (getContext() == null) return;
             // Re-enable button after status write completes (success or failure)
             btnWaterNow.setEnabled(true);
             if (statusError != null) {
@@ -430,7 +436,7 @@ public class HomeFragment extends Fragment {
     // ══════════════════════════════════════════════════════════════════════
 
     private void updateSmartIrrigationCard(SensorData data) {
-        if (!isAdded() || aiRecommendationText == null || data == null) return;
+        if (getContext() == null || aiRecommendationText == null || data == null) return;
 
         double soilPct = toSoilMoisturePercent(data.getSoilMoisture());
         double temp    = data.getTemperature();
@@ -464,7 +470,7 @@ public class HomeFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             FirebaseHelper.getInstance().getUserProfile(user.getUid(), profile -> {
-                if (!isAdded()) return;
+                if (getContext() == null) return;
                 mUserProfile = profile;
                 tvFarmerName.setText((profile != null && profile.getName() != null)
                         ? profile.getName() : "Farmer");
@@ -476,7 +482,7 @@ public class HomeFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             FirebaseHelper.getInstance().listenUserFarms(user.getUid(), farms -> {
-                if (!isAdded()) return;
+                if (getContext() == null) return;
                 mUserFarms = farms;
                 if (!farms.isEmpty()) {
                     if (mSelectedFarm == null) {
@@ -509,7 +515,7 @@ public class HomeFragment extends Fragment {
         farmPumpListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!isAdded()) return;
+                if (getContext() == null) return;
                 String status = snapshot.getValue(String.class);
                 if (status != null && mSelectedFarm != null) {
                     mSelectedFarm.setPumpStatus(status);
@@ -550,7 +556,7 @@ public class HomeFragment extends Fragment {
 
     private void loadSensorData() {
         sensorListener = FirebaseHelper.getInstance().listenSensorData(data -> {
-            if (!isAdded()) return;
+            if (getContext() == null) return;
             lastSensorData = data;
             applySensorDisplay(data);
             updateSmartIrrigationCard(data);
@@ -566,7 +572,7 @@ public class HomeFragment extends Fragment {
 
     private void loadDashboardData() {
         dashboardListener = FirebaseHelper.getInstance().listenDashboard(data -> {
-            if (!isAdded()) return;
+            if (getContext() == null) return;
 
             farmHealthValueText.setText(data.getFarmHealth() + "%");
             farmHealthStatusText.setText(data.getFarmHealth() >= 70 ? "Healthy" : "Needs Attention");
@@ -581,7 +587,7 @@ public class HomeFragment extends Fragment {
 
     private void loadWaterLossData() {
         waterLossListener = FirebaseHelper.getInstance().listenWaterLoss(data -> {
-            if (!isAdded()) return;
+            if (getContext() == null) return;
             applyWaterLossCard(data);
         });
     }
@@ -601,9 +607,9 @@ public class HomeFragment extends Fragment {
             default:
                 textColorRes = R.color.status_healthy;  bgColorRes = R.color.icon_bg_green; break;
         }
-        wlStatusBadge.setTextColor(ContextCompat.getColor(requireContext(), textColorRes));
+        wlStatusBadge.setTextColor(ContextCompat.getColor(getContext(), textColorRes));
         wlStatusBadge.setBackgroundTintList(
-                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), bgColorRes)));
+                ColorStateList.valueOf(ContextCompat.getColor(getContext(), bgColorRes)));
     }
 
     private void applyRiskLevel(String riskLevel) {
@@ -618,16 +624,16 @@ public class HomeFragment extends Fragment {
                 textColorRes = R.color.status_healthy;  bgColorRes = R.color.icon_bg_green; break;
         }
         riskLevelBadge.setText(riskLevel);
-        riskLevelBadge.setTextColor(ContextCompat.getColor(requireContext(), textColorRes));
+        riskLevelBadge.setTextColor(ContextCompat.getColor(getContext(), textColorRes));
         riskLevelBadge.setBackgroundTintList(
-                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), bgColorRes)));
+                ColorStateList.valueOf(ContextCompat.getColor(getContext(), bgColorRes)));
     }
 
     private void watchUnreadNotifications() {
         unreadListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!isAdded()) return;
+                if (getContext() == null) return;
                 boolean hasUnread = false;
                 for (DataSnapshot child : snapshot.getChildren()) {
                     Boolean read = child.child("read").getValue(Boolean.class);
@@ -659,7 +665,7 @@ public class HomeFragment extends Fragment {
         mRefreshRunnable = new Runnable() {
             @Override
             public void run() {
-                if (!isAdded()) return;
+                if (getContext() == null) return;
                 FirebaseHelper.getInstance().runAIEngine();
                 mHandler.postDelayed(this, 20000);
             }
@@ -690,5 +696,19 @@ public class HomeFragment extends Fragment {
         double light = data.getLightIntensity();
         if (light > 0) return Math.max(0, Math.min(100, (int) Math.round(light / 10)));
         return toSoilMoisturePercent(data.getSoilMoisture());
+    }
+
+    private String getGreeting() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if (hour >= 5 && hour < 12) {
+            return "Good Morning 🌱";
+        } else if (hour >= 12 && hour < 17) {
+            return "Good Afternoon ☀️";
+        } else if (hour >= 17 && hour < 21) {
+            return "Good Evening 🍃";
+        } else {
+            return "Good Night 🌙";
+        }
     }
 }
