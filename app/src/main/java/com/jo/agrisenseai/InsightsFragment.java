@@ -305,253 +305,264 @@ public class InsightsFragment extends Fragment {
             @Override
             public void onHistoryLoaded(java.util.ArrayList<HistoryModel> allEntries) {
                 if (getContext() == null) return;
+                try {
+                    // ── FIX: Always hide loading immediately (was only hidden inside
+                    // the non-empty branch, causing infinite spinner on empty data).
+                    layoutLoadingInsights.setVisibility(View.GONE);
 
-                // ── FIX: Always hide loading immediately (was only hidden inside
-                // the non-empty branch, causing infinite spinner on empty data).
-                layoutLoadingInsights.setVisibility(View.GONE);
+                    // Handle empty state
+                    if (allEntries == null || allEntries.isEmpty()) {
+                        layoutMainContent.setVisibility(View.GONE);
+                        layoutErrorInsights.setVisibility(View.GONE);
+                        layoutEmptyInsights.setVisibility(View.VISIBLE);
+                        trendDataPointsText.setText(getString(R.string.no_history_data));
+                        return;
+                    }
 
-                // Handle empty state
-                if (allEntries == null || allEntries.isEmpty()) {
-                    layoutMainContent.setVisibility(View.GONE);
+                    // Show main content
+                    layoutEmptyInsights.setVisibility(View.GONE);
                     layoutErrorInsights.setVisibility(View.GONE);
-                    layoutEmptyInsights.setVisibility(View.VISIBLE);
-                    trendDataPointsText.setText(getString(R.string.no_history_data));
-                    return;
-                }
+                    layoutMainContent.setVisibility(View.VISIBLE);
 
-                // Show main content
-                layoutEmptyInsights.setVisibility(View.GONE);
-                layoutErrorInsights.setVisibility(View.GONE);
-                layoutMainContent.setVisibility(View.VISIBLE);
+                    // ── Skip redundant re-render if data size hasn't changed ──
+                    if (allEntries.size() == lastRenderedEntryCount) return;
+                    lastRenderedEntryCount = allEntries.size();
 
-                // ── Skip redundant re-render if data size hasn't changed ──
-                if (allEntries.size() == lastRenderedEntryCount) return;
-                lastRenderedEntryCount = allEntries.size();
+                    // ── Aggregate raw readings into daily averages (max 7 days) ──
+                    List<DayAverage> dailyAvgs = aggregateByDay(allEntries, 7);
+                    int dayCount = dailyAvgs.size();
 
-                // ── Aggregate raw readings into daily averages (max 7 days) ──
-                List<DayAverage> dailyAvgs = aggregateByDay(allEntries, 7);
-                int dayCount = dailyAvgs.size();
+                    trendDataPointsText.setText(dayCount + " days of data");
 
-                trendDataPointsText.setText(dayCount + " days of data");
+                    // ── Today's Summary — use today's bucket if available ─────
+                    boolean todayFound = false;
+                    Calendar today = Calendar.getInstance();
+                    SimpleDateFormat dayKeyFmt = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+                    String todayKey = dayKeyFmt.format(today.getTime());
 
-                // ── Today's Summary — use today's bucket if available ─────
-                boolean todayFound = false;
-                Calendar today = Calendar.getInstance();
-                SimpleDateFormat dayKeyFmt = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                String todayKey = dayKeyFmt.format(today.getTime());
-
-                double sumTodayTemp = 0, sumTodayHum = 0, sumTodaySoil = 0;
-                int todayCount = 0;
-                for (HistoryModel m : allEntries) {
-                    if (m == null) continue;
-                    String k;
-                    try { k = dayKeyFmt.format(new java.util.Date(m.getTimestamp())); }
-                    catch (Exception e) { continue; }
-                    if (k.equals(todayKey)) {
-                        sumTodayTemp += m.getTemperature();
-                        sumTodayHum  += m.getHumidity();
-                        sumTodaySoil += m.getSoilMoisture();
-                        todayCount++;
-                        todayFound = true;
-                    }
-                }
-                if (todayFound && todayCount > 0) {
-                    summaryTemperatureText.setText(
-                            String.format(Locale.getDefault(), "%.1f°C", sumTodayTemp / todayCount));
-                    summaryHumidityText.setText(
-                            String.format(Locale.getDefault(), "%.1f%%", sumTodayHum / todayCount));
-                    summarySoilMoistureText.setText(
-                            String.format(Locale.getDefault(), "%.0f", sumTodaySoil / todayCount));
-                } else if (dayCount > 0) {
-                    // Fall back to most recent day's data
-                    DayAverage latest = dailyAvgs.get(dayCount - 1);
-                    summaryTemperatureText.setText(
-                            String.format(Locale.getDefault(), "%.1f°C", latest.temp));
-                    summaryHumidityText.setText(
-                            String.format(Locale.getDefault(), "%.1f%%", latest.humidity));
-                    summarySoilMoistureText.setText(
-                            String.format(Locale.getDefault(), "%.0f", latest.soil));
-                } else {
-                    summaryTemperatureText.setText("—");
-                    summaryHumidityText.setText("—");
-                    summarySoilMoistureText.setText("—");
-                }
-
-                // ── Trend indicators (compare first half vs second half) ──
-                int totalCount = allEntries.size();
-                if (totalCount >= 2) {
-                    int half = totalCount / 2;
-                    double oldTempSum = 0, newTempSum = 0;
-                    double oldHumSum  = 0, newHumSum  = 0;
-                    double oldSoilSum = 0, newSoilSum = 0;
-                    for (int i = 0; i < half; i++) {
-                        HistoryModel m = allEntries.get(i);
+                    double sumTodayTemp = 0, sumTodayHum = 0, sumTodaySoil = 0;
+                    int todayCount = 0;
+                    for (HistoryModel m : allEntries) {
                         if (m == null) continue;
-                        oldTempSum += m.getTemperature();
-                        oldHumSum  += m.getHumidity();
-                        oldSoilSum += m.getSoilMoisture();
+                        String k;
+                        try { k = dayKeyFmt.format(new java.util.Date(m.getTimestamp())); }
+                        catch (Exception e) { continue; }
+                        if (k.equals(todayKey)) {
+                            sumTodayTemp += m.getTemperature();
+                            sumTodayHum  += m.getHumidity();
+                            sumTodaySoil += m.getSoilMoisture();
+                            todayCount++;
+                            todayFound = true;
+                        }
                     }
-                    for (int i = half; i < totalCount; i++) {
-                        HistoryModel m = allEntries.get(i);
-                        if (m == null) continue;
-                        newTempSum += m.getTemperature();
-                        newHumSum  += m.getHumidity();
-                        newSoilSum += m.getSoilMoisture();
+                    if (todayFound && todayCount > 0) {
+                        summaryTemperatureText.setText(
+                                String.format(Locale.getDefault(), "%.1f°C", sumTodayTemp / todayCount));
+                        summaryHumidityText.setText(
+                                String.format(Locale.getDefault(), "%.1f%%", sumTodayHum / todayCount));
+                        summarySoilMoistureText.setText(
+                                String.format(Locale.getDefault(), "%.0f", sumTodaySoil / todayCount));
+                    } else if (dayCount > 0) {
+                        // Fall back to most recent day's data
+                        DayAverage latest = dailyAvgs.get(dayCount - 1);
+                        summaryTemperatureText.setText(
+                                String.format(Locale.getDefault(), "%.1f°C", latest.temp));
+                        summaryHumidityText.setText(
+                                String.format(Locale.getDefault(), "%.1f%%", latest.humidity));
+                        summarySoilMoistureText.setText(
+                                String.format(Locale.getDefault(), "%.0f", latest.soil));
+                    } else {
+                        summaryTemperatureText.setText("—");
+                        summaryHumidityText.setText("—");
+                        summarySoilMoistureText.setText("—");
                     }
-                    applyTrendIndicator(summaryTemperatureTrend,
-                            newTempSum / (totalCount - half) - oldTempSum / half,
-                            0.2, "°C", "Rising", "Cooling", "#FF7043", "#29B6F6");
-                    applyTrendIndicator(summaryHumidityTrend,
-                            newHumSum / (totalCount - half) - oldHumSum / half,
-                            1.0, "%", "Rising", "Falling", "#29B6F6", "#D4E157");
-                    applyTrendIndicator(summarySoilMoistureTrend,
-                            newSoilSum / (totalCount - half) - oldSoilSum / half,
-                            10.0, "", "Drier", "Wetter", "#FF7043", "#66BB6A");
-                } else {
-                    summaryTemperatureTrend.setVisibility(View.GONE);
-                    summaryHumidityTrend.setVisibility(View.GONE);
-                    summarySoilMoistureTrend.setVisibility(View.GONE);
+
+                    // ── Trend indicators (compare first half vs second half) ──
+                    int totalCount = allEntries.size();
+                    if (totalCount >= 2) {
+                        int half = totalCount / 2;
+                        double oldTempSum = 0, newTempSum = 0;
+                        double oldHumSum  = 0, newHumSum  = 0;
+                        double oldSoilSum = 0, newSoilSum = 0;
+                        for (int i = 0; i < half; i++) {
+                            HistoryModel m = allEntries.get(i);
+                            if (m == null) continue;
+                            oldTempSum += m.getTemperature();
+                            oldHumSum  += m.getHumidity();
+                            oldSoilSum += m.getSoilMoisture();
+                        }
+                        for (int i = half; i < totalCount; i++) {
+                            HistoryModel m = allEntries.get(i);
+                            if (m == null) continue;
+                            newTempSum += m.getTemperature();
+                            newHumSum  += m.getHumidity();
+                            newSoilSum += m.getSoilMoisture();
+                        }
+                        applyTrendIndicator(summaryTemperatureTrend,
+                                newTempSum / (totalCount - half) - oldTempSum / half,
+                                0.2, "°C", "Rising", "Cooling", "#FF7043", "#29B6F6");
+                        applyTrendIndicator(summaryHumidityTrend,
+                                newHumSum / (totalCount - half) - oldHumSum / half,
+                                1.0, "%", "Rising", "Falling", "#29B6F6", "#D4E157");
+                        applyTrendIndicator(summarySoilMoistureTrend,
+                                newSoilSum / (totalCount - half) - oldSoilSum / half,
+                                10.0, "", "Drier", "Wetter", "#FF7043", "#66BB6A");
+                    } else {
+                        summaryTemperatureTrend.setVisibility(View.GONE);
+                        summaryHumidityTrend.setVisibility(View.GONE);
+                        summarySoilMoistureTrend.setVisibility(View.GONE);
+                    }
+
+                    // ── Build chart entries from aggregated daily averages ────
+                    final String[] xLabels = new String[dayCount];
+                    ArrayList<Entry> tempEntries  = new ArrayList<>();
+                    ArrayList<Entry> humEntries   = new ArrayList<>();
+                    ArrayList<Entry> soilEntries  = new ArrayList<>();
+
+                    double sumTemp = 0, sumHum = 0, sumSoil = 0;
+                    for (int i = 0; i < dayCount; i++) {
+                        DayAverage d = dailyAvgs.get(i);
+                        xLabels[i] = d.label;
+                        tempEntries.add(new Entry(i, d.temp));
+                        humEntries.add(new Entry(i, d.humidity));
+                        soilEntries.add(new Entry(i, d.soil));
+                        sumTemp += d.temp;
+                        sumHum  += d.humidity;
+                        sumSoil += d.soil;
+                    }
+
+                    double avgTemp = dayCount > 0 ? sumTemp / dayCount : 0;
+                    double avgHum  = dayCount > 0 ? sumHum  / dayCount : 0;
+                    double avgSoil = dayCount > 0 ? sumSoil / dayCount : 0;
+
+                    trendAvgTempText.setText(String.format(Locale.getDefault(), "Avg: %.1f°C", avgTemp));
+                    trendAvgHumidityText.setText(String.format(Locale.getDefault(), "Avg: %.1f%%", avgHum));
+                    trendAvgSoilText.setText(String.format(Locale.getDefault(), "Avg: %.0f", avgSoil));
+
+                    // ── Update chart X-axis formatters with day labels ────────
+                    setChartXLabels(chartTemperature, xLabels);
+                    setChartXLabels(chartHumidity, xLabels);
+                    setChartXLabels(chartSoilMoisture, xLabels);
+
+                    // ── Push data to charts (animate only first time) ─────────
+                    int tempColor = ContextCompat.getColor(getContext(), R.color.accent_orange);
+                    int humColor  = ContextCompat.getColor(getContext(), R.color.accent_blue);
+                    int soilColor = ContextCompat.getColor(getContext(), R.color.primary_green);
+
+                    applyTemperatureData(tempEntries, tempColor);
+                    applyHumidityData(humEntries, humColor);
+                    applySoilMoistureData(soilEntries, soilColor);
+
+                    // ── AI Insights computed from aggregated averages ─────────
+                    boolean isSoilDry = avgSoil > 700.0;
+
+                    aiSoilMoistureStatusText.setText(isSoilDry
+                            ? String.format(Locale.getDefault(), "Dry (Avg: %.0f)", avgSoil)
+                            : String.format(Locale.getDefault(), "Healthy (Avg: %.0f)", avgSoil));
+
+                    aiIrrigationRecommendationText.setText(isSoilDry
+                            ? "Irrigation required immediately"
+                            : "Irrigation schedule sufficient");
+
+                    aiWaterDemandPredictionText.setText(
+                            avgTemp > 30.0 && avgHum < 65.0 ? "High water demand expected" :
+                            avgTemp > 25.0 && avgHum < 75.0 ? "Moderate water demand expected" :
+                            String.format(Locale.getDefault(), "Water demand stable (Temp: %.0f°C)", avgTemp));
+
+                    aiCropHealthSuggestionText.setText(
+                            avgSoil > 700.0 ? "Crop experiencing moisture stress" :
+                            avgSoil >= 350.0 ? "Healthy crop condition" :
+                            "No water stress detected");
+
+                    String waterNeed, nextWatering;
+                    if (avgSoil > 700.0) {
+                        waterNeed = "Required"; nextWatering = "Today 5:30 PM";
+                    } else if (avgSoil >= 350.0) {
+                        waterNeed = "Moderate Need"; nextWatering = "Tomorrow 6:00 AM";
+                    } else {
+                        waterNeed = "Not Required"; nextWatering = "Tomorrow 6:00 AM";
+                    }
+                    aiInsightsWaterRequirementText.setText(waterNeed);
+                    aiInsightsNextWateringText.setText(nextWatering);
+
+                    String riskLevel = (avgSoil > 700.0 && avgTemp > 30.0) ? "High" :
+                                       (avgSoil > 700.0 || avgTemp > 28.0 || avgHum < 60.0) ? "Medium" : "Low";
+                    aiInsightsRiskLevelText.setText(riskLevel);
+
+                    // ── Water loss computed from averages ─────────────────────
+                    double tempFactor = avgTemp > 25.0 ? (avgTemp - 25.0) * 1.5 : 0.0;
+                    double humFactor  = avgHum  < 70.0 ? (70.0 - avgHum) * 0.5 : 0.0;
+                    double wlPercent  = Math.max(0.0, Math.min(100.0, 10.0 + tempFactor + humFactor));
+                    wlPercentageText.setText(String.format(Locale.getDefault(), "%.1f%%", wlPercent));
+
+                    String riskLabel;
+                    int riskColor;
+                    if (wlPercent > 45.0) {
+                        riskLabel = "High"; riskColor = Color.parseColor("#E53935");
+                    } else if (wlPercent > 25.0) {
+                        riskLabel = "Medium"; riskColor = Color.parseColor("#FFA726");
+                    } else {
+                        riskLabel = "Low"; riskColor = Color.parseColor("#43A047");
+                    }
+                    wlRiskStatusText.setText(riskLabel);
+                    wlRiskStatusText.setTextColor(riskColor);
+
+                    String dryZoneLabel;
+                    int dryZoneColor;
+                    if (avgSoil > 700.0) {
+                        dryZoneLabel = "Detected"; dryZoneColor = Color.parseColor("#E53935");
+                    } else {
+                        dryZoneLabel = "Healthy";  dryZoneColor = Color.parseColor("#43A047");
+                    }
+                    wlDryZoneText.setText(dryZoneLabel);
+                    wlDryZoneText.setTextColor(dryZoneColor);
+
+                    String wlStatusBadgeText;
+                    int badgeTextColorRes, badgeBgColorRes;
+                    if (wlPercent > 45.0) {
+                        wlStatusBadgeText = "Critical Leakage";
+                        badgeTextColorRes = R.color.status_critical; badgeBgColorRes = R.color.icon_bg_red;
+                    } else if (wlPercent > 25.0) {
+                        wlStatusBadgeText = "Possible Leakage";
+                        badgeTextColorRes = R.color.status_medium;   badgeBgColorRes = R.color.icon_bg_orange;
+                    } else {
+                        wlStatusBadgeText = "No Leakage";
+                        badgeTextColorRes = R.color.status_healthy;  badgeBgColorRes = R.color.icon_bg_green;
+                    }
+                    insightWlStatusBadge.setText(wlStatusBadgeText);
+                    insightWlStatusBadge.setTextColor(
+                            ContextCompat.getColor(getContext(), badgeTextColorRes));
+                    insightWlStatusBadge.setBackgroundTintList(
+                            ColorStateList.valueOf(ContextCompat.getColor(getContext(), badgeBgColorRes)));
+
+                    insightWlRecommendation.setText(wlPercent > 25.0
+                            ? "Possible water leakage detected.\nCheck irrigation lines."
+                            : (avgSoil > 700.0 ? "Farm operating normally.\nIncrease irrigation frequency."
+                                               : "Farm operating normally.\nContinue regular monitoring."));
+
+                    // Simulate boundary sensor values from average soil
+                    double avgSoilPercent = Math.max(0, Math.min(100,
+                            100.0 - ((avgSoil - 200.0) / (1023.0 - 200.0)) * 100.0));
+                    insightWlNorth.setText(String.format(Locale.getDefault(), "%.0f%%", Math.min(100, avgSoilPercent + 1.2)));
+                    insightWlEast.setText( String.format(Locale.getDefault(), "%.0f%%", Math.max(0,  avgSoilPercent - 2.5)));
+                    insightWlSouth.setText(String.format(Locale.getDefault(), "%.0f%%", Math.min(100, avgSoilPercent + 0.8)));
+                    insightWlWest.setText( String.format(Locale.getDefault(), "%.0f%%", Math.max(0,  avgSoilPercent - 0.5)));
+                    insightWlAvgMoisture.setText(String.format(Locale.getDefault(), "%.0f%%", avgSoilPercent));
+                    insightWlFlowInput.setText("120 L");
+                    double lossLiters = 120.0 * wlPercent / 100.0;
+                    insightWlEstLoss.setText(String.format(Locale.getDefault(), "%.0f L", lossLiters));
+                    insightWlBoundary.setText(wlPercent > 25.0 ? "East" : "No Leakage");
+                } catch (Exception e) {
+                    android.util.Log.e("InsightsFragment", "Crash in onHistoryLoaded: " + e.getMessage(), e);
+                    // Hide loading and show error screen
+                    layoutLoadingInsights.setVisibility(View.GONE);
+                    layoutMainContent.setVisibility(View.GONE);
+                    layoutEmptyInsights.setVisibility(View.GONE);
+                    layoutErrorInsights.setVisibility(View.VISIBLE);
+                    if (textErrorDetails != null) {
+                        textErrorDetails.setText("Error rendering insights: " + e.toString());
+                    }
                 }
-
-                // ── Build chart entries from aggregated daily averages ────
-                final String[] xLabels = new String[dayCount];
-                ArrayList<Entry> tempEntries  = new ArrayList<>();
-                ArrayList<Entry> humEntries   = new ArrayList<>();
-                ArrayList<Entry> soilEntries  = new ArrayList<>();
-
-                double sumTemp = 0, sumHum = 0, sumSoil = 0;
-                for (int i = 0; i < dayCount; i++) {
-                    DayAverage d = dailyAvgs.get(i);
-                    xLabels[i] = d.label;
-                    tempEntries.add(new Entry(i, d.temp));
-                    humEntries.add(new Entry(i, d.humidity));
-                    soilEntries.add(new Entry(i, d.soil));
-                    sumTemp += d.temp;
-                    sumHum  += d.humidity;
-                    sumSoil += d.soil;
-                }
-
-                double avgTemp = dayCount > 0 ? sumTemp / dayCount : 0;
-                double avgHum  = dayCount > 0 ? sumHum  / dayCount : 0;
-                double avgSoil = dayCount > 0 ? sumSoil / dayCount : 0;
-
-                trendAvgTempText.setText(String.format(Locale.getDefault(), "Avg: %.1f°C", avgTemp));
-                trendAvgHumidityText.setText(String.format(Locale.getDefault(), "Avg: %.1f%%", avgHum));
-                trendAvgSoilText.setText(String.format(Locale.getDefault(), "Avg: %.0f", avgSoil));
-
-                // ── Update chart X-axis formatters with day labels ────────
-                setChartXLabels(chartTemperature, xLabels);
-                setChartXLabels(chartHumidity, xLabels);
-                setChartXLabels(chartSoilMoisture, xLabels);
-
-                // ── Push data to charts (animate only first time) ─────────
-                int tempColor = ContextCompat.getColor(getContext(), R.color.accent_orange);
-                int humColor  = ContextCompat.getColor(getContext(), R.color.accent_blue);
-                int soilColor = ContextCompat.getColor(getContext(), R.color.primary_green);
-
-                applyTemperatureData(tempEntries, tempColor);
-                applyHumidityData(humEntries, humColor);
-                applySoilMoistureData(soilEntries, soilColor);
-
-                // ── AI Insights computed from aggregated averages ─────────
-                boolean isSoilDry = avgSoil > 700.0;
-
-                aiSoilMoistureStatusText.setText(isSoilDry
-                        ? String.format(Locale.getDefault(), "Dry (Avg: %.0f)", avgSoil)
-                        : String.format(Locale.getDefault(), "Healthy (Avg: %.0f)", avgSoil));
-
-                aiIrrigationRecommendationText.setText(isSoilDry
-                        ? "Irrigation required immediately"
-                        : "Irrigation schedule sufficient");
-
-                aiWaterDemandPredictionText.setText(
-                        avgTemp > 30.0 && avgHum < 65.0 ? "High water demand expected" :
-                        avgTemp > 25.0 && avgHum < 75.0 ? "Moderate water demand expected" :
-                        String.format(Locale.getDefault(), "Water demand stable (Temp: %.0f°C)", avgTemp));
-
-                aiCropHealthSuggestionText.setText(
-                        avgSoil > 700.0 ? "Crop experiencing moisture stress" :
-                        avgSoil >= 350.0 ? "Healthy crop condition" :
-                        "No water stress detected");
-
-                String waterNeed, nextWatering;
-                if (avgSoil > 700.0) {
-                    waterNeed = "Required"; nextWatering = "Today 5:30 PM";
-                } else if (avgSoil >= 350.0) {
-                    waterNeed = "Moderate Need"; nextWatering = "Tomorrow 6:00 AM";
-                } else {
-                    waterNeed = "Not Required"; nextWatering = "Tomorrow 6:00 AM";
-                }
-                aiInsightsWaterRequirementText.setText(waterNeed);
-                aiInsightsNextWateringText.setText(nextWatering);
-
-                String riskLevel = (avgSoil > 700.0 && avgTemp > 30.0) ? "High" :
-                                   (avgSoil > 700.0 || avgTemp > 28.0 || avgHum < 60.0) ? "Medium" : "Low";
-                aiInsightsRiskLevelText.setText(riskLevel);
-
-                // ── Water loss computed from averages ─────────────────────
-                double tempFactor = avgTemp > 25.0 ? (avgTemp - 25.0) * 1.5 : 0.0;
-                double humFactor  = avgHum  < 70.0 ? (70.0 - avgHum) * 0.5 : 0.0;
-                double wlPercent  = Math.max(0.0, Math.min(100.0, 10.0 + tempFactor + humFactor));
-                wlPercentageText.setText(String.format(Locale.getDefault(), "%.1f%%", wlPercent));
-
-                String riskLabel;
-                int riskColor;
-                if (wlPercent > 45.0) {
-                    riskLabel = "High"; riskColor = Color.parseColor("#E53935");
-                } else if (wlPercent > 25.0) {
-                    riskLabel = "Medium"; riskColor = Color.parseColor("#FFA726");
-                } else {
-                    riskLabel = "Low"; riskColor = Color.parseColor("#43A047");
-                }
-                wlRiskStatusText.setText(riskLabel);
-                wlRiskStatusText.setTextColor(riskColor);
-
-                String dryZoneLabel;
-                int dryZoneColor;
-                if (avgSoil > 700.0) {
-                    dryZoneLabel = "Detected"; dryZoneColor = Color.parseColor("#E53935");
-                } else {
-                    dryZoneLabel = "Healthy";  dryZoneColor = Color.parseColor("#43A047");
-                }
-                wlDryZoneText.setText(dryZoneLabel);
-                wlDryZoneText.setTextColor(dryZoneColor);
-
-                String wlStatusBadgeText;
-                int badgeTextColorRes, badgeBgColorRes;
-                if (wlPercent > 45.0) {
-                    wlStatusBadgeText = "Critical Leakage";
-                    badgeTextColorRes = R.color.status_critical; badgeBgColorRes = R.color.icon_bg_red;
-                } else if (wlPercent > 25.0) {
-                    wlStatusBadgeText = "Possible Leakage";
-                    badgeTextColorRes = R.color.status_medium;   badgeBgColorRes = R.color.icon_bg_orange;
-                } else {
-                    wlStatusBadgeText = "No Leakage";
-                    badgeTextColorRes = R.color.status_healthy;  badgeBgColorRes = R.color.icon_bg_green;
-                }
-                insightWlStatusBadge.setText(wlStatusBadgeText);
-                insightWlStatusBadge.setTextColor(
-                        ContextCompat.getColor(getContext(), badgeTextColorRes));
-                insightWlStatusBadge.setBackgroundTintList(
-                        ColorStateList.valueOf(ContextCompat.getColor(getContext(), badgeBgColorRes)));
-
-                insightWlRecommendation.setText(wlPercent > 25.0
-                        ? "Possible water leakage detected.\nCheck irrigation lines."
-                        : (avgSoil > 700.0 ? "Farm operating normally.\nIncrease irrigation frequency."
-                                           : "Farm operating normally.\nContinue regular monitoring."));
-
-                // Simulate boundary sensor values from average soil
-                double avgSoilPercent = Math.max(0, Math.min(100,
-                        100.0 - ((avgSoil - 200.0) / (1023.0 - 200.0)) * 100.0));
-                insightWlNorth.setText(String.format(Locale.getDefault(), "%.0f%%", Math.min(100, avgSoilPercent + 1.2)));
-                insightWlEast.setText( String.format(Locale.getDefault(), "%.0f%%", Math.max(0,  avgSoilPercent - 2.5)));
-                insightWlSouth.setText(String.format(Locale.getDefault(), "%.0f%%", Math.min(100, avgSoilPercent + 0.8)));
-                insightWlWest.setText( String.format(Locale.getDefault(), "%.0f%%", Math.max(0,  avgSoilPercent - 0.5)));
-                insightWlAvgMoisture.setText(String.format(Locale.getDefault(), "%.0f%%", avgSoilPercent));
-                insightWlFlowInput.setText("120 L");
-                double lossLiters = 120.0 * wlPercent / 100.0;
-                insightWlEstLoss.setText(String.format(Locale.getDefault(), "%.0f L", lossLiters));
-                insightWlBoundary.setText(wlPercent > 25.0 ? "East" : "No Leakage");
             }
 
             @Override
@@ -822,8 +833,7 @@ public class InsightsFragment extends Fragment {
             @Override public String getFormattedValue(float v) { return (int) v + "°C"; }
         });
         chartTemperature.setData(new LineData(dataSet));
-        if (!chartsAnimated) chartTemperature.animateX(600);
-        else chartTemperature.invalidate();
+        chartTemperature.invalidate();
     }
 
     private void applyHumidityData(ArrayList<Entry> entries, int lineColor) {
@@ -833,8 +843,7 @@ public class InsightsFragment extends Fragment {
             @Override public String getFormattedValue(float v) { return (int) v + "%"; }
         });
         chartHumidity.setData(new LineData(dataSet));
-        if (!chartsAnimated) chartHumidity.animateX(700);
-        else chartHumidity.invalidate();
+        chartHumidity.invalidate();
     }
 
     private void applySoilMoistureData(ArrayList<Entry> entries, int lineColor) {
@@ -844,12 +853,10 @@ public class InsightsFragment extends Fragment {
             @Override public String getFormattedValue(float v) { return String.valueOf((int) v); }
         });
         chartSoilMoisture.setData(new LineData(dataSet));
-        if (!chartsAnimated) chartSoilMoisture.animateX(800);
-        else chartSoilMoisture.invalidate();
-
-        // After first animation, mark charts as animated to skip re-animation on updates
+        chartSoilMoisture.invalidate();
         chartsAnimated = true;
     }
+
 
     /** Applies common visual styling to a LineDataSet. highlightHex may be null to skip highlight. */
     private void styleDataSet(LineDataSet ds, int lineColor, String highlightHex) {

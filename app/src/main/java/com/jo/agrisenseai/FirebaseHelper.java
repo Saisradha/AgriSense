@@ -285,8 +285,25 @@ public class FirebaseHelper {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<SensorHistory> list = new ArrayList<>();
                 for (DataSnapshot child : snapshot.getChildren()) {
-                    SensorHistory entry = child.getValue(SensorHistory.class);
-                    if (entry != null) list.add(entry);
+                    try {
+                        Double tempVal = getDouble(child, "temperature");
+                        Double humVal  = getDouble(child, "humidity");
+                        Double soilVal = getDouble(child, "soilMoisture");
+                        Double lightVal = getDouble(child, "lightIntensity");
+                        Long timeVal   = child.child("timestamp").getValue(Long.class);
+
+                        double temp = tempVal != null ? tempVal : 0.0;
+                        double hum  = humVal != null ? humVal : 0.0;
+                        double soil = soilVal != null ? soilVal : 0.0;
+                        double light = lightVal != null ? lightVal : 0.0;
+                        long time = timeVal != null ? timeVal : 0L;
+
+                        if (time > 0) {
+                            list.add(new SensorHistory(temp, hum, soil, light, time));
+                        }
+                    } catch (Exception e) {
+                        android.util.Log.e("FirebaseHelper", "Error parsing SensorHistory: " + e.getMessage());
+                    }
                 }
                 listener.onHistoryLoaded(list);
             }
@@ -323,8 +340,23 @@ public class FirebaseHelper {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ArrayList<HistoryModel> list = new ArrayList<>();
                 for (DataSnapshot child : snapshot.getChildren()) {
-                    HistoryModel entry = child.getValue(HistoryModel.class);
-                    if (entry != null) list.add(entry);
+                    try {
+                        Double tempVal = getDouble(child, "temperature");
+                        Double humVal  = getDouble(child, "humidity");
+                        Double soilVal = getDouble(child, "soilMoisture");
+                        Long timeVal   = child.child("timestamp").getValue(Long.class);
+
+                        int temp = tempVal != null ? (int) Math.round(tempVal) : 0;
+                        int hum  = humVal != null ? (int) Math.round(humVal) : 0;
+                        int soil = soilVal != null ? (int) Math.round(soilVal) : 0;
+                        long time = timeVal != null ? timeVal : 0L;
+
+                        if (time > 0) {
+                            list.add(new HistoryModel(temp, hum, soil, time));
+                        }
+                    } catch (Exception e) {
+                        android.util.Log.e("FirebaseHelper", "Error parsing HistoryModel: " + e.getMessage());
+                    }
                 }
                 listener.onHistoryLoaded(list);
             }
@@ -337,6 +369,7 @@ public class FirebaseHelper {
         query.addValueEventListener(vel);
         return vel;
     }
+
 
     // ══════════════════════════════════════════════════════════════════════
     // REAL-TIME FARMS  (farms/)
@@ -859,8 +892,11 @@ public class FirebaseHelper {
      */
     public void removeHistoryListener(ValueEventListener listener) {
         if (listener == null) return;
+        mDatabase.child(NODE_HISTORY).orderByChild("timestamp").limitToLast(50).removeEventListener(listener);
+        mDatabase.child(NODE_HISTORY).orderByChild("timestamp").limitToLast(100).removeEventListener(listener);
         mDatabase.child(NODE_HISTORY).removeEventListener(listener);
     }
+
 
     /**
      * Removes a listener that was attached to a specific farm node.
