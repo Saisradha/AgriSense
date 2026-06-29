@@ -337,4 +337,17 @@
     <string name="chart_range_24h">Last 24 Hours</string>
     <string name="chart_range_7d">Last 7 Days</string>
     <string name="chart_range_30d">Last 30 Days</string>
+
+    <!-- About AgriSense -->
+    <string name="about_agrisense_title">About AgriSense</string>
+    <string name="about_agrisense_subtitle">Learn more about the app</string>
+    <string name="about_agrisense_description">AgriSense AI is a smart agriculture assistant that empowers farmers with real-time sensor data, AI-powered crop insights, and intelligent irrigation control — all from a single, intuitive app. Built to make precision farming accessible to everyone.</string>
+
+    <!-- Team -->
+    <string name="about_team_title">Our Team</string>
+    <string name="about_team_subtitle">The people behind AgriSense</string>
+    <string name="team_member_1">Ch SaiSradha</string>
+    <string name="team_member_2">K Anvesh</string>
+    <string name="team_member_3">M Siri Chandana Savithri</string>
+    <string name="team_member_4">M Susmitha</string>
 </resources>

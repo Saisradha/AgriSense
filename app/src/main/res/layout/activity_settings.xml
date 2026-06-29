@@ -293,6 +293,264 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ── Section: About ─────────────────────────────────────────── -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_lg"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                android:text="About"
+                android:textAppearance="@style/TextAppearance.AgriSense.SectionTitle" />
+
+            <!-- Card 5: About AgriSense -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:strokeWidth="0dp"
+                app:strokeColor="@android:color/transparent"
+                app:cardCornerRadius="@dimen/radius_card_sm"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
+
+                    <!-- Header row with icon -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_container"
+                            android:layout_height="@dimen/icon_container"
+                            android:layout_marginEnd="@dimen/spacing_md"
+                            android:background="@drawable/bg_icon_circle"
+                            android:backgroundTint="@color/icon_bg_green"
+                            android:padding="11dp"
+                            android:src="@drawable/ic_info"
+                            android:tint="@color/primary_green" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/about_agrisense_title"
+                                android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/about_agrisense_subtitle"
+                                android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Description text -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="@string/about_agrisense_description"
+                        android:textAppearance="@style/TextAppearance.AgriSense.Body"
+                        android:lineSpacingExtra="4dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 6: Our Team -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_xl"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:strokeWidth="0dp"
+                app:strokeColor="@android:color/transparent"
+                app:cardCornerRadius="@dimen/radius_card_sm"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_md"
+                    android:background="@drawable/bg_liquid_glass_card">
+
+                    <!-- Header row with icon -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_container"
+                            android:layout_height="@dimen/icon_container"
+                            android:layout_marginEnd="@dimen/spacing_md"
+                            android:background="@drawable/bg_icon_circle"
+                            android:backgroundTint="@color/icon_bg_orange"
+                            android:padding="11dp"
+                            android:src="@drawable/ic_group"
+                            android:tint="@color/accent_orange" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/about_team_title"
+                                android:textAppearance="@style/TextAppearance.AgriSense.CardTitle" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/about_team_subtitle"
+                                android:textAppearance="@style/TextAppearance.AgriSense.Caption" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:layout_marginBottom="@dimen/spacing_xs"
+                        android:background="@color/divider" />
+
+                    <!-- Member 1: Ch SaiSradha -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/spacing_sm"
+                        android:paddingBottom="@dimen/spacing_sm">
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="@dimen/spacing_md"
+                            android:background="@drawable/bg_icon_circle"
+                            android:backgroundTint="@color/icon_bg_purple"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_person"
+                            android:tint="@color/accent_purple" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/team_member_1"
+                            android:textAppearance="@style/TextAppearance.AgriSense.Body" />
+
+                    </LinearLayout>
+
+                    <!-- Member 2: K Anvesh -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/spacing_sm"
+                        android:paddingBottom="@dimen/spacing_sm">
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="@dimen/spacing_md"
+                            android:background="@drawable/bg_icon_circle"
+                            android:backgroundTint="@color/icon_bg_blue"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_person"
+                            android:tint="@color/accent_blue" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/team_member_2"
+                            android:textAppearance="@style/TextAppearance.AgriSense.Body" />
+
+                    </LinearLayout>
+
+                    <!-- Member 3: M Siri Chandana Savithri -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/spacing_sm"
+                        android:paddingBottom="@dimen/spacing_sm">
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="@dimen/spacing_md"
+                            android:background="@drawable/bg_icon_circle"
+                            android:backgroundTint="@color/icon_bg_green"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_person"
+                            android:tint="@color/primary_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/team_member_3"
+                            android:textAppearance="@style/TextAppearance.AgriSense.Body" />
+
+                    </LinearLayout>
+
+                    <!-- Member 4: M Susmitha -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/spacing_sm"
+                        android:paddingBottom="@dimen/spacing_sm">
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="@dimen/spacing_md"
+                            android:background="@drawable/bg_icon_circle"
+                            android:backgroundTint="@color/icon_bg_teal"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_person"
+                            android:tint="@color/accent_blue" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/team_member_4"
+                            android:textAppearance="@style/TextAppearance.AgriSense.Body" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
     </ScrollView>
 
